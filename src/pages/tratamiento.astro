@@ -1,0 +1,872 @@
+---
+import LayoutCommon from "../app/LayoutCommon.astro";
+import LayoutProtected from "../app/LayoutProtected.astro";
+---
+
+<LayoutProtected>
+  <LayoutCommon>
+    <div class="min-h-screen bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-800">
+      <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <!-- Header con animación sutil -->
+        <div class="mb-8 animate-fadeIn">
+          <div class="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+            <div class="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0">
+              <button id="volverBtn" class="group flex items-center text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 transform group-hover:-translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Volver al inicio
+              </button>
+              <h1 class="text-3xl font-bold text-slate-800 dark:text-slate-100">Tratamientos</h1>
+            </div>
+            <button id="createTreatmentButton" 
+              class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg">
+              <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              Nuevo Tratamiento
+            </button>
+          </div>
+        </div>
+
+        <!-- Panel principal con sombra mejorada -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden transition-all duration-300 animate-fadeIn">
+          <!-- Search & Stats Section -->
+          <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex flex-col space-y-4 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
+              <!-- Buscador mejorado -->
+              <div class="flex-grow max-w-xl">
+                <label for="searchInput" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buscar Tratamiento</label>
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Buscar por nombre o descripción..."
+                    class="w-full rounded-lg border border-gray-300 pl-10 pr-4 py-2.5 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500 transition-colors"
+                  />
+                  <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Estadísticas -->
+              <div class="flex-shrink-0 hidden md:flex space-x-4">
+                <div id="totalTreatments" class="px-4 py-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+                  <div class="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">Total</div>
+                  <div class="text-2xl font-bold text-blue-800 dark:text-blue-300" id="treatmentCount">--</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mensaje de carga -->
+          <div id="loadingState" class="py-12 flex justify-center items-center hidden">
+            <div class="flex flex-col items-center">
+              <svg class="animate-spin h-8 w-8 text-blue-600 dark:text-blue-400 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <p class="text-gray-600 dark:text-gray-400">Cargando tratamientos...</p>
+            </div>
+          </div>
+
+          <!-- Estado vacío -->
+          <div id="emptyState" class="hidden py-16 flex flex-col items-center justify-center">
+            <div class="rounded-full bg-blue-50 dark:bg-blue-900/30 p-3 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">No hay tratamientos disponibles</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-4">Comienza agregando tu primer tratamiento</p>
+            <button id="createFirstTreatment" 
+              class="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors">
+              <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              Crear tratamiento
+            </button>
+          </div>
+
+          <!-- Desktop Table con cabecera fija -->
+          <div id="treatmentsTableContainer" class="hidden md:block relative">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300 w-1/3">Nombre</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300 w-1/2">Descripción</th>
+                  <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300 w-1/6">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tratamientosTableBodyDesktop" class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
+                <!-- Filled dynamically -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Cards con mejor espaciado -->
+          <div class="md:hidden p-4 space-y-4" id="tratamientosTableBodyMobile">
+            <!-- Filled dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Modal mejorado con animación -->
+    <div id="editModal" class="fixed inset-0 z-50 hidden items-center justify-center">
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 modal-overlay"></div>
+      <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-0 w-full max-w-md mx-auto transform transition-all duration-300 scale-95 opacity-0 modal-content">
+        <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 p-6">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Editar Tratamiento</h3>
+          <button type="button" class="close-modal text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-400 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form id="editForm" class="p-6">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nombre</label>
+              <input type="text" 
+                     name="nombre" 
+                     required
+                     class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500 transition-colors"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Descripción</label>
+              <textarea name="descripcion" 
+                        required 
+                        rows="3"
+                        class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500 transition-colors resize-none"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="flex justify-end space-x-3 mt-6">
+            <button type="button"
+                    class="close-modal px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 dark:text-gray-300 dark:hover:text-white dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+              Cancelar
+            </button>
+            <button type="submit"
+                    class="px-4 py-2.5 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 shadow-sm hover:shadow focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-all">
+              Guardar cambios
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Create Modal mejorado con animación -->
+    <div id="createModal" class="fixed inset-0 z-50 hidden items-center justify-center">
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 modal-overlay"></div>
+      <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-0 w-full max-w-md mx-auto transform transition-all duration-300 scale-95 opacity-0 modal-content">
+        <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 p-6">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Nuevo Tratamiento</h3>
+          <button type="button" class="close-modal text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-400 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form id="createForm" class="p-6">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nombre</label>
+              <input type="text" 
+                     name="nombre" 
+                     required
+                     placeholder="Ej: Limpieza dental"
+                     class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500 transition-colors"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Descripción</label>
+              <textarea name="descripcion" 
+                        required 
+                        rows="3"
+                        placeholder="Descripción detallada del tratamiento..."
+                        class="block w-full rounded-lg border border-gray-300 bg-white p-2.5 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500 transition-colors resize-none"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="flex justify-end space-x-3 mt-6">
+            <button type="button"
+                    class="close-modal px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 dark:text-gray-300 dark:hover:text-white dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+              Cancelar
+            </button>
+            <button type="submit"
+                    class="px-4 py-2.5 rounded-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700 shadow-sm hover:shadow focus:ring-4 focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 transition-all">
+              Crear tratamiento
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Nueva notificación tipo toast -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50"></div>
+  </LayoutCommon>
+</LayoutProtected>
+
+<style>
+  /* Animaciones y Transiciones */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  .animate-slideUp {
+    animation: slideUp 0.4s ease-out forwards;
+  }
+  
+  /* Estilos para la notificación */
+  .toast {
+    animation: slideIn 0.3s ease-out forwards;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+  
+  .toast.hiding {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  
+  /* Mejoras para modales */
+  #editModal.show, #createModal.show {
+    display: flex;
+  }
+  
+  #editModal.show .modal-overlay,
+  #createModal.show .modal-overlay {
+    opacity: 1;
+  }
+  
+  #editModal.show .modal-content,
+  #createModal.show .modal-content {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  /* Mejoras para las tarjetas y filas de la tabla */
+  .treatment-card, .treatment-row {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .treatment-card:hover, .treatment-row:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Estilos para los elementos dinámicos */
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  .slide-up {
+    animation: slideUp 0.4s ease-out forwards;
+  }
+</style>
+
+<script>
+const BASE_URL = "http://localhost:5000/api";
+
+const state = {
+  modals: {
+    edit: { isOpen: false, selectedTreatment: null },
+    create: { isOpen: false }
+  },
+  loading: true,
+  treatments: []
+};
+
+// Elementos DOM
+const elements = {
+  loadingState: document.getElementById('loadingState'),
+  emptyState: document.getElementById('emptyState'),
+  treatmentsTableContainer: document.getElementById('treatmentsTableContainer'),
+  tbodyDesktop: document.getElementById('tratamientosTableBodyDesktop'),
+  containerMobile: document.getElementById('tratamientosTableBodyMobile'),
+  treatmentCount: document.getElementById('treatmentCount'),
+  editModal: document.getElementById('editModal'),
+  createModal: document.getElementById('createModal'),
+  searchInput: document.getElementById('searchInput'),
+  toastContainer: document.getElementById('toastContainer')
+};
+
+// Validaciones y utilidades
+const validateTreatment = (treatment) => {
+  const errors = [];
+  if (!treatment.nombre?.trim()) errors.push('El nombre es requerido');
+  if (!treatment.descripcion?.trim()) errors.push('La descripción es requerida');
+  return errors;
+};
+
+// Función mejorada de notificación tipo toast
+const showToast = (message, type = 'success') => {
+  const existingToast = document.querySelector('.toast');
+  if (existingToast) {
+    existingToast.classList.add('hiding');
+    setTimeout(() => existingToast.remove(), 300);
+  }
+
+  const toast = document.createElement('div');
+  const colors = type === 'success' 
+    ? 'bg-green-500 text-white' 
+    : 'bg-red-500 text-white';
+  
+  const icon = type === 'success'
+    ? '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
+    : '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+
+  toast.className = `toast flex items-center p-4 mb-3 rounded-lg shadow-lg ${colors} max-w-md`;
+  toast.innerHTML = `
+    <div class="flex items-center">
+      ${icon}
+      <p>${message}</p>
+    </div>
+    <button class="ml-auto text-white hover:text-gray-100 focus:outline-none">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  `;
+  
+  elements.toastContainer.appendChild(toast);
+  
+  // Añadir event listener para cerrar el toast
+  toast.querySelector('button').addEventListener('click', () => {
+    toast.classList.add('hiding');
+    setTimeout(() => toast.remove(), 300);
+  });
+  
+  // Auto-cerrar después de 5 segundos
+  setTimeout(() => {
+    if (document.body.contains(toast)) {
+      toast.classList.add('hiding');
+      setTimeout(() => toast.remove(), 300);
+    }
+  }, 5000);
+};
+
+// Mostrar/ocultar estados de UI
+function updateUIState() {
+  const { treatments, loading } = state;
+  
+  // Actualizar contador
+  if (elements.treatmentCount) {
+    elements.treatmentCount.textContent = treatments.length;
+  }
+  
+  // Mostrar estado de carga
+  if (elements.loadingState) {
+    elements.loadingState.classList.toggle('hidden', !loading);
+  }
+  
+  // Mostrar estado vacío si no hay tratamientos y no está cargando
+  if (elements.emptyState) {
+    elements.emptyState.classList.toggle('hidden', loading || treatments.length > 0);
+  }
+  
+  // Mostrar tabla/tarjetas si hay tratamientos y no está cargando
+  if (elements.treatmentsTableContainer) {
+    elements.treatmentsTableContainer.classList.toggle('hidden', loading || treatments.length === 0);
+  }
+  
+  // Para móvil
+  if (elements.containerMobile) {
+    elements.containerMobile.classList.toggle('hidden', loading || treatments.length === 0);
+  }
+}
+
+// Funciones de renderizado mejoradas
+async function fetchTreatments() {
+  state.loading = true;
+  updateUIState();
+  
+  try {
+    const response = await fetch(`${BASE_URL}/tratamientos`);
+    if (!response.ok) throw new Error('Error al obtener tratamientos');
+
+    const data = await response.json();
+    state.treatments = data;
+    return data;
+  } catch (error) {
+    console.error('Error al obtener tratamientos:', error);
+    showToast('Error al cargar los tratamientos', 'error');
+    state.treatments = [];
+    return [];
+  } finally {
+    state.loading = false;
+    updateUIState();
+  }
+}
+
+async function actualizarTabla() {
+  const treatments = await fetchTreatments();
+  renderizarVistas(treatments);
+}
+
+async function filtrarTratamientos() {
+  state.loading = true;
+  updateUIState();
+  
+  try {
+    const searchTerm = elements.searchInput?.value.toLowerCase().trim();
+    
+    // Si no hay término de búsqueda, mostrar todos
+    if (!searchTerm) {
+      const treatments = await fetchTreatments();
+      renderizarVistas(treatments);
+      return;
+    }
+    
+    // Filtrar localmente si ya tenemos los tratamientos
+    if (state.treatments.length > 0) {
+      const filtrados = state.treatments.filter(tratamiento => 
+        tratamiento.nombre.toLowerCase().includes(searchTerm) ||
+        tratamiento.descripcion.toLowerCase().includes(searchTerm)
+      );
+      renderizarVistas(filtrados);
+      return;
+    }
+    
+    // Si no tenemos tratamientos, obtenerlos y filtrar
+    const treatments = await fetchTreatments();
+    const filtrados = treatments.filter(tratamiento => 
+      tratamiento.nombre.toLowerCase().includes(searchTerm) ||
+      tratamiento.descripcion.toLowerCase().includes(searchTerm)
+    );
+    renderizarVistas(filtrados);
+  } catch (error) {
+    console.error('Error al filtrar tratamientos:', error);
+    showToast('Error al filtrar los tratamientos', 'error');
+  } finally {
+    state.loading = false;
+    updateUIState();
+  }
+}
+
+function renderizarVistas(tratamientos) {
+  if (!elements.tbodyDesktop || !elements.containerMobile) return;
+
+  // Vista Desktop con animación
+  elements.tbodyDesktop.innerHTML = tratamientos.map((row, index) => `
+    <tr class="treatment-row hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 slide-up"
+        style="animation-delay: ${index * 0.05}s"
+        data-id="${row._id}"
+        data-nombre="${row.nombre}"
+        data-descripcion="${row.descripcion}">
+      <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">${row.nombre}</td>
+      <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">${row.descripcion}</td>
+      <td class="px-6 py-4 text-right">
+        <div class="flex justify-end space-x-2">
+          <button class="edit-button p-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" 
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+          <button class="delete-button p-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors rounded-full hover:bg-red-50 dark:hover:bg-red-900/30">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" 
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  // Vista Mobile con animación y diseño mejorado
+  elements.containerMobile.innerHTML = tratamientos.map((row, index) => `
+    <div class="treatment-card bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 space-y-3 border border-gray-100 dark:border-gray-700 slide-up"
+         style="animation-delay: ${index * 0.05}s"
+         data-id="${row._id}"
+         data-nombre="${row.nombre}"
+         data-descripcion="${row.descripcion}">
+      <div class="flex justify-between items-start">
+        <h3 class="font-medium text-gray-900 dark:text-white text-lg">${row.nombre}</h3>
+        <div class="flex space-x-1">
+          <button class="edit-button p-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" 
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+          <button class="delete-button p-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors rounded-full hover:bg-red-50 dark:hover:bg-red-900/30">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" 
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <div class="text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
+        ${row.descripcion}
+      </div>
+    </div>
+  `).join('');
+
+  setupEventListeners();
+  updateUIState();
+}
+
+// Manejadores de modal mejorados
+function openEditModal(treatment) {
+  state.modals.edit.selectedTreatment = { ...treatment };
+  state.modals.edit.isOpen = true;
+  
+  if (!elements.editModal) return;
+  
+  // Rellenar el formulario
+  const form = document.getElementById('editForm');
+  if (form) {
+    form.elements.nombre.value = treatment.nombre;
+    form.elements.descripcion.value = treatment.descripcion;
+  }
+  
+  // Animación de apertura
+  elements.editModal.classList.add('show');
+  setTimeout(() => {
+    const modalContent = elements.editModal.querySelector('.modal-content');
+    if (modalContent) {
+      modalContent.style.opacity = '1';
+      modalContent.style.transform = 'scale(1)';
+    }
+    // Enfocar el primer campo
+    form?.elements?.nombre?.focus();
+  }, 50);
+}
+
+function closeEditModal() {
+  if (!elements.editModal) return;
+  
+  // Animación de cierre
+  const modalContent = elements.editModal.querySelector('.modal-content');
+  if (modalContent) {
+    modalContent.style.opacity = '0';
+    modalContent.style.transform = 'scale(0.95)';
+  }
+  
+  setTimeout(() => {
+    elements.editModal.classList.remove('show');
+    state.modals.edit.isOpen = false;
+    state.modals.edit.selectedTreatment = null;
+  }, 300);
+}
+
+function openCreateModal() {
+  if (!elements.createModal) return;
+  
+  state.modals.create.isOpen = true;
+  
+  // Resetear el formulario
+  document.getElementById('createForm')?.reset();
+  
+  // Animación de apertura
+  elements.createModal.classList.add('show');
+  setTimeout(() => {
+    const modalContent = elements.createModal.querySelector('.modal-content');
+    if (modalContent) {
+      modalContent.style.opacity = '1';
+      modalContent.style.transform = 'scale(1)';
+    }
+    // Enfocar el primer campo
+    document.getElementById('createForm')?.elements?.nombre?.focus();
+  }, 50);
+}
+
+function closeCreateModal() {
+  if (!elements.createModal) return;
+  
+  // Animación de cierre
+  const modalContent = elements.createModal.querySelector('.modal-content');
+  if (modalContent) {
+    modalContent.style.opacity = '0';
+    modalContent.style.transform = 'scale(0.95)';
+  }
+  
+  setTimeout(() => {
+    elements.createModal.classList.remove('show');
+    state.modals.create.isOpen = false;
+  }, 300);
+}
+
+// Manejadores de formulario
+async function handleCreate(formData) {
+  const treatment = {
+    nombre: formData.get('nombre')?.toString().trim(),
+    descripcion: formData.get('descripcion')?.toString().trim()
+  };
+
+  const errors = validateTreatment(treatment);
+  if (errors.length > 0) {
+    throw new Error(errors.join('\n'));
+  }
+
+  const response = await fetch(`${BASE_URL}/tratamientos/create`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Origin': 'http://localhost:4321'
+    },
+    body: JSON.stringify(treatment)
+  });
+
+  if (!response.ok) {
+    throw new Error('Error al crear el tratamiento');
+  }
+
+  showToast('Tratamiento creado correctamente');
+  await actualizarTabla();
+  closeCreateModal();
+}
+
+async function handleEdit(formData) {
+  const id = state.modals.edit.selectedTreatment.id;
+  const treatment = {
+    nombre: formData.get('nombre')?.toString().trim(),
+    descripcion: formData.get('descripcion')?.toString().trim()
+  };
+
+  const errors = validateTreatment(treatment);
+  if (errors.length > 0) {
+    throw new Error(errors.join('\n'));
+  }
+
+  const response = await fetch(`${BASE_URL}/tratamientos/updateById/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Origin': 'http://localhost:4321'
+    },
+    body: JSON.stringify(treatment)
+  });
+
+  if (!response.ok) {
+    throw new Error('Error al actualizar el tratamiento');
+  }
+
+  showToast('Tratamiento actualizado correctamente');
+  await actualizarTabla();
+  closeEditModal();
+}
+
+async function handleDelete(id, nombre) {
+  // Animación del modal de confirmación
+  const result = await showConfirmDialog(
+    `¿Está seguro que desea eliminar el tratamiento "${nombre}"?`,
+    'Esta acción no se puede deshacer'
+  );
+  
+  if (!result) return;
+
+  try {
+    const response = await fetch(`${BASE_URL}/tratamientos/deleteById/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Origin': 'http://localhost:4321'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al eliminar el tratamiento');
+    }
+
+    showToast('Tratamiento eliminado correctamente');
+    await actualizarTabla();
+  } catch (error) {
+    showToast(error.message, 'error');
+  }
+}
+
+// Dialog de confirmación mejorado
+function showConfirmDialog(title, message) {
+  return new Promise((resolve) => {
+    // Crear dialog dinámicamente
+    const dialog = document.createElement('div');
+    dialog.className = 'fixed inset-0 z-50 flex items-center justify-center';
+    dialog.innerHTML = `
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"></div>
+      <div class="relative bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 w-full max-w-md mx-auto transform transition-all duration-300 scale-95 opacity-0">
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">${title}</h3>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">${message}</p>
+        <div class="flex justify-end space-x-3">
+          <button id="cancel-btn" class="px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 dark:text-gray-300 dark:hover:text-white dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+            Cancelar
+          </button>
+          <button id="confirm-btn" class="px-4 py-2.5 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 transition-colors">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(dialog);
+    
+    // Animación de entrada
+    setTimeout(() => {
+      const modalContent = dialog.querySelector('div:nth-child(2)');
+      if (modalContent) {
+        modalContent.style.opacity = '1';
+        modalContent.style.transform = 'scale(1)';
+      }
+    }, 50);
+    
+    // Event listeners
+    const handleCancel = () => {
+      // Animación de salida
+      const modalContent = dialog.querySelector('div:nth-child(2)');
+      if (modalContent) {
+        modalContent.style.opacity = '0';
+        modalContent.style.transform = 'scale(0.95)';
+      }
+      setTimeout(() => {
+        document.body.removeChild(dialog);
+        resolve(false);
+      }, 300);
+    };
+    
+    const handleConfirm = () => {
+      // Animación de salida
+      const modalContent = dialog.querySelector('div:nth-child(2)');
+      if (modalContent) {
+        modalContent.style.opacity = '0';
+        modalContent.style.transform = 'scale(0.95)';
+      }
+      setTimeout(() => {
+        document.body.removeChild(dialog);
+        resolve(true);
+      }, 300);
+    };
+    
+    dialog.querySelector('#cancel-btn').addEventListener('click', handleCancel);
+    dialog.querySelector('#confirm-btn').addEventListener('click', handleConfirm);
+    dialog.querySelector('.absolute').addEventListener('click', handleCancel);
+  });
+}
+
+// Event Listeners y Setup
+function setupEventListeners() {
+  document.removeEventListener('click', handleButtonClick);
+  document.addEventListener('click', handleButtonClick);
+}
+
+async function handleButtonClick(e) {
+  const editButton = e.target.closest('.edit-button');
+  const deleteButton = e.target.closest('.delete-button');
+
+  if (editButton) {
+    const container = editButton.closest('[data-id]');
+    if (container) {
+      const treatment = {
+        id: container.dataset.id,
+        nombre: container.dataset.nombre,
+        descripcion: container.dataset.descripcion
+      };
+      openEditModal(treatment);
+    }
+  }
+
+  if (deleteButton) {
+    const container = deleteButton.closest('[data-id]');
+    if (container) {
+      const id = container.dataset.id;
+      const nombre = container.dataset.nombre;
+      await handleDelete(id, nombre);
+    }
+  }
+}
+
+// Inicialización mejorada con mejor manejo de eventos
+document.addEventListener('DOMContentLoaded', () => {
+  // Cargar tratamientos
+  actualizarTabla();
+
+  // Botón volver al inicio
+  document.getElementById('volverBtn')?.addEventListener('click', () => {
+    window.location.href = '/';
+  });
+
+  // Buscador con debounce
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    let debounceTimer;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        filtrarTratamientos();
+      }, 300);
+    });
+  }
+
+  // Botones para crear tratamiento
+  document.getElementById('createTreatmentButton')?.addEventListener('click', openCreateModal);
+  document.getElementById('createFirstTreatment')?.addEventListener('click', openCreateModal);
+
+  // Cerrar modales
+  document.querySelectorAll('.close-modal').forEach(button => {
+    button.addEventListener('click', () => {
+      closeEditModal();
+      closeCreateModal();
+    });
+  });
+
+  // Form submissions
+  document.getElementById('createForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await handleCreate(new FormData(e.target));
+    } catch (error) {
+      showToast(error.message, 'error');
+    }
+  });
+
+  document.getElementById('editForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await handleEdit(new FormData(e.target));
+    } catch (error) {
+      showToast(error.message, 'error');
+    }
+  });
+  
+  // Escape key para cerrar modales
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeEditModal();
+      closeCreateModal();
+    }
+  });
+});
+</script>

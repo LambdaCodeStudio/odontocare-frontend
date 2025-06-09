@@ -1,0 +1,2077 @@
+---
+const TEETH = {
+  superior: [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28],
+  inferior: [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38]
+};
+
+const PRIMARY_TEETH = {
+  superior: ['55','54','53','52','51','61','62','63','64','65'],
+  inferior: ['85','84','83','82','81','71','72','73','74','75']
+};
+
+const COLORS = {
+  primary: '#3b82f6',    
+  secondary: '#ef4444',  
+  green: '#22c55e',     
+  gray: '#4B5563',      
+  background: '#1f2937'
+};
+
+const TREATMENTS = {
+  "Caries": { icon: "●", fullTooth: false, color: COLORS.primary, multiSurface: true },
+  "Arreglo": { icon: "●", fullTooth: false, color: COLORS.secondary, multiSurface: true },
+  "Extracción": { icon: "X", fullTooth: true, color: COLORS.primary },
+  "P.D": { icon: "X", fullTooth: true, color: COLORS.secondary },
+  "Arreglo filtrado": { icon: "◎", fullTooth: false, color: COLORS.secondary, multiSurface: true },
+  "T.C": { text: "T.C", fullTooth: false, color: COLORS.primary, multiSurface: true },
+  "Corona": { icon: "⭕", fullTooth: true, color: COLORS.primary },
+  "Corona filtrada": { icon: "⭕", fullTooth: true, color: COLORS.secondary },
+  "Impl": { text: "Impl", fullTooth: false, color: COLORS.primary },
+  "A.M": { icon: "●", fullTooth: false, color: COLORS.secondary, multiSurface: true },
+  "Ortodoncia": { icon: "●", fullTooth: false, color: COLORS.green, multiSurface: true },
+  "Protesis": { icon: "[]", requiresTwoTeeth: true, fullTooth: true, color: COLORS.primary }
+};
+
+interface Props {
+  dni: string;
+}
+
+const { dni } = Astro.props;
+const BASE_URL = "http://localhost:5000/api";
+---
+
+<!-- Alerta de orientación para móviles -->
+<div class="orientation-alert hidden md:hidden">
+  <div class="text-center">
+    <div class="text-6xl mb-6 animate-bounce">📱</div>
+    <h2 class="text-2xl font-bold mb-4">Rotar Pantalla</h2>
+    <p class="text-lg text-gray-300 mb-6">
+      Para una mejor experiencia, por favor rota tu dispositivo a modo horizontal
+    </p>
+    <div class="text-4xl animate-pulse">↻</div>
+  </div>
+</div>
+
+<!-- Contenido principal -->
+<div class="main-content w-full max-w-7xl mx-auto p-4 lg:p-6">
+  <!-- Header principal -->
+  <div class="glass-card rounded-2xl p-6 mb-6 animate-slide-in">
+    <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
+      <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      Odontograma Digital
+    </h1>
+    <p class="text-gray-600 dark:text-gray-300">Sistema avanzado de registro dental</p>
+  </div>
+
+  <!-- Panel de control principal -->
+  <div class="glass-card rounded-2xl p-6 mb-8 animate-slide-in" style="animation-delay: 0.1s">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+      <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"/>
+      </svg>
+      Panel de Control
+    </h2>
+
+    <!-- Selección de tratamientos -->
+    <div class="mb-6">
+      <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Tratamientos Disponibles</h3>
+      <div class="flex flex-wrap gap-2 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl modern-scrollbar overflow-x-auto">
+        {Object.entries(TREATMENTS).map(([name, {icon, text, color}]) => (
+          <div class="treatment-option focus-ring" data-treatment={name} tabindex="0">
+            <span class="text-sm font-medium">{name}</span>
+            <span class="text-lg" style={`color: ${color}`}>{icon || text}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Formulario de control -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Tratamiento
+        </label>
+        <select id="treatment-select" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+          <option value="">Seleccionar tratamiento</option>
+          {Object.keys(TREATMENTS).map((name) => (
+            <option value={name}>{name}</option>
+          ))}
+        </select>
+      </div>
+      
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Origen
+        </label>
+        <select id="origin-select" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+          <option value="">Seleccionar origen</option>
+          <option value="propio">Este estudio</option>
+          <option value="otro">Otro estudio</option>
+        </select>
+      </div>
+      
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Observaciones
+        </label>
+        <textarea id="notes" rows="1" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-colors" placeholder="Observaciones adicionales..."></textarea>
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="flex flex-wrap gap-3 justify-end">
+      <button id="clear-all" class="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors focus-ring">
+        <span class="flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+          Eliminar Todo
+        </span>
+      </button>
+      <button id="reset" class="px-4 py-2 border border-gray-300 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors focus-ring">
+        <span class="flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          Reiniciar
+        </span>
+      </button>
+      <button id="save" class="btn-primary px-6 py-2 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed focus-ring" disabled>
+        <span class="flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+          </svg>
+          Guardar
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Odontograma Adulto -->
+  <div class="glass-card rounded-2xl p-6 mb-8 animate-slide-in" style="animation-delay: 0.2s">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+      <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
+      </svg>
+      Odontograma Adulto
+    </h2>
+
+    <!-- Dientes superiores -->
+    <div class="mb-8">
+      <h3 class="text-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-4 flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+        </svg>
+        Superior
+      </h3>
+      <div class="bg-white dark:bg-gray-800/50 p-4 rounded-xl">
+        <div class="teeth-grid teeth-grid-adult" id="superior-adult">
+          {TEETH.superior.map((tooth) => (
+            <div class="tooth-container relative w-full aspect-square mx-auto transform hover:scale-110 transition-transform duration-200" 
+                 data-tooth={tooth}
+                 role="button"
+                 aria-label={`Diente ${tooth}`}
+                 tabindex="0">
+              <span class="tooth-number absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600 dark:text-gray-400">{tooth}</span>
+              {(['11', '21'].includes(tooth.toString())) && 
+                <div class={`teeth-separator ${tooth === 11 ? 'right' : 'left'}`}></div>
+              }
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Dientes inferiores -->
+    <div class="mb-6">
+      <h3 class="text-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-4 flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+        Inferior
+      </h3>
+      <div class="bg-white dark:bg-gray-800/50 p-4 rounded-xl">
+        <div class="teeth-grid teeth-grid-adult" id="inferior-adult">
+          {TEETH.inferior.map((tooth) => (
+            <div class="tooth-container relative w-full aspect-square mx-auto transform hover:scale-110 transition-transform duration-200" 
+                 data-tooth={tooth}
+                 role="button"
+                 aria-label={`Diente ${tooth}`}
+                 tabindex="0">
+              <span class="tooth-number absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600 dark:text-gray-400">{tooth}</span>
+              {(['41', '31'].includes(tooth.toString())) && 
+                <div class={`teeth-separator ${tooth === 41 ? 'right' : 'left'}`}></div>
+              }
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Odontograma Pediátrico -->
+  <div class="glass-card rounded-2xl p-6 mb-8 animate-slide-in" style="animation-delay: 0.3s">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+      <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.5a2.5 2.5 0 110 5H9V10zm0 0V9a2 2 0 012-2h1m-1 4h3m-6 0h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      Odontograma Pediátrico
+    </h2>
+
+    <!-- Dientes temporales superiores -->
+    <div class="mb-8">
+      <h3 class="text-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-4 flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+        </svg>
+        Superior - Dientes Temporales
+      </h3>
+      <div class="bg-white dark:bg-gray-800/50 p-4 rounded-xl">
+        <div class="teeth-grid teeth-grid-pediatric" id="superior-pediatric">
+          {PRIMARY_TEETH.superior.map((tooth) => (
+            <div class="tooth-container relative w-full aspect-square mx-auto transform hover:scale-110 transition-transform duration-200" 
+                 data-tooth={tooth}
+                 role="button"
+                 aria-label={`Diente temporal ${tooth}`}
+                 tabindex="0">
+              <span class="tooth-number absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600 dark:text-gray-400">{tooth}</span>
+              {(['51', '61'].includes(tooth)) && 
+                <div class={`teeth-separator ${tooth === '51' ? 'right' : 'left'}`}></div>
+              }
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Dientes temporales inferiores -->
+    <div class="mb-6">
+      <h3 class="text-center text-sm font-medium text-gray-600 dark:text-gray-400 mb-4 flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+        Inferior - Dientes Temporales
+      </h3>
+      <div class="bg-white dark:bg-gray-800/50 p-4 rounded-xl">
+        <div class="teeth-grid teeth-grid-pediatric" id="inferior-pediatric">
+          {PRIMARY_TEETH.inferior.map((tooth) => (
+            <div class="tooth-container relative w-full aspect-square mx-auto transform hover:scale-110 transition-transform duration-200" 
+                 data-tooth={tooth}
+                 role="button"
+                 aria-label={`Diente temporal ${tooth}`}
+                 tabindex="0">
+              <span class="tooth-number absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-gray-600 dark:text-gray-400">{tooth}</span>
+              {(['81', '71'].includes(tooth)) && 
+                <div class={`teeth-separator ${tooth === '81' ? 'right' : 'left'}`}></div>
+              }
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Historial de Tratamientos -->
+  <div class="glass-card rounded-2xl p-6 animate-slide-in" style="animation-delay: 0.4s">
+    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+      <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+      Historial de Tratamientos
+    </h2>
+
+    <!-- Búsqueda -->
+    <div class="mb-4 relative">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+      <input type="text" id="search-input" placeholder="Buscar por número de diente o tratamiento..." 
+             class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+    </div>
+
+    <!-- Estado vacío -->
+    <div id="empty-state" class="hidden text-center py-12">
+      <div class="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-medium text-gray-500 dark:text-gray-400 mb-2">No hay tratamientos registrados</h3>
+      <p class="text-gray-400 dark:text-gray-500">Seleccione un diente y un tratamiento para comenzar</p>
+    </div>
+
+    <!-- Lista de tratamientos -->
+    <div id="treatment-history" class="space-y-3 max-h-96 overflow-y-auto modern-scrollbar">
+      <!-- Loading skeleton -->
+      <div id="loading-skeleton" class="hidden">
+        <div class="loading-skeleton h-20 rounded-lg mb-3"></div>
+        <div class="loading-skeleton h-20 rounded-lg mb-3"></div>
+        <div class="loading-skeleton h-20 rounded-lg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Variables CSS para consistencia */
+  :root {
+    --primary-blue: #3b82f6;
+    --secondary-red: #ef4444;
+    --success-green: #22c55e;
+    --gray-base: #4B5563;
+    --background-dark: #1f2937;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-elegant: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --border-radius-modern: 0.75rem;
+  }
+
+  /* Alerta de orientación */
+  .orientation-alert {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #1f2937, #111827);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    color: white;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  @media screen and (max-width: 768px) and (orientation: portrait) {
+    .orientation-alert {
+      display: flex;
+    }
+    .main-content {
+      display: none;
+    }
+  }
+
+  /* Scrollbars modernos */
+  .modern-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.4) transparent;
+  }
+
+  .modern-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .modern-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .modern-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(156, 163, 175, 0.4);
+    border-radius: 3px;
+  }
+
+  .modern-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(156, 163, 175, 0.6);
+  }
+
+  /* Estilos para canvas de dientes */
+  .tooth-container {
+    position: relative;
+    transition: var(--transition-smooth);
+    cursor: pointer;
+    border-radius: 8px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tooth-container:hover {
+    transform: scale(1.05);
+    z-index: 10;
+  }
+
+  .tooth-container:focus-visible {
+    outline: 2px solid var(--primary-blue);
+    outline-offset: 2px;
+  }
+
+  .tooth-canvas {
+    transition: var(--transition-smooth);
+    border-radius: 6px;
+  }
+
+  .tooth-number {
+    font-size: clamp(10px, 2vw, 14px);
+    transition: var(--transition-smooth);
+  }
+
+  /* Estilos para clínicas */
+  .own-clinic {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.2));
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.2);
+  }
+
+  .other-clinic {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.2));
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+  }
+
+  /* Conectores de prótesis mejorados */
+  .protesis-connector {
+    position: absolute;
+    pointer-events: none;
+    z-index: 20;
+    transition: var(--transition-smooth);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  /* Animaciones */
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .animate-pulse-once {
+    animation: pulse 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Mejoras de diseño responsivo */
+  .teeth-grid {
+    display: grid;
+    gap: clamp(0.25rem, 1vw, 0.75rem);
+    place-items: center;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .teeth-grid-adult {
+    grid-template-columns: repeat(8, minmax(30px, 1fr));
+  }
+
+  .teeth-grid-pediatric {
+    grid-template-columns: repeat(5, minmax(30px, 1fr));
+  }
+
+  /* Ajustes para tablets */
+  @media (min-width: 768px) {
+    .teeth-grid-adult {
+      grid-template-columns: repeat(16, minmax(35px, 1fr));
+    }
+    .teeth-grid-pediatric {
+      grid-template-columns: repeat(10, minmax(35px, 1fr));
+    }
+  }
+
+  /* Ajustes para desktop */
+  @media (min-width: 1024px) {
+    .teeth-grid-adult {
+      grid-template-columns: repeat(16, minmax(40px, 50px));
+    }
+    .teeth-grid-pediatric {
+      grid-template-columns: repeat(10, minmax(40px, 50px));
+    }
+  }
+
+  /* Separadores de dientes */
+  .teeth-separator {
+    position: absolute;
+    top: 10%;
+    bottom: 10%;
+    width: 2px;
+    background: linear-gradient(
+      to bottom, 
+      transparent, 
+      rgba(156, 163, 175, 0.6), 
+      transparent
+    );
+    z-index: 5;
+  }
+
+  .teeth-separator.left {
+    left: -4px;
+  }
+
+  .teeth-separator.right {
+    right: -4px;
+  }
+
+  /* Notificaciones elegantes */
+  .notification {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 9998;
+    border-radius: var(--border-radius-modern);
+    padding: 1rem 1.5rem;
+    box-shadow: var(--shadow-elegant);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 400px;
+    animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .notification.success {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(22, 163, 74, 0.9));
+    color: white;
+  }
+
+  .notification.error {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(220, 38, 38, 0.9));
+    color: white;
+  }
+
+  /* Estados de carga elegantes */
+  .loading-skeleton {
+    background: linear-gradient(90deg, 
+      rgba(229, 231, 235, 0.2) 25%, 
+      rgba(229, 231, 235, 0.4) 50%, 
+      rgba(229, 231, 235, 0.2) 75%
+    );
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+
+  @keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Botones mejorados */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary-blue), #2563eb);
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-elegant);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  /* Focus styles mejorados */
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--primary-blue);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Glassmorphism effect */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .glass-card {
+      background: rgba(31, 41, 55, 0.8);
+      border-color: rgba(75, 85, 99, 0.3);
+    }
+  }
+
+  /* Estilos para opciones de tratamiento */
+  .treatment-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(229, 231, 235, 1);
+    border-radius: 0.5rem;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .treatment-option:hover {
+    background: rgba(249, 250, 251, 1);
+    border-color: rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .treatment-option {
+      background: rgba(31, 41, 55, 0.8);
+      border-color: rgba(75, 85, 99, 1);
+      color: white;
+    }
+
+    .treatment-option:hover {
+      background: rgba(55, 65, 81, 0.8);
+      border-color: rgba(59, 130, 246, 0.5);
+    }
+  }
+
+  /* Mejoras de accesibilidad */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Animaciones adicionales */
+  @keyframes slideOut {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+  }
+
+  @keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  @keyframes animate-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .animate-fade-in {
+    animation: animate-fade-in 0.3s ease-out;
+  }
+</style>
+
+<script define:vars={{ dni, TREATMENTS, BASE_URL, COLORS }}>
+// Configuración y constantes
+const CONFIG = {
+  TEETH: {
+    superior: [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28],
+    inferior: [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38]
+  },
+  PRIMARY_TEETH: {
+    superior: ['55','54','53','52','51','61','62','63','64','65'],
+    inferior: ['85','84','83','82','81','71','72','73','74','75']
+  },
+  COLORS: COLORS,
+  TREATMENTS: TREATMENTS,
+  BASE_URL: BASE_URL
+};
+
+// Variables globales
+let patientId = null;
+let protesisFirstTooth = null;
+let pendingTreatments = [];
+let isLoading = false;
+let protesisConnectors = new Map(); // Mejorado manejo de conectores
+
+// Utility functions
+const debounce = (func, wait) => {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+};
+
+const animate = (element, keyframes, options = {}) => {
+  if (element && element.animate) {
+    return element.animate(keyframes, {
+      duration: 300,
+      easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      ...options
+    });
+  }
+  return { finished: Promise.resolve() };
+};
+
+// Clase mejorada para Canvas de dientes
+class EnhancedToothCanvas {
+  constructor(container, size = 50) {
+    this.container = container;
+    this.size = size;
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = size;
+    this.canvas.height = size;
+    this.canvas.className = 'tooth-canvas';
+    this.ctx = this.canvas.getContext('2d');
+    this.selectedSurfaces = new Map();
+    this.isProtesisTooth = false; // Nuevo flag para prótesis
+    
+    this.container.appendChild(this.canvas);
+    this.setupEventListeners();
+    this.drawToothBase();
+  }
+
+  setupEventListeners() {
+    // Click events con mejor handling
+    this.canvas.addEventListener('click', (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) * (this.size / rect.width);
+      const y = (e.clientY - rect.top) * (this.size / rect.height);
+      this.handleClick(x, y);
+    });
+
+    // Touch events mejorados
+    this.canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (e.touches.length === 1) {
+        const rect = this.canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const x = (touch.clientX - rect.left) * (this.size / rect.width);
+        const y = (touch.clientY - rect.top) * (this.size / rect.height);
+        this.handleClick(x, y);
+      }
+    });
+
+    // Keyboard accessibility
+    this.container.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.handleClick(this.size / 2, this.size / 2);
+      }
+    });
+  }
+
+  clear() {
+    try {
+      this.ctx.clearRect(0, 0, this.size, this.size);
+      this.ctx.save();
+      this.ctx.strokeStyle = CONFIG.COLORS.gray;
+      this.ctx.lineWidth = 2;
+      this.ctx.setLineDash([]);
+      this.drawToothBase();
+      this.ctx.restore();
+      this.selectedSurfaces.clear();
+      this.isProtesisTooth = false;
+    } catch (error) {
+      console.error('Error clearing canvas:', error);
+    }
+  }
+
+  drawToothBase() {
+    const margin = this.size * 0.25;
+    const isDark = document.documentElement.classList.contains('dark');
+    this.ctx.fillStyle = isDark ? CONFIG.COLORS.background : '#FFFFFF';
+    
+    // Dibujar las 5 superficies del diente
+    const surfaces = [
+      { x: margin, y: margin, w: this.size - 2*margin, h: this.size - 2*margin }, // central
+      { x: margin, y: 0, w: this.size - 2*margin, h: margin }, // superior
+      { x: margin, y: this.size - margin, w: this.size - 2*margin, h: margin }, // inferior
+      { x: 0, y: margin, w: margin, h: this.size - 2*margin }, // izquierda
+      { x: this.size - margin, y: margin, w: margin, h: this.size - 2*margin } // derecha
+    ];
+
+    surfaces.forEach(surface => {
+      this.ctx.fillRect(surface.x, surface.y, surface.w, surface.h);
+      this.ctx.strokeRect(surface.x, surface.y, surface.w, surface.h);
+    });
+  }
+
+  handleClick(x, y) {
+    const surface = this.getSurfaceFromCoordinates(x, y);
+    if (surface) {
+      const toothNumber = this.container.dataset.tooth;
+      selectToothSurface(toothNumber, surface, this.container);
+    }
+  }
+
+  getSurfaceFromCoordinates(x, y) {
+    const normalizedX = x / this.size;
+    const normalizedY = y / this.size;
+
+    if (normalizedX > 0.25 && normalizedX < 0.75) {
+      if (normalizedY < 0.25) return 'superior';
+      if (normalizedY > 0.75) return 'inferior';
+      if (normalizedY > 0.25 && normalizedY < 0.75) return 'central';
+    }
+
+    if (normalizedY > 0.25 && normalizedY < 0.75) {
+      if (normalizedX < 0.25) return 'izquierda';
+      if (normalizedX > 0.75) return 'derecha';
+    }
+
+    return 'central'; // default to central if unclear
+  }
+
+  drawTreatment(treatment, surface) {
+    const treatmentInfo = CONFIG.TREATMENTS[treatment];
+    if (!treatmentInfo) return;
+
+    this.ctx.fillStyle = treatmentInfo.color;
+    this.ctx.strokeStyle = treatmentInfo.color;
+
+    switch(treatment) {
+      case 'Caries':
+      case 'Arreglo':
+      case 'A.M':
+      case 'Ortodoncia':
+        this.drawCircle(surface, treatmentInfo.color);
+        break;
+      case 'Extracción':
+      case 'P.D':
+        this.drawX(treatmentInfo.color);
+        break;
+      case 'Arreglo filtrado':
+        this.drawCircleOutline(surface, treatmentInfo.color);
+        break;
+      case 'T.C':
+        this.drawText('T.C', surface, treatmentInfo.color);
+        break;
+      case 'Corona':
+        this.drawCorona(false);
+        break;
+      case 'Corona filtrada':
+        this.drawCorona(true);
+        break;
+      case 'Impl':
+        this.drawText('Impl', 'central', treatmentInfo.color);
+        break;
+    }
+  }
+
+  drawCircle(surface, color) {
+    const coords = this.getSurfaceCoordinates(surface);
+    this.ctx.fillStyle = color;
+    this.ctx.beginPath();
+    this.ctx.arc(coords.x, coords.y, 6, 0, 2 * Math.PI);
+    this.ctx.fill();
+  }
+
+  drawCircleOutline(surface, color) {
+    const coords = this.getSurfaceCoordinates(surface);
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = 2;
+    this.ctx.beginPath();
+    this.ctx.arc(coords.x, coords.y, 6, 0, 2 * Math.PI);
+    this.ctx.stroke();
+  }
+
+  drawX(color) {
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = 3;
+    this.ctx.beginPath();
+    this.ctx.moveTo(5, 5);
+    this.ctx.lineTo(this.size - 5, this.size - 5);
+    this.ctx.moveTo(this.size - 5, 5);
+    this.ctx.lineTo(5, this.size - 5);
+    this.ctx.stroke();
+  }
+
+  drawCorona(filtered = false) {
+    this.ctx.strokeStyle = filtered ? CONFIG.COLORS.secondary : CONFIG.COLORS.primary;
+    this.ctx.lineWidth = 2;
+    if (!filtered) this.ctx.setLineDash([3, 3]);
+    
+    this.ctx.beginPath();
+    this.ctx.ellipse(this.size/2, this.size/2, this.size/2 - 5, this.size/2 - 5, 0, 0, 2 * Math.PI);
+    this.ctx.stroke();
+    
+    this.ctx.setLineDash([]);
+  }
+
+  drawText(text, surface, color) {
+    const coords = this.getSurfaceCoordinates(surface);
+    this.ctx.fillStyle = color;
+    this.ctx.font = `${Math.max(8, this.size * 0.2)}px Arial`;
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+    this.ctx.fillText(text, coords.x, coords.y);
+  }
+
+  // Métodos mejorados para prótesis con mejor manejo de errores
+  drawProtesisStart() {
+    try {
+      this.isProtesisTooth = true;
+      
+      // Save context state
+      this.ctx.save();
+      
+      this.ctx.strokeStyle = CONFIG.COLORS.primary;
+      this.ctx.lineWidth = 3;
+      this.ctx.lineCap = 'round';
+      this.ctx.lineJoin = 'round';
+      
+      this.ctx.beginPath();
+      const margin = this.size * 0.1;
+      const width = this.size * 0.3;
+      
+      // Draw bracket with proper path
+      this.ctx.moveTo(this.size - margin, margin);
+      this.ctx.lineTo(this.size - width, margin);
+      this.ctx.lineTo(this.size - width, this.size - margin);
+      this.ctx.lineTo(this.size - margin, this.size - margin);
+      this.ctx.stroke();
+      
+      // Restore context state
+      this.ctx.restore();
+      
+      console.log(`Drew protesis start for tooth ${this.container.dataset.tooth}`);
+    } catch (error) {
+      console.error('Error drawing protesis start:', error);
+    }
+  }
+
+  drawProtesisEnd() {
+    try {
+      this.isProtesisTooth = true;
+      
+      // Save context state
+      this.ctx.save();
+      
+      this.ctx.strokeStyle = CONFIG.COLORS.primary;
+      this.ctx.lineWidth = 3;
+      this.ctx.lineCap = 'round';
+      this.ctx.lineJoin = 'round';
+      
+      this.ctx.beginPath();
+      const margin = this.size * 0.1;
+      const width = this.size * 0.3;
+      
+      // Draw bracket with proper path
+      this.ctx.moveTo(margin, margin);
+      this.ctx.lineTo(width, margin);
+      this.ctx.lineTo(width, this.size - margin);
+      this.ctx.lineTo(margin, this.size - margin);
+      this.ctx.stroke();
+      
+      // Restore context state
+      this.ctx.restore();
+      
+      console.log(`Drew protesis end for tooth ${this.container.dataset.tooth}`);
+    } catch (error) {
+      console.error('Error drawing protesis end:', error);
+    }
+  }
+
+  getSurfaceCoordinates(surface) {
+    const margin = this.size * 0.25;
+    const coords = {
+      'central': { x: this.size/2, y: this.size/2 },
+      'superior': { x: this.size/2, y: margin/2 },
+      'inferior': { x: this.size/2, y: this.size - margin/2 },
+      'izquierda': { x: margin/2, y: this.size/2 },
+      'derecha': { x: this.size - margin/2, y: this.size/2 }
+    };
+    return coords[surface] || coords.central;
+  }
+}
+
+// Sistema de notificaciones mejorado
+class NotificationSystem {
+  static show(message, type = 'success', duration = 5000) {
+    // Remover notificaciones existentes
+    document.querySelectorAll('.notification').forEach(notif => {
+      notif.style.animation = 'slideOut 0.3s ease-out forwards';
+      setTimeout(() => notif.remove(), 300);
+    });
+
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+      <div class="flex items-start gap-3">
+        <div class="flex-shrink-0">
+          ${this.getIcon(type)}
+        </div>
+        <div class="flex-1">
+          <p class="text-sm font-medium">${message}</p>
+        </div>
+        <button class="flex-shrink-0 text-current opacity-70 hover:opacity-100 transition-opacity">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Auto-remove
+    const timer = setTimeout(() => {
+      this.remove(notification);
+    }, duration);
+
+    // Manual close
+    notification.querySelector('button').addEventListener('click', () => {
+      clearTimeout(timer);
+      this.remove(notification);
+    });
+
+    return notification;
+  }
+
+  static remove(notification) {
+    notification.style.animation = 'slideOut 0.3s ease-out forwards';
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.remove();
+      }
+    }, 300);
+  }
+
+  static getIcon(type) {
+    const icons = {
+      success: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>`,
+      error: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>`,
+      warning: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 15.5c-.77.833.192 2.5 1.732 2.5z"/>
+                </svg>`
+    };
+    return icons[type] || icons.success;
+  }
+}
+
+// Sistema mejorado de manejo de prótesis con mejor manejo de errores
+class ProtesisManager {
+  static createConnector(startContainer, endContainer) {
+    try {
+      // Validation
+      if (!startContainer || !endContainer || 
+          !startContainer.dataset.tooth || !endContainer.dataset.tooth) {
+        console.error('Invalid containers for connector');
+        return null;
+      }
+
+      // Generar ID único para el conector
+      const connectorId = `${startContainer.dataset.tooth}-${endContainer.dataset.tooth}`;
+      const reverseId = `${endContainer.dataset.tooth}-${startContainer.dataset.tooth}`;
+      
+      // Verificar si ya existe el conector
+      if (protesisConnectors.has(connectorId) || protesisConnectors.has(reverseId)) {
+        console.log(`Connector already exists: ${connectorId}`);
+        return protesisConnectors.get(connectorId) || protesisConnectors.get(reverseId);
+      }
+
+      const connector = document.createElement('canvas');
+      connector.className = 'protesis-connector';
+      connector.dataset.start = startContainer.dataset.tooth;
+      connector.dataset.end = endContainer.dataset.tooth;
+      connector.setAttribute('aria-hidden', 'true');
+
+      // Determinar orden (izquierda a derecha)
+      const startRect = startContainer.getBoundingClientRect();
+      const endRect = endContainer.getBoundingClientRect();
+      
+      let leftContainer, rightContainer;
+      if (startRect.left < endRect.left) {
+        leftContainer = startContainer;
+        rightContainer = endContainer;
+      } else {
+        leftContainer = endContainer;
+        rightContainer = startContainer;
+      }
+
+      // Posicionar y dibujar conector
+      this.positionConnector(connector, leftContainer, rightContainer);
+      
+      // Agregar al DOM
+      const parentElement = leftContainer.parentElement;
+      if (parentElement) {
+        parentElement.appendChild(connector);
+        
+        // Guardar referencia
+        protesisConnectors.set(connectorId, {
+          element: connector,
+          leftContainer: leftContainer,
+          rightContainer: rightContainer
+        });
+        
+        console.log(`Created connector: ${connectorId}`);
+        return connector;
+      } else {
+        console.error('Parent element not found for connector');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error creating connector:', error);
+      return null;
+    }
+  }
+
+  static positionConnector(connector, leftContainer, rightContainer) {
+    try {
+      const leftRect = leftContainer.getBoundingClientRect();
+      const rightRect = rightContainer.getBoundingClientRect();
+      const parentRect = leftContainer.parentElement.getBoundingClientRect();
+      
+      const width = Math.abs(rightRect.left - leftRect.right);
+      const top = (leftRect.top + leftRect.height / 2) - parentRect.top - 2;
+      const left = leftRect.right - parentRect.left;
+      
+      connector.style.position = 'absolute';
+      connector.style.top = `${top}px`;
+      connector.style.left = `${left}px`;
+      connector.width = Math.max(width, 10);
+      connector.height = 4;
+      
+      // Dibujar línea
+      const ctx = connector.getContext('2d');
+      ctx.clearRect(0, 0, connector.width, connector.height);
+      ctx.strokeStyle = CONFIG.COLORS.primary;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, 2);
+      ctx.lineTo(connector.width, 2);
+      ctx.stroke();
+    } catch (error) {
+      console.error('Error positioning connector:', error);
+    }
+  }
+
+  static repositionAllConnectors() {
+    let repositioned = 0;
+    let failed = 0;
+    
+    protesisConnectors.forEach((connectorData, id) => {
+      try {
+        const { element, leftContainer, rightContainer } = connectorData;
+        
+        if (!leftContainer.parentElement || !rightContainer.parentElement) {
+          console.warn(`Removing orphaned connector: ${id}`);
+          if (element.parentElement) {
+            element.remove();
+          }
+          protesisConnectors.delete(id);
+          return;
+        }
+        
+        this.positionConnector(element, leftContainer, rightContainer);
+        repositioned++;
+      } catch (error) {
+        console.error(`Error repositioning connector ${id}:`, error);
+        failed++;
+      }
+    });
+    
+    console.log(`Repositioned ${repositioned} connectors, ${failed} failed`);
+  }
+
+  static removeConnector(toothNumber) {
+    const keysToRemove = [];
+    protesisConnectors.forEach((connectorData, id) => {
+      if (id.includes(toothNumber)) {
+        connectorData.element.remove();
+        keysToRemove.push(id);
+      }
+    });
+    keysToRemove.forEach(key => protesisConnectors.delete(key));
+  }
+
+  static clearAllConnectors() {
+    protesisConnectors.forEach((connectorData) => {
+      connectorData.element.remove();
+    });
+    protesisConnectors.clear();
+  }
+}
+
+// Funciones principales del odontograma
+function initializeTeeth() {
+  // Inicializar dientes adultos
+  createTeethGrid('superior-adult', CONFIG.TEETH.superior);
+  createTeethGrid('inferior-adult', CONFIG.TEETH.inferior);
+  
+  // Inicializar dientes pediátricos
+  createTeethGrid('superior-pediatric', CONFIG.PRIMARY_TEETH.superior);
+  createTeethGrid('inferior-pediatric', CONFIG.PRIMARY_TEETH.inferior);
+}
+
+function createTeethGrid(containerId, teethNumbers) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  // Los dientes ya están en el HTML, solo necesitamos inicializar los canvas
+  const toothContainers = container.querySelectorAll('.tooth-container');
+  
+  toothContainers.forEach(toothContainer => {
+    if (!toothContainer.toothCanvas) {
+      const canvas = new EnhancedToothCanvas(toothContainer, 50);
+      toothContainer.toothCanvas = canvas;
+    }
+  });
+}
+
+function selectToothSurface(toothNumber, surface, container) {
+  const treatment = document.getElementById('treatment-select')?.value;
+  const origin = document.getElementById('origin-select')?.value;
+  
+  if (!treatment || !origin) {
+    NotificationSystem.show('Seleccione tratamiento y origen', 'error');
+    return;
+  }
+
+  // Aplicar feedback visual inmediato
+  animate(container, [
+    { transform: 'scale(1.1)' },
+    { transform: 'scale(1)' }
+  ]);
+
+  // Aplicar estilo de origen
+  container.classList.remove('own-clinic', 'other-clinic');
+  container.classList.add(origin === 'propio' ? 'own-clinic' : 'other-clinic');
+
+  // Manejar prótesis
+  if (treatment === 'Protesis') {
+    handleProtesisSelection(toothNumber, container, origin);
+    return;
+  }
+
+  // Aplicar tratamiento normal
+  applyTreatmentToTooth(container, treatment, surface, origin);
+  
+  // Actualizar tratamientos pendientes
+  updatePendingTreatments();
+  document.getElementById('save').disabled = pendingTreatments.length === 0;
+}
+
+function handleProtesisSelection(toothNumber, container, origin) {
+  if (!protesisFirstTooth) {
+    protesisFirstTooth = container;
+    NotificationSystem.show('Seleccione el segundo diente para la prótesis', 'success');
+    container.classList.add('animate-pulse-once');
+    return;
+  }
+
+  const firstNum = parseInt(protesisFirstTooth.dataset.tooth);
+  const secondNum = parseInt(toothNumber);
+
+  // Validaciones
+  if (Math.floor(firstNum/10) !== Math.floor(secondNum/10)) {
+    NotificationSystem.show('Los dientes deben estar en la misma fila', 'error');
+    protesisFirstTooth = null;
+    return;
+  }
+
+  if (Math.abs(secondNum - firstNum) > 7) {
+    NotificationSystem.show('Los dientes están demasiado separados', 'error');
+    protesisFirstTooth = null;
+    return;
+  }
+
+  // Aplicar prótesis
+  applyProtesis(protesisFirstTooth, container, origin);
+  protesisFirstTooth = null;
+  updatePendingTreatments();
+  document.getElementById('save').disabled = false;
+}
+
+function applyTreatmentToTooth(container, treatment, surface, origin) {
+  const treatmentInfo = CONFIG.TREATMENTS[treatment];
+  if (!treatmentInfo) return;
+
+  const canvas = container.toothCanvas;
+  
+  if (treatmentInfo.fullTooth) {
+    canvas.clear();
+    canvas.drawToothBase();
+    canvas.drawTreatment(treatment, 'completo');
+  } else if (treatmentInfo.multiSurface) {
+    canvas.selectedSurfaces.set(surface, { treatment, origin });
+    canvas.drawTreatment(treatment, surface);
+  } else {
+    canvas.clear();
+    canvas.drawToothBase();
+    canvas.drawTreatment(treatment, surface);
+  }
+}
+
+async function applyProtesis(startContainer, endContainer, origin) {
+  try {
+    // Verificar que los contenedores existen y tienen canvas
+    if (!startContainer || !endContainer || !startContainer.toothCanvas || !endContainer.toothCanvas) {
+      console.error('Invalid containers for protesis');
+      return false;
+    }
+
+    // Limpiar y preparar ambos dientes
+    [startContainer, endContainer].forEach(container => {
+      container.classList.remove('own-clinic', 'other-clinic');
+      container.classList.add(origin === 'propio' ? 'own-clinic' : 'other-clinic');
+      
+      // Clear and redraw base
+      container.toothCanvas.clear();
+      container.toothCanvas.drawToothBase();
+    });
+
+    // Wait for canvas operations
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
+    // Determinar orden (izquierda a derecha)
+    const startNum = parseInt(startContainer.dataset.tooth);
+    const endNum = parseInt(endContainer.dataset.tooth);
+    const [leftContainer, rightContainer] = startNum < endNum ? 
+      [startContainer, endContainer] : [endContainer, startContainer];
+
+    // Dibujar brackets con validación
+    if (leftContainer.toothCanvas && rightContainer.toothCanvas) {
+      leftContainer.toothCanvas.drawProtesisStart();
+      rightContainer.toothCanvas.drawProtesisEnd();
+      
+      // Wait for drawing operations
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      
+      // Crear conector
+      ProtesisManager.createConnector(leftContainer, rightContainer);
+      
+      console.log(`Successfully applied protesis: ${leftContainer.dataset.tooth} - ${rightContainer.dataset.tooth}`);
+      return true;
+    } else {
+      console.error('Canvas not available for protesis drawing');
+      return false;
+    }
+  } catch (error) {
+    console.error('Error applying protesis:', error);
+    return false;
+  }
+}
+
+function updatePendingTreatments() {
+  pendingTreatments = [];
+  
+  document.querySelectorAll('.tooth-container').forEach(container => {
+    const toothNumber = container.dataset.tooth;
+    const canvas = container.toothCanvas;
+    const origin = container.classList.contains('own-clinic') ? 'propio' : 
+                  container.classList.contains('other-clinic') ? 'otro' : null;
+    
+    if (!origin) return;
+
+    // Check for protesis
+    const hasProtesis = canvas?.isProtesisTooth;
+    if (hasProtesis) {
+      // Buscar el partner en los conectores
+      let partnerTooth = null;
+      protesisConnectors.forEach((connectorData, id) => {
+        if (id.includes(toothNumber)) {
+          const [tooth1, tooth2] = id.split('-');
+          partnerTooth = tooth1 === toothNumber ? tooth2 : tooth1;
+        }
+      });
+      
+      if (partnerTooth) {
+        pendingTreatments.push({
+          numeroDiente: toothNumber,
+          superficie: 'completo',
+          tratamiento: 'Protesis',
+          origen: origin,
+          protesisPartner: partnerTooth
+        });
+      }
+    }
+
+    // Check for other treatments
+    if (canvas && canvas.selectedSurfaces.size > 0) {
+      canvas.selectedSurfaces.forEach((info, surface) => {
+        pendingTreatments.push({
+          numeroDiente: toothNumber,
+          superficie: surface,
+          tratamiento: info.treatment,
+          origen: origin
+        });
+      });
+    }
+  });
+}
+
+// Funciones de guardado y carga
+async function saveTreatments() {
+  if (pendingTreatments.length === 0) {
+    NotificationSystem.show('No hay tratamientos pendientes', 'error');
+    return;
+  }
+
+  const saveButton = document.getElementById('save');
+  const originalContent = saveButton.innerHTML;
+  
+  saveButton.disabled = true;
+  saveButton.innerHTML = `
+    <span class="flex items-center gap-2">
+      <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      Guardando...
+    </span>
+  `;
+
+  try {
+    updatePendingTreatments();
+    const notes = document.getElementById('notes')?.value || '';
+    
+    const treatments = pendingTreatments.map(t => ({
+      numeroDiente: t.numeroDiente.toString(),
+      superficie: t.superficie,
+      tratamiento: t.tratamiento,
+      origen: t.origen,
+      notas: notes,
+      protesisPartner: t.protesisPartner
+    }));
+
+    const response = await fetch(`${CONFIG.BASE_URL}/odontograma`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        idPaciente: patientId,
+        dientes: treatments
+      })
+    });
+
+    if (!response.ok) throw new Error(await response.text());
+
+    // Reset form
+    document.getElementById('treatment-select').value = '';
+    document.getElementById('origin-select').value = '';
+    document.getElementById('notes').value = '';
+    
+    // Clear pending treatments
+    pendingTreatments = [];
+    
+    // Reload existing treatments
+    await loadExistingTreatments();
+    
+    NotificationSystem.show('Tratamientos guardados exitosamente', 'success');
+  } catch (error) {
+    console.error('Error saving treatments:', error);
+    NotificationSystem.show(`Error al guardar: ${error.message}`, 'error');
+  } finally {
+    saveButton.disabled = false;
+    saveButton.innerHTML = originalContent;
+  }
+}
+
+// FUNCIÓN MEJORADA loadExistingTreatments con mejor manejo de prótesis
+async function loadExistingTreatments() {
+  if (!patientId) return;
+
+  toggleLoadingState(true);
+
+  try {
+    const response = await fetch(`${CONFIG.BASE_URL}/odontograma/patient/${patientId}`);
+    if (!response.ok) throw new Error('Error loading treatments');
+
+    const treatments = JSON.parse(await response.text());
+    
+    // Clear all teeth and connectors FIRST
+    clearAllTeeth();
+    
+    if (!Array.isArray(treatments) || treatments.length === 0) {
+      toggleEmptyState(true);
+      return;
+    }
+
+    // Process treatments in a more reliable way
+    const sortedTreatments = treatments.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    
+    // IMPROVEMENT 1: Wait for DOM to be ready
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    
+    // IMPROVEMENT 2: Process in two phases
+    await processNonProtesisTreatments(sortedTreatments);
+    await processProtesisTreatments(sortedTreatments);
+    
+    // Update treatment history
+    updateTreatmentHistory(sortedTreatments);
+    toggleEmptyState(false);
+    
+    // IMPROVEMENT 3: Multiple reposition attempts for stability
+    repositionConnectorsWithRetry();
+
+  } catch (error) {
+    console.error('Error loading treatments:', error);
+    NotificationSystem.show('Error al cargar tratamientos', 'error');
+  } finally {
+    toggleLoadingState(false);
+  }
+}
+
+// NUEVA FUNCIÓN PARA PROCESAR TRATAMIENTOS NO-PROTESIS
+async function processNonProtesisTreatments(sortedTreatments) {
+  const processedTeeth = new Set();
+  
+  sortedTreatments.forEach(odontogram => {
+    odontogram.dientes.forEach(tooth => {
+      // Solo procesar si NO es prótesis y no ha sido procesado
+      if (tooth.tratamiento !== 'Protesis' && !processedTeeth.has(tooth.numeroDiente)) {
+        const container = document.querySelector(`[data-tooth="${tooth.numeroDiente}"]`);
+        if (container && container.toothCanvas) {
+          container.classList.remove('own-clinic', 'other-clinic');
+          container.classList.add(tooth.origen === 'propio' ? 'own-clinic' : 'other-clinic');
+          
+          container.toothCanvas.clear();
+          container.toothCanvas.drawToothBase();
+          container.toothCanvas.drawTreatment(tooth.tratamiento, tooth.superficie);
+          
+          processedTeeth.add(tooth.numeroDiente);
+        }
+      }
+    });
+  });
+  
+  // Small delay to ensure rendering
+  await new Promise(resolve => setTimeout(resolve, 50));
+}
+
+// NUEVA FUNCIÓN PARA PROCESAR PROTESIS
+async function processProtesisTreatments(sortedTreatments) {
+  const protesisPairs = new Map();
+  
+  // Collect all protesis pairs
+  sortedTreatments.forEach(odontogram => {
+    odontogram.dientes.forEach(tooth => {
+      if (tooth.tratamiento === 'Protesis' && tooth.protesisPartner) {
+        const [menor, mayor] = [tooth.numeroDiente, tooth.protesisPartner]
+          .sort((a, b) => parseInt(a) - parseInt(b));
+        const pairId = `${menor}-${mayor}`;
+        
+        if (!protesisPairs.has(pairId)) {
+          protesisPairs.set(pairId, {
+            tooth1: menor,
+            tooth2: mayor,
+            origin: tooth.origen,
+            date: odontogram.fecha
+          });
+        }
+      }
+    });
+  });
+
+  // Apply protesis pairs with proper validation
+  for (const [pairId, data] of protesisPairs) {
+    const container1 = document.querySelector(`[data-tooth="${data.tooth1}"]`);
+    const container2 = document.querySelector(`[data-tooth="${data.tooth2}"]`);
+    
+    if (container1 && container2 && container1.toothCanvas && container2.toothCanvas) {
+      console.log(`Applying protesis: ${data.tooth1} - ${data.tooth2}`);
+      await applyProtesis(container1, container2, data.origin);
+      
+      // Small delay between each protesis application
+      await new Promise(resolve => setTimeout(resolve, 25));
+    } else {
+      console.warn(`Failed to find containers for protesis: ${data.tooth1} - ${data.tooth2}`);
+    }
+  }
+}
+
+// MEJORAR EL SISTEMA DE REPOSICIONAMIENTO
+function repositionConnectorsWithRetry(maxRetries = 3) {
+  let retryCount = 0;
+  
+  const reposition = () => {
+    try {
+      ProtesisManager.repositionAllConnectors();
+      retryCount++;
+      
+      if (retryCount < maxRetries) {
+        setTimeout(reposition, 100 * retryCount);
+      }
+    } catch (error) {
+      console.error('Error repositioning connectors:', error);
+    }
+  };
+  
+  // Initial reposition
+  setTimeout(reposition, 50);
+}
+
+function clearAllTeeth() {
+  document.querySelectorAll('.tooth-container').forEach(container => {
+    container.classList.remove('own-clinic', 'other-clinic');
+    if (container.toothCanvas) {
+      container.toothCanvas.clear();
+      container.toothCanvas.drawToothBase();
+    }
+  });
+  
+  ProtesisManager.clearAllConnectors();
+  protesisFirstTooth = null;
+  pendingTreatments = [];
+}
+
+async function clearAllTreatments() {
+  const confirmed = await ModalSystem.confirm(
+    '¿Eliminar todos los tratamientos?',
+    'Esta acción eliminará todos los tratamientos registrados para este paciente y no se puede deshacer.',
+    'Eliminar todo'
+  );
+
+  if (!confirmed) return;
+
+  try {
+    toggleLoadingState(true);
+    
+    const response = await fetch(`${CONFIG.BASE_URL}/odontograma/patient/${patientId}`, {
+      method: 'DELETE'
+    });
+    
+    if (!response.ok) throw new Error('Error deleting treatments');
+    
+    clearAllTeeth();
+    
+    // Reset form
+    document.getElementById('treatment-select').value = '';
+    document.getElementById('origin-select').value = '';
+    document.getElementById('notes').value = '';
+    document.getElementById('save').disabled = true;
+    
+    // Clear treatment history
+    document.getElementById('treatment-history').innerHTML = '';
+    toggleEmptyState(true);
+    
+    NotificationSystem.show('Todos los tratamientos eliminados', 'success');
+  } catch (error) {
+    console.error('Error:', error);
+    NotificationSystem.show('Error al eliminar los tratamientos', 'error');
+  } finally {
+    toggleLoadingState(false);
+  }
+}
+
+function resetSelection() {
+  clearAllTeeth();
+  
+  document.getElementById('treatment-select').value = '';
+  document.getElementById('origin-select').value = '';
+  document.getElementById('notes').value = '';
+  document.getElementById('save').disabled = true;
+  
+  NotificationSystem.show('Selección reiniciada', 'success');
+}
+
+// Sistema de modales mejorado
+class ModalSystem {
+  static async confirm(title, message, confirmText = 'Confirmar', cancelText = 'Cancelar') {
+    return new Promise((resolve) => {
+      const overlay = document.createElement('div');
+      overlay.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] animate-fade-in';
+      overlay.innerHTML = `
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 mx-4 max-w-md w-full shadow-2xl animate-scale-in">
+          <div class="text-center mb-6">
+            <div class="w-12 h-12 mx-auto mb-4 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+              <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 15.5c-.77.833.192 2.5 1.732 2.5z"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">${title}</h3>
+            <p class="text-gray-600 dark:text-gray-300">${message}</p>
+          </div>
+          <div class="flex flex-col-reverse sm:flex-row gap-3 justify-end">
+            <button id="modal-cancel" class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              ${cancelText}
+            </button>
+            <button id="modal-confirm" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+              ${confirmText}
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(overlay);
+      document.body.style.overflow = 'hidden';
+
+      const close = (result) => {
+        overlay.style.animation = 'fade-out 0.3s ease-out forwards';
+        setTimeout(() => {
+          overlay.remove();
+          document.body.style.overflow = '';
+          resolve(result);
+        }, 300);
+      };
+
+      overlay.querySelector('#modal-confirm').addEventListener('click', () => close(true));
+      overlay.querySelector('#modal-cancel').addEventListener('click', () => close(false));
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) close(false);
+      });
+    });
+  }
+}
+
+// Funciones de UI
+function toggleLoadingState(loading) {
+  isLoading = loading;
+  
+  const skeleton = document.getElementById('loading-skeleton');
+  if (skeleton) {
+    skeleton.style.display = loading ? 'block' : 'none';
+  }
+  
+  // Disable/enable controls
+  const controls = [
+    'treatment-select', 'origin-select', 'notes', 
+    'save', 'reset', 'clear-all'
+  ];
+  
+  controls.forEach(id => {
+    const element = document.getElementById(id);
+    if (element) element.disabled = loading;
+  });
+}
+
+function toggleEmptyState(empty) {
+  const emptyState = document.getElementById('empty-state');
+  
+  if (emptyState) {
+    emptyState.style.display = empty ? 'block' : 'none';
+  }
+}
+
+function updateTreatmentHistory(treatments) {
+  const container = document.getElementById('treatment-history');
+  if (!container) return;
+
+  // Clear but keep skeleton
+  const skeleton = container.querySelector('#loading-skeleton');
+  container.innerHTML = '';
+  if (skeleton) container.appendChild(skeleton);
+
+  treatments.forEach(odontogram => {
+    odontogram.dientes.forEach(tooth => {
+      addTreatmentToHistory(tooth, odontogram.fecha, odontogram._id);
+    });
+  });
+}
+
+function addTreatmentToHistory(tooth, date, id) {
+  const container = document.getElementById('treatment-history');
+  if (!container) return;
+
+  const treatment = CONFIG.TREATMENTS[tooth.tratamiento];
+  if (!treatment) return;
+
+  const isPrimary = ['5','6','7','8'].includes(tooth.numeroDiente.toString().charAt(0));
+  const dentitionType = isPrimary ? '(Temporal)' : '(Permanente)';
+
+  const treatmentElement = document.createElement('div');
+  treatmentElement.className = 'bg-white dark:bg-gray-800/50 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 animate-scale-in';
+  treatmentElement.dataset.id = id;
+  treatmentElement.dataset.searchContent = `${tooth.numeroDiente} ${tooth.tratamiento}`.toLowerCase();
+
+  treatmentElement.innerHTML = `
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+          <span style="color: ${treatment.color}">${treatment.icon || treatment.text}</span>
+        </div>
+        <div>
+          <h4 class="font-medium text-gray-900 dark:text-white">
+            Diente ${tooth.numeroDiente} ${dentitionType}
+          </h4>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            ${tooth.tratamiento} - ${tooth.superficie}
+            ${tooth.protesisPartner ? ` (Conectado con ${tooth.protesisPartner})` : ''}
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-gray-500 dark:text-gray-400">
+          ${new Date(date).toLocaleDateString()}
+        </span>
+        <button onclick="deleteTreatment('${id}')" 
+                class="p-1 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors rounded-full hover:bg-red-50 dark:hover:bg-red-900/20">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    ${tooth.notas ? `
+      <div class="mt-3 p-2 bg-gray-50 dark:bg-gray-700/50 rounded text-sm text-gray-600 dark:text-gray-400">
+        <strong>Observaciones:</strong> ${tooth.notas}
+      </div>
+    ` : ''}
+  `;
+
+  container.appendChild(treatmentElement);
+}
+
+async function deleteTreatment(id) {
+  const confirmed = await ModalSystem.confirm(
+    '¿Eliminar este tratamiento?',
+    'Esta acción eliminará el tratamiento seleccionado y no se puede deshacer.'
+  );
+
+  if (!confirmed) return;
+
+  try {
+    const response = await fetch(`${CONFIG.BASE_URL}/odontograma/${id}`, {
+      method: 'DELETE'
+    });
+
+    if (!response.ok) throw new Error('Error deleting treatment');
+
+    // Remove element with animation
+    const element = document.querySelector(`[data-id="${id}"]`);
+    if (element) {
+      animate(element, [
+        { opacity: 1, height: element.offsetHeight + 'px' },
+        { opacity: 0, height: '0px' }
+      ], { duration: 300 }).finished.then(() => {
+        element.remove();
+      });
+    }
+
+    // Reload treatments
+    await loadExistingTreatments();
+    
+    NotificationSystem.show('Tratamiento eliminado correctamente', 'success');
+  } catch (error) {
+    console.error('Error deleting treatment:', error);
+    NotificationSystem.show('Error al eliminar el tratamiento', 'error');
+  }
+}
+
+function searchTreatments(query) {
+  const container = document.getElementById('treatment-history');
+  const queryLower = query.toLowerCase().trim();
+  let visibleCount = 0;
+
+  Array.from(container.children).forEach(element => {
+    if (!element.dataset.searchContent) return;
+    
+    const visible = element.dataset.searchContent.includes(queryLower);
+    element.style.display = visible ? 'block' : 'none';
+    
+    if (visible) {
+      visibleCount++;
+      animate(element, [
+        { opacity: 0.5, transform: 'translateY(5px)' },
+        { opacity: 1, transform: 'translateY(0)' }
+      ], { duration: 150 });
+    }
+  });
+
+  // Show no results message
+  const existing = container.querySelector('.no-results');
+  if (existing) existing.remove();
+
+  if (visibleCount === 0 && queryLower.length > 0) {
+    const noResults = document.createElement('div');
+    noResults.className = 'no-results text-center py-8 text-gray-500 dark:text-gray-400';
+    noResults.innerHTML = `
+      <svg class="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <p>No se encontraron resultados para "${query}"</p>
+    `;
+    container.appendChild(noResults);
+  }
+
+  toggleEmptyState(visibleCount === 0 && queryLower.length === 0);
+}
+
+// Event listeners y inicialización
+function setupEventListeners() {
+  // Treatment selection buttons
+  document.querySelectorAll('.treatment-option').forEach(button => {
+    button.addEventListener('click', () => {
+      const treatmentSelect = document.getElementById('treatment-select');
+      treatmentSelect.value = button.dataset.treatment;
+      
+      animate(button, [
+        { backgroundColor: 'rgba(59, 130, 246, 0.2)' },
+        { backgroundColor: 'transparent' }
+      ], { duration: 500 });
+    });
+
+    button.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        button.click();
+      }
+    });
+  });
+
+  // Control buttons
+  document.getElementById('save')?.addEventListener('click', saveTreatments);
+  document.getElementById('reset')?.addEventListener('click', resetSelection);
+  document.getElementById('clear-all')?.addEventListener('click', clearAllTreatments);
+
+  // Search
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) {
+    searchInput.addEventListener('input', debounce((e) => {
+      searchTreatments(e.target.value);
+    }, 250));
+  }
+
+  // Responsive handling
+  window.addEventListener('resize', debounce(() => ProtesisManager.repositionAllConnectors(), 250));
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => ProtesisManager.repositionAllConnectors(), 300);
+  });
+
+  // Dark mode handling
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      setTimeout(() => {
+        ProtesisManager.repositionAllConnectors();
+        // Redraw all teeth for color updates
+        document.querySelectorAll('.tooth-container').forEach(container => {
+          if (container.toothCanvas) {
+            const surfaces = new Map(container.toothCanvas.selectedSurfaces);
+            const isProtesis = container.toothCanvas.isProtesisTooth;
+            container.toothCanvas.clear();
+            container.toothCanvas.drawToothBase();
+            
+            if (isProtesis) {
+              // Redibujar prótesis
+              container.toothCanvas.isProtesisTooth = true;
+              // Determinar si es start o end basado en conectores existentes
+              protesisConnectors.forEach((connectorData, id) => {
+                if (id.includes(container.dataset.tooth)) {
+                  const [tooth1, tooth2] = id.split('-');
+                  if (parseInt(tooth1) < parseInt(tooth2)) {
+                    if (container.dataset.tooth === tooth1) {
+                      container.toothCanvas.drawProtesisStart();
+                    } else {
+                      container.toothCanvas.drawProtesisEnd();
+                    }
+                  } else {
+                    if (container.dataset.tooth === tooth2) {
+                      container.toothCanvas.drawProtesisStart();
+                    } else {
+                      container.toothCanvas.drawProtesisEnd();
+                    }
+                  }
+                }
+              });
+            }
+            
+            surfaces.forEach((info, surface) => {
+              container.toothCanvas.selectedSurfaces.set(surface, info);
+              container.toothCanvas.drawTreatment(info.treatment, surface);
+            });
+          }
+        });
+      }, 100);
+    });
+  }
+}
+
+// Función de debugging para prótesis
+function debugProtesis() {
+  console.log('=== PROTESIS DEBUG INFO ===');
+  console.log('Protesis Connectors:', protesisConnectors.size);
+  
+  protesisConnectors.forEach((data, id) => {
+    console.log(`Connector ${id}:`, {
+      element: data.element,
+      leftTooth: data.leftContainer.dataset.tooth,
+      rightTooth: data.rightContainer.dataset.tooth,
+      leftCanvas: !!data.leftContainer.toothCanvas,
+      rightCanvas: !!data.rightContainer.toothCanvas,
+      leftIsProtesis: data.leftContainer.toothCanvas?.isProtesisTooth,
+      rightIsProtesis: data.rightContainer.toothCanvas?.isProtesisTooth
+    });
+  });
+  
+  const protesisTeeth = Array.from(document.querySelectorAll('.tooth-container')).filter(container => 
+    container.toothCanvas?.isProtesisTooth
+  );
+  console.log('Protesis teeth count:', protesisTeeth.length);
+  
+  protesisTeeth.forEach(container => {
+    console.log(`Protesis tooth ${container.dataset.tooth}:`, {
+      isProtesis: container.toothCanvas.isProtesisTooth,
+      hasCanvas: !!container.toothCanvas
+    });
+  });
+}
+
+// Inicialización principal
+async function initialize() {
+  try {
+    toggleLoadingState(true);
+    
+    // Get patient ID
+    const response = await fetch(`${CONFIG.BASE_URL}/paciente/findByDni/${dni}`);
+    if (!response.ok) throw new Error('Patient not found');
+    
+    const data = JSON.parse(await response.text());
+    patientId = data.paciente?.id;
+    
+    if (!patientId) {
+      throw new Error('Patient ID not found');
+    }
+
+    // Initialize teeth grids
+    initializeTeeth();
+    
+    // Load existing treatments
+    await loadExistingTreatments();
+    
+    // Setup event listeners
+    setupEventListeners();
+    
+  } catch (error) {
+    console.error('Initialization error:', error);
+    NotificationSystem.show('Error al cargar el paciente', 'error');
+  } finally {
+    toggleLoadingState(false);
+  }
+}
+
+// Make functions globally available
+window.deleteTreatment = deleteTreatment;
+window.debugProtesis = debugProtesis; // Para debugging en consola
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initialize);
+} else {
+  initialize();
+}
+
+</script>

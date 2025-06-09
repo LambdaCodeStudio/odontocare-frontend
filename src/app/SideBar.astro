@@ -1,0 +1,474 @@
+---
+---
+
+<aside
+  id="sidebar"
+  class="fixed top-0 left-0 z-20 flex flex-col flex-shrink-0 hidden w-64 h-full pt-16 font-normal duration-300 lg:flex transition-all bg-gradient-to-b from-slate-50 to-slate-100 dark:from-gray-800 dark:to-gray-900"
+  aria-label="Sidebar"
+>
+  <div
+    class="relative flex flex-col flex-1 min-h-0 pt-0 border-r border-gray-200 dark:border-gray-700 shadow-inner"
+  >
+    <div
+      class="flex flex-col flex-1 pt-5 pb-28 overflow-y-auto custom-scrollbar"
+    >
+      <div
+        class="flex-1 px-3 space-y-2 bg-transparent"
+      >
+        <!-- Perfil compacto para sidebar -->
+        <div class="flex flex-col items-center mb-6 mt-1 px-2">
+          <div class="relative">
+            <div id="sidebarProfileSkeleton" class="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse mb-2"></div>
+            <img 
+              id="sidebarProfileImage" 
+              class="w-16 h-16 rounded-full p-0.5 bg-gradient-to-r from-blue-500 to-indigo-600 shadow-md hidden transition-all hover:scale-105" 
+              src="/images/perfil-logo.png" 
+              alt="Foto de perfil"
+            >
+            <div id="sidebarStatusIndicator" class="absolute bottom-1 right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white dark:border-gray-900"></div>
+          </div>
+          <div id="sidebarNameSkeleton" class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 mt-3 animate-pulse"></div>
+          <h4 id="sidebarUserName" class="font-medium text-sm text-gray-900 dark:text-white mt-2 hidden">Nombre de Usuario</h4>
+          <div id="sidebarRoleSkeleton" class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16 mt-1 animate-pulse"></div>
+          <span id="sidebarUserRole" class="text-xs text-gray-500 dark:text-gray-400 hidden">Cargo</span>
+        </div>
+
+        <!-- Separador decorativo -->
+        <div class="relative py-4">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300 dark:border-gray-600"></div>
+          </div>
+          <div class="relative flex justify-center">
+            <span class="px-3 text-xs font-medium text-gray-500 bg-gradient-to-r from-slate-50 to-slate-100 dark:from-gray-800 dark:to-gray-900 dark:text-gray-400">MENÚ PRINCIPAL</span>
+          </div>
+        </div>
+
+        <ul class="space-y-1.5">
+          <!-- Inicio -->
+          <li>
+            <a
+              href="/"
+              class="group flex items-center p-2.5 text-base font-normal text-gray-900 rounded-xl hover:bg-blue-50 dark:text-white dark:hover:bg-gray-700 transition-colors duration-200"
+              data-page="home"
+            >
+              <svg
+                class="w-6 h-6 text-blue-600 transition duration-75 group-hover:text-blue-700 dark:text-blue-400 dark:group-hover:text-blue-300"
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="1.5"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                ></path>
+              </svg>
+              <span class="ml-3 group-hover:translate-x-0.5 transition-transform duration-200">Inicio</span>
+            </a>
+          </li>
+          
+          <!-- Agenda -->
+          <li>
+            <a
+              href="/citasTable"
+              class="group flex items-center p-2.5 text-base font-normal text-gray-900 rounded-xl hover:bg-blue-50 dark:text-white dark:hover:bg-gray-700 transition-colors duration-200"
+              data-page="citasTable"
+            >
+              <svg 
+                class="w-6 h-6 text-blue-600 transition duration-75 group-hover:text-blue-700 dark:text-blue-400 dark:group-hover:text-blue-300"
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="1.5"
+                viewBox="0 0 24 24" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+              </svg>
+              <span class="ml-3 group-hover:translate-x-0.5 transition-transform duration-200">Agenda</span>
+            </a>
+          </li>
+          
+          <!-- Pacientes -->
+          <li>
+            <a
+              href="/pacientes"
+              class="group flex items-center p-2.5 text-base font-normal text-gray-900 rounded-xl hover:bg-blue-50 dark:text-white dark:hover:bg-gray-700 transition-colors duration-200"
+              data-page="pacientes"
+            >
+              <svg 
+                class="w-6 h-6 text-blue-600 transition duration-75 group-hover:text-blue-700 dark:text-blue-400 dark:group-hover:text-blue-300"
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="1.5" 
+                viewBox="0 0 24 24" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+              </svg>
+              <span class="ml-3 group-hover:translate-x-0.5 transition-transform duration-200">Pacientes</span>
+            </a>
+          </li>
+          
+          <!-- Usuarios/Empleados -->
+          <li>
+            <a
+              href="/empleados"
+              class="group flex items-center p-2.5 text-base font-normal text-gray-900 rounded-xl hover:bg-blue-50 dark:text-white dark:hover:bg-gray-700 transition-colors duration-200"
+              data-page="empleados"
+            >
+              <svg 
+                class="w-6 h-6 text-blue-600 transition duration-75 group-hover:text-blue-700 dark:text-blue-400 dark:group-hover:text-blue-300"
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="1.5" 
+                viewBox="0 0 24 24" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+              </svg>
+              <span class="ml-3 group-hover:translate-x-0.5 transition-transform duration-200">Usuarios</span>
+            </a>
+          </li>
+          
+          <!-- Tratamientos -->
+          <li>
+            <a
+              href="/tratamiento"
+              class="group flex items-center p-2.5 text-base font-normal text-gray-900 rounded-xl hover:bg-blue-50 dark:text-white dark:hover:bg-gray-700 transition-colors duration-200"
+              data-page="tratamiento"
+            >
+              <svg 
+                class="w-6 h-6 text-blue-600 transition duration-75 group-hover:text-blue-700 dark:text-blue-400 dark:group-hover:text-blue-300"
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="1.5" 
+                viewBox="0 0 24 24" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+              </svg>
+              <span class="ml-3 group-hover:translate-x-0.5 transition-transform duration-200">Tratamientos</span>
+            </a>
+          </li>
+          
+          <!-- Mi Perfil -->
+          <li>
+            <a
+              href="/dashboard"
+              class="group flex items-center p-2.5 text-base font-normal text-gray-900 rounded-xl hover:bg-blue-50 dark:text-white dark:hover:bg-gray-700 transition-colors duration-200"
+              data-page="dashboard"
+            >
+              <svg 
+                class="w-6 h-6 text-blue-600 transition duration-75 group-hover:text-blue-700 dark:text-blue-400 dark:group-hover:text-blue-300"
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="1.5" 
+                viewBox="0 0 24 24" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span class="ml-3 group-hover:translate-x-0.5 transition-transform duration-200">Mi Perfil</span>
+            </a>
+          </li>
+        </ul>
+        
+        <!-- Separador decorativo para componentes futuros -->
+        <div class="relative py-4 mt-6">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300 dark:border-gray-600"></div>
+          </div>
+          <div class="relative flex justify-center">
+            <span class="px-3 text-xs font-medium text-gray-500 bg-gradient-to-r from-slate-50 to-slate-100 dark:from-gray-800 dark:to-gray-900 dark:text-gray-400">ACCESOS RÁPIDOS</span>
+          </div>
+        </div>
+        
+        <!-- Accesos rápidos -->
+        <div class="grid grid-cols-2 gap-2">
+          <a href="/nueva-cita" class="flex flex-col items-center p-3 text-center bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors duration-200 dark:bg-gray-700 dark:hover:bg-gray-600">
+            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400 mb-1" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"></path>
+            </svg>
+            <span class="text-xs font-medium text-gray-900 dark:text-white">Nueva Cita</span>
+          </a>
+          
+          <a href="/nuevo-paciente" class="flex flex-col items-center p-3 text-center bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors duration-200 dark:bg-gray-700 dark:hover:bg-gray-600">
+            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400 mb-1" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"></path>
+            </svg>
+            <span class="text-xs font-medium text-gray-900 dark:text-white">Nuevo Paciente</span>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Sección inferior fija -->
+      <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-100 to-transparent dark:from-gray-800 dark:to-transparent">
+        <a href="/dashboard" class="flex items-center p-2 text-sm font-medium text-gray-900 rounded-lg hover:bg-blue-50 dark:text-white dark:hover:bg-gray-700 group transition-colors duration-200">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md">
+            <span id="userInitials">--</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-gray-900 dark:text-white font-medium" id="footerUserName">Cargando...</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400" id="footerUserRole">Cargando...</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- Backdrop para móvil -->
+<div
+  class="fixed inset-0 z-10 hidden bg-gray-900/50 backdrop-blur-sm dark:bg-gray-900/80 transition-opacity duration-300"
+  id="sidebarBackdrop"
+>
+</div>
+
+<script>
+  // Definición de tipos para TypeScript
+  interface SidebarElements {
+    sidebar: HTMLElement;
+    sidebarBackdrop: HTMLElement;
+    toggleSidebarMobileHamburger: HTMLElement;
+    toggleSidebarMobileClose: HTMLElement;
+  }
+  
+  // Actualiza la página actual en el sidebar
+  function highlightCurrentPage() {
+    const currentPath = window.location.pathname;
+    const menuItems = document.querySelectorAll('a[data-page]');
+
+    menuItems.forEach((item) => {
+      const link = item as HTMLAnchorElement;
+      const href = link.getAttribute('href') || '';
+      
+      // Remover clase activa de todos los elementos
+      link.classList.remove('bg-blue-100', 'dark:bg-gray-600');
+      
+      // Si la URL coincide o si estamos en la página principal
+      if ((currentPath === '/' && href === '/') || 
+          (currentPath !== '/' && href !== '/' && currentPath.includes(href))) {
+        link.classList.add('bg-blue-100', 'dark:bg-gray-600');
+      }
+    });
+  }
+
+  // Función para cargar los datos del perfil en el sidebar
+  function loadSidebarProfile() {
+    const userId = localStorage.getItem('userId');
+    const userRole = localStorage.getItem('userRole');
+    
+    if (!userId || !userRole) return;
+    
+    // Actualizar iniciales en el pie de página
+    const userInitials = document.getElementById('userInitials');
+    const footerUserName = document.getElementById('footerUserName');
+    const footerUserRole = document.getElementById('footerUserRole');
+    const sidebarUserName = document.getElementById('sidebarUserName');
+    const sidebarUserRole = document.getElementById('sidebarUserRole');
+    const sidebarProfileImage = document.getElementById('sidebarProfileImage');
+    const sidebarProfileSkeleton = document.getElementById('sidebarProfileSkeleton');
+    const sidebarNameSkeleton = document.getElementById('sidebarNameSkeleton');
+    const sidebarRoleSkeleton = document.getElementById('sidebarRoleSkeleton');
+    
+    // Determinar imagen según rol y actualizar elementos
+    if (sidebarProfileImage) {
+      sidebarProfileImage.setAttribute('src', 
+        userRole === 'secretaria' ? '/images/perfil-logo-secretaria.png' : '/images/perfil-logo.png'
+      );
+      
+      // Pequeño delay para mostrar el skeleton
+      setTimeout(() => {
+        if (sidebarProfileSkeleton) sidebarProfileSkeleton.classList.add('hidden');
+        if (sidebarProfileImage) sidebarProfileImage.classList.remove('hidden');
+        if (sidebarNameSkeleton) sidebarNameSkeleton.classList.add('hidden');
+        if (sidebarRoleSkeleton) sidebarRoleSkeleton.classList.add('hidden');
+        if (sidebarUserName) sidebarUserName.classList.remove('hidden');
+        if (sidebarUserRole) sidebarUserRole.classList.remove('hidden');
+      }, 800);
+    }
+    
+    // Determinar texto del rol
+    const rolText = userRole === 'secretaria' ? 'Secretaria' : 'Odontólogo';
+    
+    // Obtener datos del usuario desde localStorage o API
+    const BASE_URL = "http://localhost:5000/api";
+    let endpoint = '';
+    
+    if (userRole === 'odontologo') {
+      endpoint = `${BASE_URL}/medico/findById/${userId}`;
+    } else if (userRole === 'secretaria') {
+      endpoint = `${BASE_URL}/secretaria/buscarId/${userId}`;
+    }
+    
+    // Actualizar rol inmediatamente mientras se carga el nombre
+    if (sidebarUserRole) sidebarUserRole.textContent = rolText;
+    if (footerUserRole) footerUserRole.textContent = rolText;
+    
+    // Obtener datos si hay endpoint válido
+    if (endpoint) {
+      fetch(endpoint)
+        .then(response => response.ok ? response.json() : Promise.reject('Error al cargar'))
+        .then(data => {
+          const user = userRole === 'odontologo' ? data.medico : data.secretaria;
+          
+          if (!user) return;
+          
+          // Actualizar nombre
+          if (footerUserName) footerUserName.textContent = user.nombre || 'Usuario';
+          if (sidebarUserName) sidebarUserName.textContent = user.nombre || 'Usuario';
+          
+          // Actualizar iniciales
+          if (userInitials && user.nombre) {
+            const nameParts = user.nombre.split(' ');
+            const initials = nameParts.length > 1 
+              ? (nameParts[0][0] + nameParts[1][0]).toUpperCase()
+              : (nameParts[0][0] + (nameParts[0][1] || '')).toUpperCase();
+            userInitials.textContent = initials;
+          }
+          
+          // Si el usuario tiene foto personalizada, actualizarla
+          if (user.photoUrl && sidebarProfileImage) {
+            sidebarProfileImage.src = user.photoUrl;
+          }
+        })
+        .catch(error => {
+          console.error('Error al cargar perfil:', error);
+          if (footerUserName) footerUserName.textContent = 'Error al cargar';
+          if (sidebarUserName) sidebarUserName.textContent = 'Error al cargar';
+        });
+    }
+  }
+
+  // Función para manejar el toggle del sidebar en móvil
+  function setupSidebarToggle() {
+    const sidebar = document.getElementById('sidebar');
+    
+    if (!sidebar) return;
+    
+    const toggleSidebarMobile = (
+      {sidebar, sidebarBackdrop, toggleSidebarMobileHamburger, toggleSidebarMobileClose}: SidebarElements
+    ) => {
+      sidebar.classList.toggle('hidden');
+      sidebarBackdrop.classList.toggle('hidden');
+      toggleSidebarMobileHamburger.classList.toggle('hidden');
+      toggleSidebarMobileClose.classList.toggle('hidden');
+      
+      // Agregar clase de animación al abrir
+      if (!sidebar.classList.contains('hidden')) {
+        sidebar.classList.add('animate-slide-in-left');
+        setTimeout(() => {
+          sidebar.classList.remove('animate-slide-in-left');
+        }, 300);
+      }
+    };
+
+    const toggleSidebarMobileEl = document.getElementById('toggleSidebarMobile');
+    const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+    const toggleSidebarMobileHamburger = document.getElementById('toggleSidebarMobileHamburger');
+    const toggleSidebarMobileClose = document.getElementById('toggleSidebarMobileClose');
+    
+    if (!sidebarBackdrop || !toggleSidebarMobileHamburger || !toggleSidebarMobileClose) return;
+
+    toggleSidebarMobileEl?.addEventListener('click', () => {
+      toggleSidebarMobile({
+        sidebar,
+        sidebarBackdrop,
+        toggleSidebarMobileHamburger,
+        toggleSidebarMobileClose,
+      });
+    });
+
+    sidebarBackdrop?.addEventListener('click', () => {
+      toggleSidebarMobile({
+        sidebar,
+        sidebarBackdrop,
+        toggleSidebarMobileHamburger,
+        toggleSidebarMobileClose,
+      });
+    });
+    
+    // Cerrar sidebar en cambios de ruta
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      link.addEventListener('click', () => {
+        // Solo cerrar en móvil
+        if (window.innerWidth < 1024 && !sidebar.classList.contains('hidden')) {
+          toggleSidebarMobile({
+            sidebar,
+            sidebarBackdrop,
+            toggleSidebarMobileHamburger,
+            toggleSidebarMobileClose,
+          });
+        }
+      });
+    });
+  }
+
+  // Aplicar estilos en CustomScrollbar
+  function applyCustomScrollbarStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(156, 163, 175, 0.3);
+        border-radius: 9999px;
+      }
+      
+      .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(75, 85, 99, 0.3);
+      }
+      
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(156, 163, 175, 0.5);
+      }
+      
+      .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(75, 85, 99, 0.5);
+      }
+      
+      @keyframes slide-in-left {
+        from { transform: translateX(-100%); }
+        to { transform: translateX(0); }
+      }
+      
+      .animate-slide-in-left {
+        animation: slide-in-left 0.3s ease-in-out;
+      }
+    `;
+    
+    document.head.appendChild(style);
+  }
+
+  // Inicializar todo
+  document.addEventListener('DOMContentLoaded', () => {
+    applyCustomScrollbarStyles();
+    highlightCurrentPage();
+    setupSidebarToggle();
+    loadSidebarProfile();
+    
+    // Mantener la página actual resaltada al cambiar la URL
+    window.addEventListener('popstate', highlightCurrentPage);
+  });
+</script>
+
+<style>
+  /* Fallback para navegadores que no soporten ::-webkit-scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+  }
+  
+  .dark .custom-scrollbar {
+    scrollbar-color: rgba(75, 85, 99, 0.3) transparent;
+  }
+</style>

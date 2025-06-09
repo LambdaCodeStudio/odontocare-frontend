@@ -1,0 +1,1813 @@
+---
+---
+
+<div class="min-h-screen bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 px-4 py-6 sm:p-6 lg:p-8">
+  <div class="max-w-7xl mx-auto space-y-8 animate-fadeIn">
+    <!-- Header con bienvenida personalizada -->
+    <div class="mb-6">
+      <h1 id="welcomeHeader" class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+        <div class="inline-block h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-64"></div>
+      </h1>
+      <p class="mt-2 text-gray-600 dark:text-gray-400">Panel de control personal con tus datos y actividad reciente</p>
+    </div>
+    
+    <!-- Tarjeta de perfil mejorada -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700 transform transition-all duration-300 hover:shadow-2xl">
+      <!-- Header con gradiente suave y ondas decorativas -->
+      <div class="relative">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 dark:from-blue-800/20 dark:to-indigo-800/20"></div>
+        
+        <!-- Ondas decorativas SVG -->
+        <svg class="absolute bottom-0 left-0 w-full h-24 text-white dark:text-gray-800 opacity-20" viewBox="0 0 1000 100" preserveAspectRatio="none">
+          <path class="fill-current" d="M0,0 C200,100 400,0 500,100 C600,0 800,100 1000,0 L1000,100 L0,100 Z"></path>
+        </svg>
+        
+        <div class="relative px-6 py-8 flex flex-col md:flex-row md:items-center gap-8">
+          <!-- Imagen de perfil con animación hover -->
+          <div class="shrink-0 relative group mx-auto md:mx-0">
+            <div class="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 opacity-0 group-hover:opacity-100 blur-lg transition-all duration-700 animate-pulse-slow"></div>
+            <div class="relative">
+              <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" id="profileImageSkeleton"></div>
+              <img
+                id="profileImage"
+                class="w-32 h-32 sm:w-40 sm:h-40 rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-lg group-hover:scale-105 transition-transform duration-300 hidden"
+                src="/images/perfil-logo.png"
+                alt="Foto de perfil"
+              />
+              <div class="absolute bottom-2 right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white dark:border-gray-800 flex items-center justify-center shadow-md opacity-0 transition-opacity duration-300" id="onlineStatus">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Información del perfil -->
+          <div class="flex-1 text-center md:text-left">
+            <h2 id="userName" class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              <div class="inline-block h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-48"></div>
+            </h2>
+            <div id="userRoleContainer" class="mb-4">
+              <div class="inline-block h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-32"></div>
+            </div>
+            
+            <!-- Tarjeta de detalles mejorada -->
+            <div class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="space-y-1 transform transition-all duration-200 hover:translate-y-[-2px]">
+                  <h5 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Email
+                  </h5>
+                  <p id="userEmail" class="text-base font-medium text-gray-900 dark:text-white">
+                    <div class="h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-36"></div>
+                  </p>
+                </div>
+                
+                <div class="space-y-1 transform transition-all duration-200 hover:translate-y-[-2px]">
+                  <h5 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    Teléfono
+                  </h5>
+                  <p id="userPhone" class="text-base font-medium text-gray-900 dark:text-white">
+                    <div class="h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-28"></div>
+                  </p>
+                </div>
+                
+                <div id="especialidadContainer" class="hidden space-y-1 transform transition-all duration-200 hover:translate-y-[-2px]">
+                  <h5 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                    Especialidad
+                  </h5>
+                  <p id="userEspecialidad" class="text-base font-medium text-gray-900 dark:text-white">
+                    <div class="h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-32"></div>
+                  </p>
+                </div>
+                
+                <div id="matriculaContainer" class="hidden space-y-1 transform transition-all duration-200 hover:translate-y-[-2px]">
+                  <h5 class="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                    </svg>
+                    Nº Matrícula
+                  </h5>
+                  <p id="userMatricula" class="text-base font-medium text-gray-900 dark:text-white">
+                    <div class="h-5 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-24"></div>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Estadísticas rápidas - solo visible para odontólogos -->
+      <div id="statsContainer" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-gray-50 dark:bg-gray-800/80 p-4 border-t border-gray-100 dark:border-gray-700">
+        <div class="stat-card bg-white dark:bg-gray-700 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600 transition-all duration-300 hover:shadow-md">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Citas pendientes</p>
+              <h3 id="statPendientes" class="text-2xl font-bold text-gray-900 dark:text-white mt-1">--</h3>
+            </div>
+            <div class="rounded-full p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-500 dark:text-blue-300">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+          </div>
+          <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            <span id="statPendientesChange" class="text-green-500 dark:text-green-400 font-medium inline-flex items-center">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+              --
+            </span>
+            <span> esta semana</span>
+          </div>
+        </div>
+        
+        <div class="stat-card bg-white dark:bg-gray-700 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600 transition-all duration-300 hover:shadow-md">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Pacientes activos</p>
+              <h3 id="statPacientes" class="text-2xl font-bold text-gray-900 dark:text-white mt-1">--</h3>
+            </div>
+            <div class="rounded-full p-2 bg-green-100 dark:bg-green-900/30 text-green-500 dark:text-green-300">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+          </div>
+          <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            <span id="statPacientesChange" class="text-green-500 dark:text-green-400 font-medium inline-flex items-center">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+              --
+            </span>
+            <span> último mes</span>
+          </div>
+        </div>
+        
+        <div class="stat-card bg-white dark:bg-gray-700 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600 transition-all duration-300 hover:shadow-md">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Completadas</p>
+              <h3 id="statCompletadas" class="text-2xl font-bold text-gray-900 dark:text-white mt-1">--</h3>
+            </div>
+            <div class="rounded-full p-2 bg-purple-100 dark:bg-purple-900/30 text-purple-500 dark:text-purple-300">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+          <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            <span id="statCompletadasChange" class="text-purple-500 dark:text-purple-400 font-medium">
+              --
+            </span>
+            <span> esta semana</span>
+          </div>
+        </div>
+        
+        <div class="stat-card bg-white dark:bg-gray-700 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-600 transition-all duration-300 hover:shadow-md">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500 dark:text-gray-400">En proceso</p>
+              <h3 id="statProceso" class="text-2xl font-bold text-gray-900 dark:text-white mt-1">--</h3>
+            </div>
+            <div class="rounded-full p-2 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-500 dark:text-yellow-300">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+          <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+            <span id="statProcesoChange" class="text-yellow-500 dark:text-yellow-400 font-medium">
+              --
+            </span>
+            <span> actual</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de Tabs -->
+    <div id="tableContainer" class="fade-in-slide-up hidden">
+      <!-- Tab Navigation mejorada -->
+      <div class="bg-white dark:bg-gray-800 rounded-t-2xl p-4 border border-gray-100 dark:border-gray-700 shadow-md flex flex-col sm:flex-row justify-between items-center">
+        <h2 class="text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 mb-4 sm:mb-0">
+          Resumen de Actividad
+        </h2>
+        <div class="w-full sm:w-auto flex space-x-2">
+          <!-- Filtro de fecha (placeholder) -->
+          <div class="relative flex-1 sm:flex-none hidden sm:block">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <select id="dateFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 py-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+              <option value="todos">Todos</option>
+              <option value="hoy">Hoy</option>
+              <option value="semana">Esta semana</option>
+              <option value="mes">Este mes</option>
+            </select>
+          </div>
+          
+          <!-- Tabs -->
+          <div class="inline-flex p-1 bg-gray-100 dark:bg-gray-700 rounded-lg">
+            <button
+              id="citasButton"
+              class="tab-button active py-2 px-4 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              aria-pressed="true"
+            >
+              <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Citas
+              </div>
+            </button>
+            <button
+              id="pacientesButton"
+              class="tab-button py-2 px-4 text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              aria-pressed="false"
+            >
+              <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                Pacientes
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Contenido de Tabs mejorado -->
+      <div class="bg-white dark:bg-gray-800 rounded-b-2xl border-x border-b border-gray-100 dark:border-gray-700 shadow-xl overflow-hidden">
+        <!-- Tabla de Citas -->
+        <div id="citasTable" class="tab-content w-full">
+          <!-- Barra de búsqueda para citas -->
+          <div class="p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+              <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <input 
+                  type="search" 
+                  id="citasSearch" 
+                  class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5" 
+                  placeholder="Buscar por paciente, motivo..." 
+                />
+              </div>
+              
+              <div class="flex space-x-2">
+                <select id="citasEstadoFilter" class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
+                  <option value="todos">Estado: Todos</option>
+                  <option value="pendiente">Pendientes</option>
+                  <option value="en_proceso">En proceso</option>
+                  <option value="completada">Completadas</option>
+                  <option value="cancelada">Canceladas</option>
+                </select>
+                
+                <button id="citasExportButton" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 transition-colors">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                  Exportar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vista Desktop -->
+          <div class="hidden md:block">
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Hora</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Paciente</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Motivo</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Estado</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Monto</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="citasTableBodyDesktop" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                  <!-- Filas de carga -->
+                  <tr><td colspan="6" class="px-6 py-4">
+                    <div class="animate-pulse space-y-4">
+                      <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mx-auto"></div>
+                      <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mx-auto"></div>
+                      <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6 mx-auto"></div>
+                    </div>
+                  </td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Vista Mobile -->
+          <div class="md:hidden">
+            <div class="divide-y divide-gray-200 dark:divide-gray-700" id="citasTableBodyMobile">
+              <!-- Skeletons de carga -->
+              <div class="p-4 animate-pulse">
+                <div class="flex justify-between">
+                  <div class="w-1/3">
+                    <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded mt-2 w-3/4"></div>
+                  </div>
+                  <div class="w-1/4">
+                    <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  </div>
+                </div>
+                <div class="mt-4 h-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Tabla de Pacientes -->
+        <div id="pacientesTable" class="hidden tab-content w-full">
+          <!-- Barra de búsqueda para pacientes -->
+          <div class="p-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+              <div class="relative flex-grow">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <input 
+                  type="search" 
+                  id="pacientesSearch" 
+                  class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5" 
+                  placeholder="Buscar por nombre, DNI..." 
+                />
+              </div>
+              
+              <button id="nuevoPacienteButton" class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-colors">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Nuevo Paciente
+              </button>
+            </div>
+          </div>
+          
+          <!-- Vista Desktop -->
+          <div class="hidden md:block">
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nombre</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">DNI</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Teléfono</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="pacientesTableBodyDesktop" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                  <!-- Filas de carga -->
+                  <tr><td colspan="5" class="px-6 py-4">
+                    <div class="animate-pulse space-y-4">
+                      <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mx-auto"></div>
+                      <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full mx-auto"></div>
+                      <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6 mx-auto"></div>
+                    </div>
+                  </td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Vista Mobile -->
+          <div class="md:hidden">
+            <div class="divide-y divide-gray-200 dark:divide-gray-700" id="pacientesTableBodyMobile">
+              <!-- Skeletons de carga -->
+              <div class="p-4 animate-pulse">
+                <div class="flex justify-between">
+                  <div class="w-2/3">
+                    <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded mt-2 w-1/2"></div>
+                  </div>
+                  <div class="w-1/4">
+                    <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  </div>
+                </div>
+                <div class="mt-4 h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast mejorado -->
+<div id="toast" class="fixed top-4 right-4 z-50 max-w-xs hidden transform transition-all duration-300 translate-y-[-1rem] opacity-0">
+  <div class="flex items-center p-4 rounded-lg shadow-lg">
+    <div id="toastIcon" class="inline-flex flex-shrink-0 items-center justify-center w-8 h-8 rounded-lg"></div>
+    <div id="toastMessage" class="ml-3 text-sm font-medium"></div>
+    <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2 p-1.5 inline-flex h-8 w-8 focus:outline-none" id="closeToast">
+      <span class="sr-only">Cerrar</span>
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+// Constantes globales
+const BASE_URL = "http://localhost:5000/api";
+
+// Estado global (mejor organización del estado)
+const state = {
+  userData: null,
+  citas: [],
+  pacientes: [],
+  filtros: {
+    citas: {
+      texto: '',
+      estado: 'todos',
+      fecha: 'todos'
+    },
+    pacientes: {
+      texto: ''
+    }
+  },
+  stats: {
+    pendientes: 0,
+    proceso: 0,
+    completadas: 0,
+    pacientes: 0
+  }
+};
+
+// Elementos DOM agrupados por funcionalidad
+const elements = {
+  profile: {
+    image: document.getElementById('profileImage'),
+    imageSkeleton: document.getElementById('profileImageSkeleton'),
+    name: document.getElementById('userName'),
+    role: document.getElementById('userRoleContainer'),
+    email: document.getElementById('userEmail'),
+    phone: document.getElementById('userPhone'),
+    especialidad: document.getElementById('userEspecialidad'),
+    matricula: document.getElementById('userMatricula'),
+    especialidadContainer: document.getElementById('especialidadContainer'),
+    matriculaContainer: document.getElementById('matriculaContainer'),
+    onlineStatus: document.getElementById('onlineStatus'),
+    welcomeHeader: document.getElementById('welcomeHeader')
+  },
+  stats: {
+    container: document.getElementById('statsContainer'),
+    pendientes: document.getElementById('statPendientes'),
+    pendientesChange: document.getElementById('statPendientesChange'),
+    proceso: document.getElementById('statProceso'),
+    procesoChange: document.getElementById('statProcesoChange'),
+    completadas: document.getElementById('statCompletadas'),
+    completadasChange: document.getElementById('statCompletadasChange'),
+    pacientes: document.getElementById('statPacientes'),
+    pacientesChange: document.getElementById('statPacientesChange')
+  },
+  tables: {
+    container: document.getElementById('tableContainer'),
+    citasButton: document.getElementById('citasButton'),
+    pacientesButton: document.getElementById('pacientesButton'),
+    citasTable: document.getElementById('citasTable'),
+    pacientesTable: document.getElementById('pacientesTable'),
+    citasSearch: document.getElementById('citasSearch'),
+    citasEstadoFilter: document.getElementById('citasEstadoFilter'),
+    pacientesSearch: document.getElementById('pacientesSearch'),
+    dateFilter: document.getElementById('dateFilter'),
+    citasExportButton: document.getElementById('citasExportButton'),
+    nuevoPacienteButton: document.getElementById('nuevoPacienteButton'),
+    citasTableBodyDesktop: document.getElementById('citasTableBodyDesktop'),
+    citasTableBodyMobile: document.getElementById('citasTableBodyMobile'),
+    pacientesTableBodyDesktop: document.getElementById('pacientesTableBodyDesktop'),
+    pacientesTableBodyMobile: document.getElementById('pacientesTableBodyMobile')
+  },
+  toast: {
+    container: document.getElementById('toast'),
+    message: document.getElementById('toastMessage'),
+    icon: document.getElementById('toastIcon'),
+    closeButton: document.getElementById('closeToast')
+  }
+};
+
+// Utilidades
+const utils = {
+  // Formatear fecha/hora
+  formatDateTime: (dateString, options = {}) => {
+    if (!dateString) return 'No disponible';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit',
+        ...options
+      });
+    } catch (e) {
+      console.error('Error al formatear fecha:', e);
+      return 'Fecha inválida';
+    }
+  },
+  
+  // Obtener información del estado de una cita
+  getEstadoInfo: (estado) => {
+    const estados = {
+      'en_proceso': {
+        class: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200',
+        text: 'En proceso',
+        icon: '<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'
+      },
+      'completada': {
+        class: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200',
+        text: 'Completada',
+        icon: '<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>'
+      },
+      'pendiente': {
+        class: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200',
+        text: 'Pendiente',
+        icon: '<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'
+      },
+      'cancelada': {
+        class: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200',
+        text: 'Cancelada',
+        icon: '<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>'
+      }
+    };
+    
+    return estados[estado] || {
+      class: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
+      text: estado || 'Desconocido',
+      icon: '<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'
+    };
+  },
+  
+  // Obtener color aleatorio para avatar basado en el nombre
+  getAvatarColor: (name) => {
+    if (!name) return { bg: 'bg-gray-100', text: 'text-gray-800', dark: { bg: 'dark:bg-gray-700', text: 'dark:text-gray-200' } };
+    
+    const colors = [
+      { bg: 'bg-blue-100', text: 'text-blue-800', dark: { bg: 'dark:bg-blue-900/50', text: 'dark:text-blue-200' } },
+      { bg: 'bg-green-100', text: 'text-green-800', dark: { bg: 'dark:bg-green-900/50', text: 'dark:text-green-200' } },
+      { bg: 'bg-purple-100', text: 'text-purple-800', dark: { bg: 'dark:bg-purple-900/50', text: 'dark:text-purple-200' } },
+      { bg: 'bg-indigo-100', text: 'text-indigo-800', dark: { bg: 'dark:bg-indigo-900/50', text: 'dark:text-indigo-200' } },
+      { bg: 'bg-pink-100', text: 'text-pink-800', dark: { bg: 'dark:bg-pink-900/50', text: 'dark:text-pink-200' } },
+      { bg: 'bg-yellow-100', text: 'text-yellow-800', dark: { bg: 'dark:bg-yellow-900/50', text: 'dark:text-yellow-200' } }
+    ];
+    
+    // Usar la suma de los códigos de caracteres para determinar el color
+    const charSum = name.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    return colors[charSum % colors.length];
+  },
+  
+  // Filtrar citas según los filtros actuales
+  filtrarCitas: () => {
+    let citasFiltradas = [...state.citas];
+    
+    // Filtrar por texto
+    if (state.filtros.citas.texto) {
+      const texto = state.filtros.citas.texto.toLowerCase();
+      citasFiltradas = citasFiltradas.filter(cita => 
+        (cita.pacienteId?.nombre || '').toLowerCase().includes(texto) ||
+        (cita.motivo || '').toLowerCase().includes(texto)
+      );
+    }
+    
+    // Filtrar por estado
+    if (state.filtros.citas.estado !== 'todos') {
+      citasFiltradas = citasFiltradas.filter(cita => 
+        cita.estado === state.filtros.citas.estado
+      );
+    }
+    
+    // Filtrar por fecha
+    if (state.filtros.citas.fecha !== 'todos') {
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      
+      const inicioSemana = new Date(hoy);
+      inicioSemana.setDate(hoy.getDate() - hoy.getDay());
+      
+      const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+      
+      citasFiltradas = citasFiltradas.filter(cita => {
+        const fechaCita = new Date(cita.fecha);
+        
+        if (state.filtros.citas.fecha === 'hoy') {
+          return fechaCita >= hoy && fechaCita < new Date(hoy.getTime() + 86400000);
+        } else if (state.filtros.citas.fecha === 'semana') {
+          return fechaCita >= inicioSemana;
+        } else if (state.filtros.citas.fecha === 'mes') {
+          return fechaCita >= inicioMes;
+        }
+        
+        return true;
+      });
+    }
+    
+    return citasFiltradas.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+  },
+  
+  // Filtrar pacientes según los filtros actuales
+  filtrarPacientes: () => {
+    let pacientesFiltrados = [...state.pacientes];
+    
+    // Filtrar por texto
+    if (state.filtros.pacientes.texto) {
+      const texto = state.filtros.pacientes.texto.toLowerCase();
+      pacientesFiltrados = pacientesFiltrados.filter(paciente => 
+        (paciente.nombre || '').toLowerCase().includes(texto) ||
+        (paciente.dni || '').toLowerCase().includes(texto) ||
+        (paciente.mail || '').toLowerCase().includes(texto)
+      );
+    }
+    
+    return pacientesFiltrados.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
+  },
+  
+  // Generar ID único
+  generateId: () => '_' + Math.random().toString(36).substr(2, 9),
+  
+  // Función para manejar errores de fetch
+  handleFetchError: async (response) => {
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Error ${response.status}: ${errorText}`);
+    }
+    return response;
+  },
+  
+  // Crear una función para observar visibilidad
+  observeVisibility: (element, callback) => {
+    if (!element) return null;
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          callback();
+          observer.unobserve(element);
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    observer.observe(element);
+    return observer;
+  }
+};
+
+// Funciones UI
+const ui = {
+  // Mostrar notificación tipo toast mejorado
+  showToast: (message, type = 'success') => {
+    const { container, message: messageEl, icon, closeButton } = elements.toast;
+    
+    if (!container || !messageEl || !icon) return;
+    
+    // Configurar tipo
+    const types = {
+      success: {
+        bgClass: 'bg-green-100 dark:bg-green-900/20',
+        textClass: 'text-green-800 dark:text-green-200',
+        iconClass: 'bg-green-100 text-green-500 dark:bg-green-900/30 dark:text-green-300',
+        buttonClass: 'text-green-500 hover:bg-green-200 focus:ring-green-300 dark:text-green-300 dark:hover:bg-green-800/30',
+        svg: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
+      },
+      error: {
+        bgClass: 'bg-red-100 dark:bg-red-900/20',
+        textClass: 'text-red-800 dark:text-red-200',
+        iconClass: 'bg-red-100 text-red-500 dark:bg-red-900/30 dark:text-red-300',
+        buttonClass: 'text-red-500 hover:bg-red-200 focus:ring-red-300 dark:text-red-300 dark:hover:bg-red-800/30',
+        svg: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
+      },
+      warning: {
+        bgClass: 'bg-yellow-100 dark:bg-yellow-900/20',
+        textClass: 'text-yellow-800 dark:text-yellow-200',
+        iconClass: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-300',
+        buttonClass: 'text-yellow-500 hover:bg-yellow-200 focus:ring-yellow-300 dark:text-yellow-300 dark:hover:bg-yellow-800/30',
+        svg: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>'
+      },
+      info: {
+        bgClass: 'bg-blue-100 dark:bg-blue-900/20',
+        textClass: 'text-blue-800 dark:text-blue-200',
+        iconClass: 'bg-blue-100 text-blue-500 dark:bg-blue-900/30 dark:text-blue-300',
+        buttonClass: 'text-blue-500 hover:bg-blue-200 focus:ring-blue-300 dark:text-blue-300 dark:hover:bg-blue-800/30',
+        svg: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+      }
+    };
+    
+    const typeConfig = types[type] || types.info;
+    
+    // Remover clases anteriores
+    container.className = container.className.replace(/(bg|text)-\w+-\d+/g, '');
+    icon.className = icon.className.replace(/(bg|text)-\w+-\d+/g, '');
+    closeButton.className = closeButton.className.replace(/(text|bg|focus:ring)-\w+-\d+/g, '');
+    
+    // Aplicar nuevas clases
+    container.classList.add('fixed', 'top-4', 'right-4', 'z-50', 'max-w-xs', 'transform', 'transition-all', 'duration-300');
+    container.firstElementChild.className = `flex items-center p-4 rounded-lg shadow-lg ${typeConfig.bgClass} ${typeConfig.textClass}`;
+    
+    icon.className = `inline-flex flex-shrink-0 items-center justify-center w-8 h-8 rounded-lg ${typeConfig.iconClass}`;
+    icon.innerHTML = typeConfig.svg;
+    
+    closeButton.className = `ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2 p-1.5 inline-flex h-8 w-8 focus:outline-none ${typeConfig.buttonClass}`;
+    
+    // Actualizar mensaje
+    messageEl.textContent = message;
+    
+    // Mostrar toast con animación
+    container.classList.remove('hidden');
+    setTimeout(() => {
+      container.classList.remove('translate-y-[-1rem]', 'opacity-0');
+      container.classList.add('translate-y-0', 'opacity-100');
+    }, 10);
+    
+    // Auto-cerrar después de 5 segundos
+    const toastTimeout = setTimeout(() => {
+      ui.hideToast();
+    }, 5000);
+    
+    // Guardar referencia al timeout
+    container.dataset.timeout = toastTimeout;
+    
+    return toastTimeout;
+  },
+  
+  // Ocultar toast
+  hideToast: () => {
+    const { container } = elements.toast;
+    
+    if (!container) return;
+    
+    // Limpiar timeout existente
+    if (container.dataset.timeout) {
+      clearTimeout(parseInt(container.dataset.timeout));
+    }
+    
+    // Animar salida
+    container.classList.remove('translate-y-0', 'opacity-100');
+    container.classList.add('translate-y-[-1rem]', 'opacity-0');
+    
+    // Ocultar después de la animación
+    setTimeout(() => {
+      container.classList.add('hidden');
+    }, 300);
+  },
+  
+  // Actualizar estadísticas
+  updateStats: () => {
+    const { stats } = elements;
+    
+    if (!stats.container || !stats.pendientes) return;
+    
+    // Actualizar contadores
+    stats.pendientes.textContent = state.stats.pendientes;
+    stats.proceso.textContent = state.stats.proceso;
+    stats.completadas.textContent = state.stats.completadas;
+    stats.pacientes.textContent = state.stats.pacientes;
+    
+    // Mostrar estadísticas
+    stats.container.classList.remove('hidden');
+    
+    // Animación de números
+    const animateCounter = (element, value) => {
+      const duration = 1500;
+      const start = 0;
+      const increment = Math.ceil(value / (duration / 16));
+      let current = 0;
+      
+      const updateCounter = () => {
+        current += increment;
+        if (current > value) current = value;
+        element.textContent = current;
+        
+        if (current < value) requestAnimationFrame(updateCounter);
+      };
+      
+      updateCounter();
+    };
+    
+    // Iniciar animaciones con un pequeño retraso escalonado
+    setTimeout(() => animateCounter(stats.pendientes, state.stats.pendientes), 300);
+    setTimeout(() => animateCounter(stats.pacientes, state.stats.pacientes), 500);
+    setTimeout(() => animateCounter(stats.completadas, state.stats.completadas), 700);
+    setTimeout(() => animateCounter(stats.proceso, state.stats.proceso), 900);
+    
+    // Actualizar tendencias (comparación con períodos anteriores)
+    stats.pendientesChange.innerHTML = `
+      <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+      </svg>
+      2 más
+    `;
+    
+    stats.pacientesChange.innerHTML = `
+      <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+      </svg>
+      3 nuevos
+    `;
+    
+    stats.completadasChange.textContent = '4 citas';
+    stats.procesoChange.textContent = 'actualmente';
+  },
+  
+  // Cambiar entre tabs
+  switchTab: (tab) => {
+    const { citasButton, pacientesButton, citasTable, pacientesTable } = elements.tables;
+    
+    // Actualizar botones
+    citasButton.classList.toggle('active', tab === 'citas');
+    citasButton.setAttribute('aria-pressed', tab === 'citas');
+    pacientesButton.classList.toggle('active', tab === 'pacientes');
+    pacientesButton.setAttribute('aria-pressed', tab === 'pacientes');
+    
+    // Actualizar contenido
+    citasTable.classList.toggle('hidden', tab !== 'citas');
+    pacientesTable.classList.toggle('hidden', tab !== 'pacientes');
+    
+    // Cargar datos correspondientes
+    if (tab === 'citas') {
+      api.cargarCitas();
+    } else {
+      api.cargarPacientes();
+    }
+  },
+  
+  // Renderizar citas
+  renderizarCitas: (citas) => {
+    const { citasTableBodyDesktop, citasTableBodyMobile } = elements.tables;
+    
+    if (!citasTableBodyDesktop || !citasTableBodyMobile) return;
+    
+    // Estado vacío si no hay citas
+    if (citas.length === 0) {
+      const emptyState = `
+        <div class="flex flex-col items-center justify-center py-12 text-center">
+          <div class="rounded-full bg-blue-50 dark:bg-blue-900/30 p-3 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-1">No hay citas que mostrar</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">No se encontraron citas con los filtros actuales</p>
+          <button id="resetCitasFilters" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-colors">
+            Limpiar filtros
+          </button>
+        </div>
+      `;
+      
+      citasTableBodyDesktop.innerHTML = `
+        <tr><td colspan="6" class="px-6 py-4 text-center">${emptyState}</td></tr>
+      `;
+      citasTableBodyMobile.innerHTML = emptyState;
+      
+      // Agregar evento para reset de filtros
+      document.getElementById('resetCitasFilters')?.addEventListener('click', () => {
+        state.filtros.citas.texto = '';
+        state.filtros.citas.estado = 'todos';
+        state.filtros.citas.fecha = 'todos';
+        
+        elements.tables.citasSearch.value = '';
+        elements.tables.citasEstadoFilter.value = 'todos';
+        elements.tables.dateFilter.value = 'todos';
+        
+        // Volver a filtrar y renderizar
+        ui.renderizarCitas(utils.filtrarCitas());
+      });
+      
+      return;
+    }
+
+    // Limpiar contenedores
+    citasTableBodyDesktop.innerHTML = '';
+    citasTableBodyMobile.innerHTML = '';
+
+    // Renderizar citas
+    citas.forEach((cita, index) => {
+      const hora = utils.formatDateTime(cita.fecha);
+      const fecha = utils.formatDateTime(cita.fecha, { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+      const consultaUrl = `/consulta?id=${cita._id}`;
+      const estadoInfo = utils.getEstadoInfo(cita.estado);
+      const delay = index * 50; // Para animación escalonada
+      const avatarColor = utils.getAvatarColor(cita.pacienteId?.nombre);
+
+      // Vista Desktop
+      const rowDesktop = document.createElement('tr');
+      rowDesktop.className = 'hover:bg-gray-50 dark:hover:bg-gray-750 transition-all duration-200 animate-fadeIn';
+      rowDesktop.style.animationDelay = `${delay}ms`;
+      rowDesktop.innerHTML = `
+        <td class="px-6 py-4 whitespace-nowrap">
+          <span class="font-medium text-gray-900 dark:text-white">${hora}</span>
+          <p class="text-xs text-gray-500 dark:text-gray-400">${fecha}</p>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 h-8 w-8 ${avatarColor.bg} ${avatarColor.dark.bg} rounded-full flex items-center justify-center ${avatarColor.text} ${avatarColor.dark.text}">
+              ${cita.pacienteId?.nombre?.charAt(0).toUpperCase() || '?'}
+            </div>
+            <div class="ml-3">
+              <p class="font-medium text-gray-900 dark:text-white">
+                ${cita.pacienteId?.nombre || 'No disponible'}
+              </p>
+              ${cita.pacienteId?.dni ? 
+                `<p class="text-xs text-gray-500 dark:text-gray-400">
+                  DNI: ${cita.pacienteId.dni}
+                </p>` : 
+                ''}
+            </div>
+          </div>
+        </td>
+        <td class="px-6 py-4 max-w-xs">
+          <div class="line-clamp-2 text-gray-700 dark:text-gray-300">${cita.motivo || 'Sin motivo'}</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${estadoInfo.class}">
+            ${estadoInfo.icon}
+            ${estadoInfo.text}
+          </span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <span class="font-medium ${cita.monto ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}">
+            ${cita.monto ? `$${cita.monto}` : 'No definido'}
+          </span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          ${cita.estado === 'pendiente' ? `
+            <a href="${consultaUrl}"
+               class="group inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 transition-colors">
+                <span>Atender</span>
+                <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+            </a>
+          ` : cita.estado === 'en_proceso' ? `
+            <a href="${consultaUrl}"
+               class="group inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 dark:focus:ring-yellow-800 transition-colors">
+                <span>Continuar</span>
+                <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+            </a>
+          ` : `
+            <a href="${consultaUrl}"
+               class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 dark:text-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                <span>Ver detalle</span>
+            </a>
+          `}
+        </td>
+      `;
+      citasTableBodyDesktop.appendChild(rowDesktop);
+
+      // Vista Mobile (Tarjeta mejorada)
+      const cardMobile = document.createElement('div');
+      cardMobile.className = 'p-4 bg-white dark:bg-gray-800 animate-fadeIn';
+      cardMobile.style.animationDelay = `${delay}ms`;
+      cardMobile.innerHTML = `
+        <div class="space-y-3">
+          <div class="flex justify-between items-start">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10 ${avatarColor.bg} ${avatarColor.dark.bg} rounded-full flex items-center justify-center ${avatarColor.text} ${avatarColor.dark.text} text-lg font-medium">
+                ${cita.pacienteId?.nombre?.charAt(0).toUpperCase() || '?'}
+              </div>
+              <div class="ml-3">
+                <p class="text-base font-medium text-gray-900 dark:text-white">
+                  ${cita.pacienteId?.nombre || 'No disponible'}
+                </p>
+                <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  ${hora}
+                </div>
+              </div>
+            </div>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${estadoInfo.class}">
+              ${estadoInfo.icon}
+              ${estadoInfo.text}
+            </span>
+          </div>
+          
+          <div class="rounded-lg bg-gray-50 dark:bg-gray-700/50 p-3 space-y-2">
+            <div>
+              <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Fecha</p>
+              <p class="text-sm text-gray-900 dark:text-white">${fecha}</p>
+            </div>
+            
+            <div>
+              <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Motivo</p>
+              <p class="text-sm text-gray-900 dark:text-white line-clamp-2">${cita.motivo || 'Sin motivo'}</p>
+            </div>
+            
+            <div class="flex items-center justify-between pt-2">
+              <div>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Monto</p>
+                <p class="text-sm font-medium ${cita.monto ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}">
+                  ${cita.monto ? `$${cita.monto}` : 'No definido'}
+                </p>
+              </div>
+              
+              ${cita.estado === 'pendiente' ? `
+                <a href="${consultaUrl}"
+                  class="group inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 transition-colors">
+                    <span>Atender</span>
+                    <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </a>
+              ` : cita.estado === 'en_proceso' ? `
+                <a href="${consultaUrl}"
+                  class="group inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 dark:focus:ring-yellow-800 transition-colors">
+                    <span>Continuar</span>
+                    <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </a>
+              ` : `
+                <a href="${consultaUrl}"
+                  class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 dark:text-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                    <span>Ver detalle</span>
+                </a>
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+      citasTableBodyMobile.appendChild(cardMobile);
+    });
+  },
+  
+  // Renderizar pacientes
+  renderizarPacientes: (pacientes) => {
+    const { pacientesTableBodyDesktop, pacientesTableBodyMobile } = elements.tables;
+    
+    if (!pacientesTableBodyDesktop || !pacientesTableBodyMobile) return;
+    
+    // Estado vacío si no hay pacientes
+    if (pacientes.length === 0) {
+      const emptyState = `
+        <div class="flex flex-col items-center justify-center py-12 text-center">
+          <div class="rounded-full bg-blue-50 dark:bg-blue-900/30 p-3 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-1">No hay pacientes registrados</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">No se encontraron pacientes con los filtros actuales</p>
+          <div class="mt-6 space-x-2">
+            <button id="resetPacientesFilters" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-colors">
+              Limpiar filtros
+            </button>
+            <a href="/nuevo-paciente" class="inline-flex items-center px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300 transition-colors">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              Agregar Paciente
+            </a>
+          </div>
+        </div>
+      `;
+      
+      pacientesTableBodyDesktop.innerHTML = `
+        <tr><td colspan="5" class="px-6 py-4 text-center">${emptyState}</td></tr>
+      `;
+      pacientesTableBodyMobile.innerHTML = emptyState;
+      
+      // Agregar evento para reset de filtros
+      document.getElementById('resetPacientesFilters')?.addEventListener('click', () => {
+        state.filtros.pacientes.texto = '';
+        elements.tables.pacientesSearch.value = '';
+        
+        // Volver a filtrar y renderizar
+        ui.renderizarPacientes(utils.filtrarPacientes());
+      });
+      
+      return;
+    }
+
+    // Limpiar contenedores
+    pacientesTableBodyDesktop.innerHTML = '';
+    pacientesTableBodyMobile.innerHTML = '';
+
+    // Renderizar pacientes
+    pacientes.forEach((paciente, index) => {
+      const pacienteUrl = `/paciente/${paciente.dni}`;
+      const delay = index * 50; // Para animación escalonada
+      const avatarColor = utils.getAvatarColor(paciente.nombre);
+      
+      // Vista Desktop
+      const rowDesktop = document.createElement('tr');
+      rowDesktop.className = 'hover:bg-gray-50 dark:hover:bg-gray-750 transition-all duration-200 animate-fadeIn';
+      rowDesktop.style.animationDelay = `${delay}ms`;
+      rowDesktop.innerHTML = `
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 h-9 w-9 ${avatarColor.bg} ${avatarColor.dark.bg} rounded-full flex items-center justify-center ${avatarColor.text} ${avatarColor.dark.text}">
+              ${paciente.nombre?.charAt(0).toUpperCase() || '?'}
+            </div>
+            <div class="ml-3">
+              <p class="font-medium text-gray-900 dark:text-white">
+                ${paciente.nombre || 'No disponible'}
+              </p>
+            </div>
+          </div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <span class="text-gray-700 dark:text-gray-300">${paciente.dni || 'No disponible'}</span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          ${paciente.telefono ? 
+            `<span class="text-gray-700 dark:text-gray-300">${paciente.areaCode || ''} ${paciente.telefono}</span>` : 
+            '<span class="text-gray-400 dark:text-gray-500">No disponible</span>'
+          }
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          ${paciente.mail ? 
+            `<a href="mailto:${paciente.mail}" class="text-blue-600 dark:text-blue-400 hover:underline">
+              ${paciente.mail}
+            </a>` : 
+            '<span class="text-gray-400 dark:text-gray-500">No disponible</span>'
+          }
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="flex space-x-2">
+            <a href="${pacienteUrl}" 
+                class="group inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-colors">
+              <span>Ver perfil</span>
+              <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+            <a href="/nueva-cita?paciente=${paciente.dni}" 
+                class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 transition-colors">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>Agendar</span>
+            </a>
+          </div>
+        </td>
+      `;
+      pacientesTableBodyDesktop.appendChild(rowDesktop);
+
+      // Vista Mobile mejorada
+      const cardMobile = document.createElement('div');
+      cardMobile.className = 'p-4 bg-white dark:bg-gray-800 animate-fadeIn';
+      cardMobile.style.animationDelay = `${delay}ms`;
+      cardMobile.innerHTML = `
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-12 w-12 ${avatarColor.bg} ${avatarColor.dark.bg} rounded-full flex items-center justify-center ${avatarColor.text} ${avatarColor.dark.text} text-lg font-medium">
+                ${paciente.nombre?.charAt(0).toUpperCase() || '?'}
+              </div>
+              <div class="ml-3">
+                <p class="text-base font-medium text-gray-900 dark:text-white">
+                  ${paciente.nombre || 'No disponible'}
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  DNI: ${paciente.dni || 'No disponible'}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="rounded-lg bg-gray-50 dark:bg-gray-700/50 p-3 space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Teléfono</p>
+                <p class="text-sm text-gray-900 dark:text-white">
+                  ${paciente.telefono ? 
+                    `${paciente.areaCode || ''} ${paciente.telefono}` : 
+                    'No disponible'
+                  }
+                </p>
+              </div>
+              
+              <div>
+                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Email</p>
+                ${paciente.mail ? 
+                  `<a href="mailto:${paciente.mail}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                    ${paciente.mail}
+                  </a>` : 
+                  '<p class="text-sm text-gray-400 dark:text-gray-500">No disponible</p>'
+                }
+              </div>
+            </div>
+            
+            <div class="border-t border-gray-200 dark:border-gray-600 pt-3 flex items-center justify-between">
+              <a href="${pacienteUrl}" 
+                 class="group inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-colors">
+                <span>Ver perfil</span>
+                <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+              
+              <a href="/nueva-cita?paciente=${paciente.dni}" 
+                 class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-800 transition-colors">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span>Agendar</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+      pacientesTableBodyMobile.appendChild(cardMobile);
+    });
+  }
+};
+
+// Funciones API
+const api = {
+  // Cargar datos del perfil
+  cargarPerfil: async () => {
+    try {
+      const userId = localStorage.getItem('userId');
+      const userRole = localStorage.getItem('userRole');
+
+      if (!userId || !userRole) {
+        window.location.href = '/login';
+        return;
+      }
+
+      // Actualizar bienvenida
+      if (elements.profile.welcomeHeader) {
+        // Determinar saludo según hora del día
+        const hora = new Date().getHours();
+        let saludo = 'Buenos días';
+        if (hora >= 12 && hora < 19) saludo = 'Buenas tardes';
+        else if (hora >= 19 || hora < 6) saludo = 'Buenas noches';
+        
+        elements.profile.welcomeHeader.innerHTML = `<div class="inline-block h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-64"></div>`;
+      }
+
+      // Actualizar imagen según el tipo de usuario
+      if (elements.profile.image && elements.profile.imageSkeleton) {
+        elements.profile.image.src = userRole === 'secretaria' 
+          ? '/images/perfil-logo-secretaria.png' 
+          : '/images/perfil-logo.png';
+      }
+      
+      // Mostrar/ocultar elementos según el rol
+      if (elements.tables.container) {
+        elements.tables.container.style.display = userRole === 'secretaria' ? 'none' : 'block';
+      }
+
+      // Determinar el endpoint según el rol
+      let endpoint = '';
+      if (userRole === 'secretaria') {
+        endpoint = `${BASE_URL}/secretaria/buscarId/${userId}`;
+      } else if (userRole === 'odontologo') {
+        endpoint = `${BASE_URL}/medico/findById/${userId}`;
+        
+        // Mostrar campos específicos de odontólogo
+        if (elements.profile.especialidadContainer) elements.profile.especialidadContainer.classList.remove('hidden');
+        if (elements.profile.matriculaContainer) elements.profile.matriculaContainer.classList.remove('hidden');
+      }
+
+      // Realizar la petición con manejo de errores mejorado
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
+      
+      const response = await fetch(endpoint, { 
+        signal: controller.signal,
+        headers: { 
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const userData = userRole === 'secretaria' ? data.secretaria : (data.medico || data);
+      
+      // Guardar datos en estado
+      state.userData = userData;
+
+      // Actualizar elementos del DOM con animación
+      setTimeout(() => {
+        // Mostrar imagen de perfil
+        if (elements.profile.image && elements.profile.imageSkeleton) {
+          elements.profile.imageSkeleton.classList.add('hidden');
+          elements.profile.image.classList.remove('hidden');
+          
+          // Si tiene foto personalizada, actualizarla
+          if (userData.photoUrl) {
+            elements.profile.image.src = userData.photoUrl;
+          }
+          
+          // Mostrar indicador online
+          elements.profile.onlineStatus.classList.remove('opacity-0');
+        }
+        
+        // Actualizar nombre con animación de typing
+        if (elements.profile.name) {
+          const nombreCompleto = userData.nombre || 'Usuario';
+          elements.profile.name.innerHTML = '';
+          elements.profile.name.classList.add('border-r-2', 'border-gray-900', 'dark:border-white', 'pr-1');
+          
+          let i = 0;
+          const typeEffect = setInterval(() => {
+            if (i < nombreCompleto.length) {
+              elements.profile.name.innerHTML += nombreCompleto.charAt(i);
+              i++;
+            } else {
+              clearInterval(typeEffect);
+              setTimeout(() => {
+                elements.profile.name.classList.remove('border-r-2', 'border-gray-900', 'dark:border-white', 'pr-1');
+              }, 300);
+            }
+          }, 50);
+        }
+        
+        // Actualizar bienvenida con el nombre
+        if (elements.profile.welcomeHeader) {
+          const hora = new Date().getHours();
+          let saludo = 'Buenos días';
+          if (hora >= 12 && hora < 19) saludo = 'Buenas tardes';
+          else if (hora >= 19 || hora < 6) saludo = 'Buenas noches';
+          
+          elements.profile.welcomeHeader.innerHTML = `
+            <span class="text-gray-900 dark:text-white">${saludo},</span> 
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">${userData.nombre?.split(' ')[0] || 'Usuario'}</span>
+          `;
+        }
+        
+        // Actualizar rol
+        if (elements.profile.role) {
+          const rolTexto = userRole === 'secretaria' ? 'Secretaria' : 'Odontólogo';
+          elements.profile.role.innerHTML = `
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              ${rolTexto}
+            </span>
+          `;
+        }
+        
+        // Actualizar email
+        if (elements.profile.email) {
+          elements.profile.email.innerHTML = userData.email || 'No disponible';
+        }
+        
+        // Actualizar teléfono
+        if (elements.profile.phone) {
+          elements.profile.phone.innerHTML = userData.celular || userData.telefono || 'No disponible';
+        }
+        
+        // Actualizar campos específicos de odontólogo
+        if (userRole === 'odontologo') {
+          if (elements.profile.especialidad) {
+            elements.profile.especialidad.innerHTML = userData.especialidad || 'No especificada';
+          }
+          
+          if (elements.profile.matricula) {
+            elements.profile.matricula.innerHTML = userData.nMatricula || 'No disponible';
+          }
+          
+          // Cargar datos de las tablas
+          api.setupTables();
+        }
+      }, 800); // Retraso para mostrar los skeletons
+
+    } catch (error) {
+      console.error('Error loading user data:', error);
+      let errorMessage = 'Error al cargar los datos del perfil';
+      
+      if (error.name === 'AbortError') {
+        errorMessage = 'Tiempo de espera agotado. Verifique su conexión.';
+      } else if (error.message.includes('status')) {
+        errorMessage = `Error de servidor: ${error.message}`;
+      }
+      
+      ui.showToast(errorMessage, 'error');
+      
+      // Actualizar elementos con mensaje de error
+      setTimeout(() => {
+        if (elements.profile.name) {
+          elements.profile.name.innerHTML = 'Error al cargar datos';
+        }
+        
+        if (elements.profile.welcomeHeader) {
+          elements.profile.welcomeHeader.innerHTML = 'Bienvenido al sistema';
+        }
+        
+        if (elements.profile.role) {
+          elements.profile.role.innerHTML = `
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Error de conexión
+            </span>
+          `;
+        }
+        
+        // Mostrar imagen genérica
+        if (elements.profile.image && elements.profile.imageSkeleton) {
+          elements.profile.imageSkeleton.classList.add('hidden');
+          elements.profile.image.classList.remove('hidden');
+        }
+        
+        // Actualizar campos con mensaje genérico
+        const errorFields = [
+          elements.profile.email, 
+          elements.profile.phone, 
+          elements.profile.especialidad, 
+          elements.profile.matricula
+        ];
+        
+        errorFields.forEach(field => {
+          if (field) field.innerHTML = 'Error al cargar datos';
+        });
+      }, 800);
+    }
+  },
+  
+  // Configurar tabs y sus eventos
+  setupTables: () => {
+    const { container, citasButton, pacientesButton } = elements.tables;
+    
+    if (!container || !citasButton || !pacientesButton) return;
+    
+    // Mostrar la sección de tablas
+    container.classList.remove('hidden');
+    
+    // Event listeners para los tabs
+    citasButton.addEventListener('click', () => ui.switchTab('citas'));
+    pacientesButton.addEventListener('click', () => ui.switchTab('pacientes'));
+    
+    // Event listeners para los filtros
+    elements.tables.citasSearch?.addEventListener('input', (e) => {
+      state.filtros.citas.texto = e.target.value;
+      ui.renderizarCitas(utils.filtrarCitas());
+    });
+    
+    elements.tables.citasEstadoFilter?.addEventListener('change', (e) => {
+      state.filtros.citas.estado = e.target.value;
+      ui.renderizarCitas(utils.filtrarCitas());
+    });
+    
+    elements.tables.dateFilter?.addEventListener('change', (e) => {
+      state.filtros.citas.fecha = e.target.value;
+      ui.renderizarCitas(utils.filtrarCitas());
+    });
+    
+    elements.tables.pacientesSearch?.addEventListener('input', (e) => {
+      state.filtros.pacientes.texto = e.target.value;
+      ui.renderizarPacientes(utils.filtrarPacientes());
+    });
+    
+    // Exportar citas a CSV
+    elements.tables.citasExportButton?.addEventListener('click', () => {
+      try {
+        const citasFiltradas = utils.filtrarCitas();
+        
+        if (citasFiltradas.length === 0) {
+          ui.showToast('No hay citas para exportar', 'warning');
+          return;
+        }
+        
+        // Preparar datos CSV
+        const headers = ['Fecha', 'Hora', 'Paciente', 'DNI', 'Motivo', 'Estado', 'Monto'];
+        
+        const rows = citasFiltradas.map(cita => {
+          const fecha = new Date(cita.fecha);
+          return [
+            fecha.toLocaleDateString('es-ES'),
+            fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+            cita.pacienteId?.nombre || 'No disponible',
+            cita.pacienteId?.dni || 'No disponible',
+            cita.motivo || '',
+            utils.getEstadoInfo(cita.estado).text,
+            cita.monto || '0'
+          ];
+        });
+        
+        // Construir CSV
+        const csvContent = [
+          headers.join(','),
+          ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+        ].join('\n');
+        
+        // Crear blob y link de descarga
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `citas_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        ui.showToast('Citas exportadas correctamente', 'success');
+      } catch (error) {
+        console.error('Error al exportar citas:', error);
+        ui.showToast('Error al exportar citas', 'error');
+      }
+    });
+    
+    // Redirección a nuevo paciente
+    elements.tables.nuevoPacienteButton?.addEventListener('click', () => {
+      window.location.href = '/nuevo-paciente';
+    });
+    
+    // Cargar citas por defecto
+    ui.switchTab('citas');
+  },
+  
+  // Cargar citas
+  cargarCitas: async () => {
+    if (!elements.tables.citasTableBodyDesktop || !elements.tables.citasTableBodyMobile) return;
+
+    try {
+      const userId = localStorage.getItem('userId');
+      
+      // Si ya tenemos citas cargadas, mostrarlas inmediatamente mientras se actualiza
+      if (state.citas.length > 0) {
+        ui.renderizarCitas(utils.filtrarCitas());
+      }
+      
+      // Hacer la petición para obtener citas actualizadas
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      
+      const response = await fetch(`${BASE_URL}/citas/todas`, { 
+        signal: controller.signal,
+        headers: { 'Cache-Control': 'no-store' }
+      });
+      
+      clearTimeout(timeoutId);
+      await utils.handleFetchError(response);
+      
+      const data = await response.json();
+      
+      // Filtrar citas del médico actual
+      const citasFiltradas = data
+        .filter(cita => cita.medicoId?._id === userId || cita.medicoId === userId)
+        .map(cita => {
+          // Normalizar datos inconsistentes
+          if (typeof cita.pacienteId === 'string') {
+            cita.pacienteTemp = { nombre: 'Cargando...', dni: '' };
+          }
+          return cita;
+        });
+      
+      // Actualizar estado
+      state.citas = citasFiltradas;
+      
+      // Actualizar estadísticas
+      state.stats.pendientes = citasFiltradas.filter(c => c.estado === 'pendiente').length;
+      state.stats.proceso = citasFiltradas.filter(c => c.estado === 'en_proceso').length;
+      state.stats.completadas = citasFiltradas.filter(c => c.estado === 'completada').length;
+      
+      // Actualizar UI
+      ui.updateStats();
+      ui.renderizarCitas(utils.filtrarCitas());
+      
+      // Cargar datos completos de pacientes para citas que solo tienen ID
+      const citasConIdPaciente = citasFiltradas.filter(c => 
+        typeof c.pacienteId === 'string' && c.pacienteId
+      );
+      
+      if (citasConIdPaciente.length > 0) {
+        const uniquePacienteIds = [...new Set(citasConIdPaciente.map(c => c.pacienteId))];
+        
+        // Cargar datos de los pacientes en paralelo
+        const pacientesPromises = uniquePacienteIds.map(id => 
+          fetch(`${BASE_URL}/paciente/findById/${id}`)
+            .then(response => response.ok ? response.json() : null)
+            .then(data => ({ id, data: data?.paciente }))
+            .catch(() => ({ id, data: null }))
+        );
+        
+        // Esperar a que todas las promesas se resuelvan
+        const pacientesResults = await Promise.all(pacientesPromises);
+        
+        // Crear un mapa de id -> datos del paciente
+        const pacientesMap = pacientesResults.reduce((map, result) => {
+          if (result.data) map[result.id] = result.data;
+          return map;
+        }, {});
+        
+        // Actualizar las citas con los datos de pacientes
+        state.citas = state.citas.map(cita => {
+          if (typeof cita.pacienteId === 'string' && pacientesMap[cita.pacienteId]) {
+            return { ...cita, pacienteId: pacientesMap[cita.pacienteId] };
+          }
+          return cita;
+        });
+        
+        // Actualizar UI nuevamente
+        ui.renderizarCitas(utils.filtrarCitas());
+      }
+
+    } catch (error) {
+      console.error('Error al cargar citas:', error);
+      let errorMessage = 'Error al cargar las citas';
+      
+      if (error.name === 'AbortError') {
+        errorMessage = 'Tiempo de espera agotado. Verifique su conexión.';
+      }
+      
+      ui.showToast(errorMessage, 'error');
+      
+      // Mostrar mensaje de error en la UI
+      const errorContent = `
+        <div class="flex flex-col items-center justify-center py-12 text-center">
+          <div class="rounded-full bg-red-50 dark:bg-red-900/20 p-3 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-1">Error al cargar las citas</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">${error.message}</p>
+          <button 
+            id="reintentarCitas" 
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-colors"
+          >
+            Reintentar
+          </button>
+        </div>
+      `;
+      
+      if (elements.tables.citasTableBodyDesktop && elements.tables.citasTableBodyMobile) {
+        elements.tables.citasTableBodyDesktop.innerHTML = `
+          <tr><td colspan="6" class="px-6 py-4 text-center">${errorContent}</td></tr>
+        `;
+        elements.tables.citasTableBodyMobile.innerHTML = errorContent;
+        
+        // Agregar evento para reintentar
+        document.getElementById('reintentarCitas')?.addEventListener('click', api.cargarCitas);
+      }
+    }
+  },
+  
+  // Cargar pacientes
+  cargarPacientes: async () => {
+    if (!elements.tables.pacientesTableBodyDesktop || !elements.tables.pacientesTableBodyMobile) return;
+
+    try {
+      // Si ya tenemos pacientes cargados, mostrarlos inmediatamente
+      if (state.pacientes.length > 0) {
+        ui.renderizarPacientes(utils.filtrarPacientes());
+      }
+      
+      const userId = localStorage.getItem('userId');
+      
+      // Obtener citas para extraer pacientes del médico
+      let citasResponse;
+      try {
+        citasResponse = await fetch(`${BASE_URL}/citas/todas`);
+        await utils.handleFetchError(citasResponse);
+      } catch (error) {
+        // Si falla al obtener citas, intentar usar las que ya tenemos
+        if (state.citas.length === 0) throw error;
+        citasResponse = { ok: true, json: () => Promise.resolve(state.citas) };
+      }
+      
+      const citasData = await citasResponse.json();
+      
+      const citasDelMedico = citasData.filter(cita => 
+        cita.medicoId?._id === userId || cita.medicoId === userId
+      );
+      
+      // Extraer IDs únicos de pacientes
+      const pacientesIds = [...new Set(citasDelMedico.map(cita => {
+        if (typeof cita.pacienteId === 'object' && cita.pacienteId !== null) {
+          return cita.pacienteId.id || cita.pacienteId._id;
+        }
+        return cita.pacienteId;
+      }))].filter(Boolean);
+      
+      // Actualizar estadística de pacientes
+      state.stats.pacientes = pacientesIds.length;
+      ui.updateStats();
+      
+      // Si no hay pacientes, mostrar estado vacío
+      if (pacientesIds.length === 0) {
+        state.pacientes = [];
+        ui.renderizarPacientes([]);
+        return;
+      }
+      
+      // Obtener datos de pacientes con manejo de errores mejorado
+      const pacientesPromises = pacientesIds.map(id => 
+        fetch(`${BASE_URL}/paciente/findById/${id}`)
+          .then(response => response.ok ? response.json() : null)
+          .then(data => data?.paciente)
+          .catch(error => {
+            console.error(`Error al obtener paciente ${id}:`, error);
+            return null;
+          })
+      );
+
+      const pacientes = (await Promise.all(pacientesPromises))
+        .filter(Boolean)
+        .sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
+        
+      // Actualizar estado
+      state.pacientes = pacientes;
+      
+      // Renderizar pacientes
+      ui.renderizarPacientes(utils.filtrarPacientes());
+
+    } catch (error) {
+      console.error('Error al cargar pacientes:', error);
+      let errorMessage = 'Error al cargar los pacientes';
+      
+      if (error.name === 'AbortError') {
+        errorMessage = 'Tiempo de espera agotado. Verifique su conexión.';
+      }
+      
+      ui.showToast(errorMessage, 'error');
+      
+      // Mostrar mensaje de error en la UI
+      const errorContent = `
+        <div class="flex flex-col items-center justify-center py-12 text-center">
+          <div class="rounded-full bg-red-50 dark:bg-red-900/20 p-3 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-medium text-gray-800 dark:text-white mb-1">Error al cargar los pacientes</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">${error.message}</p>
+          <button 
+            id="reintentarPacientes" 
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-colors"
+          >
+            Reintentar
+          </button>
+        </div>
+      `;
+      
+      if (elements.tables.pacientesTableBodyDesktop && elements.tables.pacientesTableBodyMobile) {
+        elements.tables.pacientesTableBodyDesktop.innerHTML = `
+          <tr><td colspan="5" class="px-6 py-4 text-center">${errorContent}</td></tr>
+        `;
+        elements.tables.pacientesTableBodyMobile.innerHTML = errorContent;
+        
+        // Agregar evento para reintentar
+        document.getElementById('reintentarPacientes')?.addEventListener('click', api.cargarPacientes);
+      }
+    }
+  }
+};
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', () => {
+  // Inicializar toast
+  elements.toast.closeButton?.addEventListener('click', ui.hideToast);
+  
+  // Inicializar perfil
+  api.cargarPerfil();
+  
+  // Para efectos visuales de carga progresiva
+  const observeElements = [
+    { element: elements.profile.image, delay: 300 },
+    { element: elements.stats.container, delay: 600 },
+    { element: elements.tables.container, delay: 900 }
+  ];
+  
+  observeElements.forEach(({ element, delay }) => {
+    if (element) {
+      setTimeout(() => {
+        element.classList.add('animate-fadeIn');
+      }, delay);
+    }
+  });
+  
+  // Lazy loading para secciones de la página cuando entran en viewport
+  utils.observeVisibility(elements.stats.container, () => {
+    if (state.stats.pendientes === 0) {
+      ui.updateStats();
+    }
+  });
+});

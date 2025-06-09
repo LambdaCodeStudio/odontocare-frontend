@@ -1,0 +1,552 @@
+---
+import LayoutCommon from "../app/LayoutCommon.astro";
+import LayoutProtected from "../app/LayoutProtected.astro";
+---
+
+<LayoutProtected>
+  <LayoutCommon>
+    <div class="min-h-screen bg-gradient-to-r from-slate-50 to-slate-100 p-4 text-slate-800 dark:from-slate-900 dark:to-slate-800 dark:text-slate-100 lg:p-8 transition-all duration-300">
+      <div class="mx-auto max-w-6xl">
+        <!-- Header -->
+        <div class="mb-8 flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+          <div class="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0">
+            <button id="volverBtn" class="group flex items-center text-blue-600 transition-colors duration-200 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" aria-label="Volver al inicio">
+              <svg 
+                class="mr-2 h-4 w-4 transform transition-transform duration-200 group-hover:-translate-x-1" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+              </svg>
+              Volver al inicio
+            </button>
+            <h1 class="text-3xl font-bold">Equipo</h1>
+          </div>
+          
+          <div class="flex items-center">
+            <div id="employeeCount" class="mr-2 hidden text-sm text-blue-600 dark:text-blue-400 sm:block">
+              <span id="filteredEmployeeCount">-</span><span>/</span><span id="totalEmployeeCount">-</span> <span>usuarios</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtros y Búsqueda -->
+        <div class="mb-8 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-6 shadow-md dark:from-slate-800 dark:to-slate-700">
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="space-y-2 lg:col-span-2">
+              <label for="searchInput" class="block text-base font-medium text-blue-800 dark:text-blue-300">Buscar</label>
+              <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <svg 
+                    class="h-5 w-5 text-gray-400 dark:text-gray-500" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Buscar por nombre o email..."
+                  class="w-full rounded-lg border border-gray-300 bg-white p-3 pl-10 text-gray-900 shadow-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-800"
+                  aria-label="Buscar usuario"
+                />
+              </div>
+            </div>
+            
+            <div class="space-y-2">
+              <label for="rolFilter" class="block text-base font-medium text-blue-800 dark:text-blue-300">Filtrar por Rol</label>
+              <div class="flex gap-3">
+                <button
+                  type="button"
+                  data-filter=""
+                  class="filter-button w-full rounded-lg bg-white px-4 py-3 text-gray-800 shadow-sm hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 active-filter"
+                >
+                  Todos
+                </button>
+              </div>
+              <div class="flex gap-3 mt-3">
+                <button
+                  type="button"
+                  data-filter="Odontólogo"
+                  class="filter-button w-full rounded-lg bg-white px-4 py-3 text-gray-800 shadow-sm hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+                >
+                  Odontólogos
+                </button>
+                <button
+                  type="button"
+                  data-filter="Secretaria"
+                  class="filter-button w-full rounded-lg bg-white px-4 py-3 text-gray-800 shadow-sm hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+                >
+                  Secretarias
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading Skeleton -->
+        <div id="loadingSkeleton" class="animate-pulse">
+          <div class="hidden md:block">
+            <div class="rounded-xl bg-white shadow-xl dark:bg-gray-800">
+              <div class="p-6 space-y-4">
+                <div class="grid grid-cols-5 gap-4">
+                  <div class="h-6 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-6 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-6 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-6 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-6 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                </div>
+                <div class="grid grid-cols-5 gap-4">
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                </div>
+                <div class="grid grid-cols-5 gap-4">
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="md:hidden space-y-4">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
+              <div class="flex justify-between">
+                <div class="w-1/2 h-6 bg-gray-200 rounded dark:bg-gray-700"></div>
+                <div class="w-8 h-8 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+              </div>
+              <div class="space-y-3 mt-4">
+                <div class="w-3/4 h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+                <div class="w-full h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+                <div class="w-5/6 h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+              </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
+              <div class="flex justify-between">
+                <div class="w-1/2 h-6 bg-gray-200 rounded dark:bg-gray-700"></div>
+                <div class="w-8 h-8 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+              </div>
+              <div class="space-y-3 mt-4">
+                <div class="w-3/4 h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+                <div class="w-full h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+                <div class="w-5/6 h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden">
+          <div class="flex flex-col items-center justify-center rounded-xl bg-white p-12 text-center shadow-xl dark:bg-gray-800">
+            <div class="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/30">
+              <svg 
+                class="h-12 w-12 text-blue-600 dark:text-blue-400" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+            </div>
+            <h3 class="mb-2 text-xl font-semibold text-gray-900 dark:text-white">No se encontraron usuarios</h3>
+            <p class="mb-6 text-gray-600 dark:text-gray-400" id="emptyStateMessage">No hay resultados para la búsqueda actual.</p>
+            <button
+              id="clearFiltersBtn"
+              class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-medium text-white shadow-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-all duration-200 transform hover:translate-y-[-2px]"
+              aria-label="Limpiar filtros"
+            >
+              <svg
+                class="mr-2 h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+
+        <!-- Desktop Table -->
+        <div id="dataContainer" class="hidden md:block overflow-hidden rounded-xl bg-white shadow-xl dark:bg-gray-800 transition-all duration-300">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+              <tr>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Nombre</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Email</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Celular</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Rol</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Especialidad</th>
+              </tr>
+            </thead>
+            <tbody id="empleadosTableBodyDesktop" class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
+              <!-- Filled dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Cards -->
+        <div class="md:hidden space-y-4" id="empleadosTableBodyMobile">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 space-y-3"></div>
+  </LayoutCommon>
+</LayoutProtected>
+
+<script>
+  const BASE_URL = "http://localhost:5000/api";
+  
+  // Estado global
+  const state = {
+    empleados: [],
+    filteredEmpleados: [],
+    loading: true,
+    filters: {
+      searchTerm: "",
+      rolFilter: "",
+    }
+  };
+  
+  function showToast(message, type = 'success') {
+    const toastContainer = document.getElementById("toastContainer");
+    
+    if (!toastContainer) return;
+    
+    const toast = document.createElement("div");
+    const bgColor = type === "success" 
+      ? "bg-green-50 border-green-500 text-green-800 dark:bg-green-900/30 dark:text-green-200 dark:border-green-600" 
+      : "bg-red-50 border-red-500 text-red-800 dark:bg-red-900/30 dark:text-red-200 dark:border-red-600";
+    
+    const iconColor = type === "success" ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400";
+    const iconPath = type === "success" 
+      ? "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
+      : "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z";
+    
+    toast.className = `flex items-center w-full max-w-sm p-4 mb-4 rounded-lg shadow-lg border-l-4 ${bgColor} transform transition-all duration-300 ease-out translate-x-full opacity-0`;
+    toast.innerHTML = `
+      <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 ${iconColor}">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconPath}"></path>
+        </svg>
+      </div>
+      <div class="ml-3 text-sm font-normal">${message}</div>
+      <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 inline-flex h-8 w-8" aria-label="Cerrar">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    // Añadir event listener para cerrar
+    toast.querySelector("button").addEventListener("click", () => {
+      toast.classList.add("translate-x-full", "opacity-0");
+      setTimeout(() => toast.remove(), 300);
+    });
+    
+    // Animación de entrada
+    setTimeout(() => {
+      toast.classList.remove("translate-x-full", "opacity-0");
+    }, 10);
+    
+    // Auto cerrar después de 5 segundos
+    setTimeout(() => {
+      if (toast.parentNode) {
+        toast.classList.add("translate-x-full", "opacity-0");
+        setTimeout(() => toast.remove(), 300);
+      }
+    }, 5000);
+  }
+  
+  function getRolClass(rol) {
+    return rol === 'Odontólogo' 
+      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200'
+      : 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200';
+  }
+  
+  function toggleLoadingState(isLoading) {
+    state.loading = isLoading;
+    const loadingSkeleton = document.getElementById("loadingSkeleton");
+    const dataContainer = document.getElementById("dataContainer");
+    const mobileContainer = document.getElementById("empleadosTableBodyMobile");
+    const emptyState = document.getElementById("emptyState");
+    
+    if (loadingSkeleton) {
+      loadingSkeleton.classList.toggle("hidden", !isLoading);
+    }
+    
+    if (!isLoading) {
+      const hasEmpleados = state.filteredEmpleados.length > 0;
+      
+      if (dataContainer) {
+        dataContainer.classList.toggle("hidden", !hasEmpleados);
+      }
+      
+      if (mobileContainer) {
+        mobileContainer.classList.toggle("hidden", !hasEmpleados);
+      }
+      
+      if (emptyState) {
+        emptyState.classList.toggle("hidden", hasEmpleados);
+        
+        // Actualizar mensaje de estado vacío
+        const emptyStateMessage = document.getElementById("emptyStateMessage");
+        if (emptyStateMessage) {
+          if (state.filters.searchTerm || state.filters.rolFilter) {
+            emptyStateMessage.textContent = "No se encontraron resultados para los filtros aplicados.";
+          } else {
+            emptyStateMessage.textContent = "No hay usuarios registrados en el sistema.";
+          }
+        }
+      }
+      
+      // Actualizar contadores
+      const totalCount = document.getElementById("totalEmployeeCount");
+      const filteredCount = document.getElementById("filteredEmployeeCount");
+      
+      if (totalCount) {
+        totalCount.textContent = state.empleados.length;
+      }
+      
+      if (filteredCount) {
+        filteredCount.textContent = state.filteredEmpleados.length;
+      }
+    }
+  }
+  
+  function filtrarEmpleados() {
+    const searchTerm = state.filters.searchTerm.toLowerCase();
+    const rolFilter = state.filters.rolFilter;
+  
+    state.filteredEmpleados = state.empleados.filter(empleado => {
+      const cumpleBusqueda = !searchTerm || 
+        (empleado.nombre && empleado.nombre.toLowerCase().includes(searchTerm)) || 
+        (empleado.email && empleado.email.toLowerCase().includes(searchTerm));
+      
+      const cumpleRol = !rolFilter || (empleado.rol === rolFilter);
+  
+      return cumpleBusqueda && cumpleRol;
+    });
+  
+    renderizarVistas(state.filteredEmpleados);
+    toggleLoadingState(false);
+    
+    // Actualizar UI de filtros activos
+    document.querySelectorAll('.filter-button').forEach(btn => {
+      const filterValue = btn.dataset.filter;
+      const isActive = filterValue === rolFilter;
+      
+      btn.classList.toggle('active-filter', isActive);
+      
+      if (isActive) {
+        btn.classList.add('bg-blue-100', 'text-blue-800', 'border-blue-300', 'dark:bg-blue-900/30', 'dark:text-blue-300');
+        btn.classList.remove('bg-white', 'text-gray-800', 'dark:bg-gray-700', 'dark:text-white');
+      } else {
+        btn.classList.remove('bg-blue-100', 'text-blue-800', 'border-blue-300', 'dark:bg-blue-900/30', 'dark:text-blue-300');
+        btn.classList.add('bg-white', 'text-gray-800', 'dark:bg-gray-700', 'dark:text-white');
+      }
+    });
+  }
+  
+  function renderizarVistas(empleados) {
+    const tbodyDesktop = document.getElementById('empleadosTableBodyDesktop');
+    const containerMobile = document.getElementById('empleadosTableBodyMobile');
+    
+    if (!tbodyDesktop || !containerMobile) return;
+  
+    // Vista Desktop
+    tbodyDesktop.innerHTML = empleados.map(empleado => `
+      <tr class="group hover:bg-blue-50 dark:hover:bg-gray-700 transition-all duration-200">
+        <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">${empleado.nombre || ''}</td>
+        <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">${empleado.email || ''}</td>
+        <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">${empleado.celular || ''}</td>
+        <td class="px-6 py-4 text-sm">
+          <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getRolClass(empleado.rol)}">
+            ${empleado.rol}
+          </span>
+        </td>
+        <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+          ${empleado.especialidad && empleado.especialidad !== '-' 
+            ? `<span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-200">${empleado.especialidad}</span>` 
+            : '-'}
+        </td>
+      </tr>
+    `).join('');
+  
+    // Vista Mobile
+    containerMobile.innerHTML = empleados.map(empleado => `
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-5 space-y-4 transition-transform duration-200 hover:scale-[1.01]">
+        <div class="flex justify-between items-start">
+          <div class="space-y-1">
+            <div class="font-medium text-lg text-gray-900 dark:text-white">${empleado.nombre || ''}</div>
+            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getRolClass(empleado.rol)}">
+              ${empleado.rol}
+            </span>
+          </div>
+          ${empleado.especialidad && empleado.especialidad !== '-' ? `
+            <div class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-200">
+              ${empleado.especialidad}
+            </div>
+          ` : ''}
+        </div>
+        
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div class="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+            <span class="text-xs font-medium text-blue-800 dark:text-blue-300">Email</span>
+            <p class="mt-1 text-gray-900 dark:text-white break-all">${empleado.email || 'No especificado'}</p>
+          </div>
+          
+          <div class="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+            <span class="text-xs font-medium text-blue-800 dark:text-blue-300">Celular</span>
+            <p class="mt-1 text-gray-900 dark:text-white">
+              ${empleado.celular || 'No especificado'}
+            </p>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+  
+  async function cargarEmpleados() {
+    toggleLoadingState(true);
+    
+    try {
+      // Obtener médicos y secretarias en paralelo
+      const [responseMedicos, responseSecretarias] = await Promise.all([
+        fetch(`${BASE_URL}/medico`),
+        fetch(`${BASE_URL}/secretaria/getAll`)
+      ]);
+      
+      if (!responseMedicos.ok || !responseSecretarias.ok) {
+        throw new Error("Error al obtener datos de empleados");
+      }
+      
+      const dataMedicos = await responseMedicos.json();
+      const dataSecretarias = await responseSecretarias.json();
+      
+      const medicos = dataMedicos.medicos.map(medico => ({
+        ...medico,
+        rol: 'Odontólogo'
+      }));
+  
+      const secretarias = dataSecretarias.secretarias.map(secretaria => ({
+        ...secretaria,
+        rol: 'Secretaria',
+        especialidad: '-'
+      }));
+  
+      // Combinar y ordenar por nombre
+      state.empleados = [...medicos, ...secretarias].sort((a, b) => 
+        a.nombre.localeCompare(b.nombre)
+      );
+      
+      // Aplicar filtros iniciales
+      state.filteredEmpleados = [...state.empleados];
+      
+      // Renderizar y actualizar UI
+      renderizarVistas(state.filteredEmpleados);
+      toggleLoadingState(false);
+    } catch (error) {
+      console.error('Error:', error);
+      showToast('Error al cargar los empleados', 'error');
+      toggleLoadingState(false);
+    }
+  }
+  
+  // Setup inicial de la página
+  document.addEventListener('DOMContentLoaded', () => {
+    cargarEmpleados();
+    
+    // Navegación
+    const volverBtn = document.getElementById('volverBtn');
+    if (volverBtn) {
+      volverBtn.addEventListener('click', () => {
+        window.location.href = '/';
+      });
+    }
+  
+    // Búsqueda
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        state.filters.searchTerm = e.target.value.trim();
+        filtrarEmpleados();
+      });
+    }
+  
+    // Filtros de rol con botones
+    document.querySelectorAll('.filter-button').forEach(button => {
+      button.addEventListener('click', () => {
+        state.filters.rolFilter = button.dataset.filter;
+        filtrarEmpleados();
+      });
+    });
+    
+    // Botón de limpiar filtros
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+    if (clearFiltersBtn) {
+      clearFiltersBtn.addEventListener('click', () => {
+        // Resetear filtros
+        state.filters.searchTerm = "";
+        state.filters.rolFilter = "";
+        
+        // Resetear UI
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+          searchInput.value = "";
+        }
+        
+        // Actualizar datos
+        filtrarEmpleados();
+      });
+    }
+    
+    // Inicializar manejador de toasts
+    document.getElementById("toastContainer")?.addEventListener("click", (e) => {
+      if (e.target.closest("button")) {
+        const toast = e.target.closest("div");
+        if (toast) {
+          toast.classList.add("translate-x-full", "opacity-0");
+          setTimeout(() => toast.remove(), 300);
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  /* Estilos adicionales para los botones de filtro */
+  .filter-button {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .filter-button:hover {
+    transform: translateY(-2px);
+  }
+  
+  .filter-button.active-filter {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  }
+</style>

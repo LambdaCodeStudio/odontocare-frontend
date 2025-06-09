@@ -1,0 +1,1380 @@
+---
+interface Props {
+  dni: string;
+}
+
+const { dni } = Astro.props;
+---
+
+<div class="space-y-6 transition-all duration-300 animate-fadeIn">
+  <!-- Header con título y botón -->
+  <div class="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-4 shadow-md transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <h2 class="text-xl font-bold text-indigo-700 dark:text-indigo-300 sm:text-2xl transition-all duration-300 flex items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      Atenciones
+    </h2>
+    <button
+      id="nuevaAtencionBtn"
+      class="w-full sm:w-auto rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 px-4 py-2.5 text-white hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center"
+      aria-label="Crear nueva atención"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+      Nueva Atención
+    </button>
+  </div>
+
+  <!-- Estado de carga -->
+  <div id="loadingState" class="animate-pulse space-y-4">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+      <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-4"></div>
+      <div class="space-y-3">
+        <div class="grid grid-cols-3 gap-4">
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded col-span-1"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded col-span-1"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded col-span-1"></div>
+        </div>
+        <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+        <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+        <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado vacío -->
+  <div id="emptyState" class="hidden bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
+    <div class="mx-auto w-24 h-24 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    </div>
+    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">No hay atenciones registradas</h3>
+    <p class="text-gray-600 dark:text-gray-400 mb-6">Registre una nueva atención para comenzar a llevar el historial del paciente.</p>
+    <button
+      id="nuevaAtencionBtnEmpty"
+      class="inline-flex items-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 px-5 py-2.5 text-white hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 shadow-md hover:shadow-lg transition-all duration-300"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+      Nueva Atención
+    </button>
+  </div>
+
+  <!-- Estado de error -->
+  <div id="errorState" class="hidden bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
+    <div class="mx-auto w-24 h-24 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+    </div>
+    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Error al cargar datos</h3>
+    <p id="errorMessage" class="text-gray-600 dark:text-gray-400 mb-6">No se pudieron cargar las atenciones del paciente.</p>
+    <button
+      id="retryButton"
+      class="inline-flex items-center rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 px-5 py-2.5 text-white hover:from-indigo-600 hover:to-indigo-700 dark:from-indigo-600 dark:to-indigo-700 dark:hover:from-indigo-500 dark:hover:to-indigo-600 shadow-md hover:shadow-lg transition-all duration-300"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+      Reintentar
+    </button>
+  </div>
+
+  <!-- Vista de tabla para desktop -->
+  <div id="tableContainer" class="hidden md:block w-full">
+    <div class="inline-block min-w-full py-2 align-middle">
+      <div class="overflow-hidden border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800">
+            <tr>
+              <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-bold text-gray-900 dark:text-gray-200 sm:pl-6">Fecha</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-bold text-gray-900 dark:text-gray-200">Profesional</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-bold text-gray-900 dark:text-gray-200 w-full">Notas</th>
+              <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                <span class="sr-only">Acciones</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="atencionesTableBody" class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+            <!-- Las filas se agregarán dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista de tarjetas para móvil -->
+  <div class="md:hidden space-y-4" id="atencionesCardView">
+    <!-- Las tarjetas se agregarán dinámicamente -->
+  </div>
+
+  <!-- Modal Nueva Atención -->
+  <div
+    id="atencionModal"
+    class="fixed inset-0 z-50 hidden overflow-y-auto overflow-x-hidden backdrop-blur-sm transition-all duration-300"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitleNueva"
+  >
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+      <div id="atencionModalContent" class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-800 text-left shadow-xl transition-all duration-300 sm:w-full sm:max-w-lg opacity-0 scale-95">
+        <div class="px-6 pb-6 pt-5">
+          <div class="flex items-center justify-between mb-5">
+            <h3 id="modalTitleNueva" class="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Nueva Atención
+            </h3>
+            <button
+              type="button"
+              id="closeModalBtn"
+              class="rounded-full p-1.5 text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              aria-label="Cerrar"
+              title="Cerrar"
+            >
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <form id="atencionForm" class="space-y-4">
+            <input type="hidden" id="pacienteId" />
+
+            <!-- Selector de profesional -->
+            <div>
+              <label for="profesional" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Profesional
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <select
+                  id="profesional"
+                  name="profesional"
+                  required
+                  class="w-full rounded-lg border border-gray-300 bg-white pl-10 px-3 py-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 transition-colors duration-200"
+                >
+                  <option value="">Seleccione un profesional</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Campo de fecha -->
+            <div>
+              <label for="fecha" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Fecha y Hora
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <input
+                  type="datetime-local"
+                  id="fecha"
+                  name="fecha"
+                  required
+                  class="w-full rounded-lg border border-gray-300 bg-white pl-10 px-3 py-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 transition-colors duration-200"
+                />
+              </div>
+            </div>
+
+            <!-- Campo de notas -->
+            <div>
+              <label for="notaDelDia" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Notas
+              </label>
+              <div class="relative">
+                <div class="absolute top-3 left-3 pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </div>
+                <textarea
+                  id="notaDelDia"
+                  name="notaDelDia"
+                  required
+                  rows="4"
+                  class="w-full rounded-lg border border-gray-300 bg-white pl-10 px-3 py-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 transition-colors duration-200 resize-y min-h-[6rem]"
+                  placeholder="Ingrese las notas de la atención..."
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Botones del modal responsive -->
+            <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-2 mt-6">
+              <button
+                type="button"
+                id="cancelarBtnA"
+                class="w-full sm:w-auto rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-all duration-200"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                class="w-full sm:w-auto rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 px-4 py-2.5 text-white hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center"
+              >
+                <span id="atencionSubmitText">Guardar</span>
+                <span id="atencionSubmitLoading" class="hidden">
+                  <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Editar Atención -->
+  <div
+    id="editarAtencionModal"
+    class="fixed inset-0 z-50 hidden overflow-y-auto overflow-x-hidden backdrop-blur-sm transition-all duration-300"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitleEditar"
+  >
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+      <div id="editarAtencionModalContent" class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-800 text-left shadow-xl transition-all duration-300 sm:w-full sm:max-w-lg opacity-0 scale-95">
+        <div class="px-6 pb-6 pt-5">
+          <div class="flex items-center justify-between mb-5">
+            <h3 id="modalTitleEditar" class="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Editar Atención
+            </h3>
+            <button
+              type="button"
+              id="closeEditModalBtn"
+              class="rounded-full p-1.5 text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              aria-label="Cerrar"
+              title="Cerrar"
+            >
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <form id="editarAtencionForm" class="space-y-4">
+            <input type="hidden" id="editPacienteId" />
+            <input type="hidden" id="editFechaOriginal" />
+            
+            <!-- Selector de profesional -->
+            <div>
+              <label for="editProfesional" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Profesional
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <select
+                  id="editProfesional"
+                  name="editProfesional"
+                  required
+                  class="w-full rounded-lg border border-gray-300 bg-white pl-10 px-3 py-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 transition-colors duration-200"
+                >
+                </select>
+              </div>
+            </div>
+
+            <!-- Campo de fecha -->
+            <div>
+              <label for="editFecha" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Fecha y Hora
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <input
+                  type="datetime-local"
+                  id="editFecha"
+                  name="editFecha"
+                  required
+                  class="w-full rounded-lg border border-gray-300 bg-white pl-10 px-3 py-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 transition-colors duration-200"
+                />
+              </div>
+            </div>
+
+            <!-- Campo de notas -->
+            <div>
+              <label for="editNotaDelDia" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Notas
+              </label>
+              <div class="relative">
+                <div class="absolute top-3 left-3 pointer-events-none">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </div>
+                <textarea
+                  id="editNotaDelDia"
+                  name="editNotaDelDia"
+                  required
+                  rows="4"
+                  class="w-full rounded-lg border border-gray-300 bg-white pl-10 px-3 py-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 transition-colors duration-200 resize-y min-h-[6rem]"
+                  placeholder="Ingrese las notas de la atención..."
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Botones del modal responsive -->
+            <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-2 mt-6">
+              <button
+                type="button"
+                id="cancelarEditarBtnA"
+                class="w-full sm:w-auto rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-all duration-200"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                class="w-full sm:w-auto rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 px-4 py-2.5 text-white hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center"
+              >
+                <span id="editarSubmitText">Actualizar</span>
+                <span id="editarSubmitLoading" class="hidden">
+                  <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Confirmación Eliminar -->
+  <div
+    id="eliminarAtencionModal"
+    class="fixed inset-0 z-50 hidden overflow-y-auto overflow-x-hidden backdrop-blur-sm transition-all duration-300"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitleEliminar"
+  >
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+      <div id="eliminarAtencionModalContent" class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-800 text-left shadow-xl transition-all duration-300 sm:w-full sm:max-w-md opacity-0 scale-95">
+        <div class="px-6 pb-6 pt-5">
+          <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30 mb-6">
+            <svg class="h-12 w-12 text-red-600 dark:text-red-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+            </svg>
+          </div>
+
+          <div class="text-center">
+            <h3 id="modalTitleEliminar" class="text-xl font-bold text-gray-900 dark:text-white mb-4">Eliminar Atención</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">¿Está seguro de eliminar esta atención? Esta acción no se puede deshacer.</p>
+
+            <div class="flex flex-col-reverse sm:flex-row justify-center gap-3 sm:gap-2">
+              <button
+                type="button"
+                id="cancelarEliminarBtn"
+                class="w-full sm:w-auto rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-all duration-200"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                id="confirmarEliminarBtn"
+                class="w-full sm:w-auto rounded-lg bg-gradient-to-br from-red-500 to-red-600 px-4 py-2.5 text-white hover:from-red-600 hover:to-red-700 dark:from-red-600 dark:to-red-700 dark:hover:from-red-500 dark:hover:to-red-600 shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center"
+              >
+                <span id="eliminarSubmitText">Eliminar</span>
+                <span id="eliminarSubmitLoading" class="hidden">
+                  <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+</div>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  /* Estilo para transiciones */
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .duration-300 {
+    transition-duration: 300ms;
+  }
+  
+  /* Efectos para botones */
+  button:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+  
+  button:not(:disabled):active {
+    transform: translateY(0);
+  }
+  
+  /* Mejoras para accesibilidad */
+  :focus-visible {
+    outline: 2px solid #4f46e5;
+    outline-offset: 2px;
+  }
+  
+  /* Animaciones para tarjetas */
+  .hover\:shadow-xl:hover {
+    transition-duration: 300ms;
+  }
+  
+  /* Estilos para filas de tabla */
+  .hover\:bg-gray-50:hover td {
+    transition: background-color 150ms ease-in-out;
+  }
+  
+  /* Estilo para alertas de validación */
+  input:invalid,
+  select:invalid,
+  textarea:invalid {
+    border-color: #ef4444;
+  }
+  
+  /* Efecto ripple para botones */
+  button:not(:disabled):active::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+  }
+  
+  @keyframes ripple {
+    to {
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 0;
+    }
+  }
+  
+  /* Mejor soporte para tema oscuro */
+  .dark input,
+  .dark select,
+  .dark textarea {
+    color-scheme: dark;
+  }
+  
+  /* Estilo para scrollbars */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 20px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.7);
+  }
+</style>
+
+<script define:vars={{ dni }}>
+// ====================================
+// CONFIGURACIÓN Y ESTADO
+// ====================================
+const BASE_URL = "http://localhost:5000/api";
+
+// Estado centralizado
+const appState = {
+  loading: true,
+  error: null,
+  atenciones: [],
+  paciente: null,
+  medicos: [],
+  atencionAEliminar: {
+    pacienteId: null,
+    fecha: null
+  }
+};
+
+// ====================================
+// FUNCIONES DE UTILIDAD
+// ====================================
+
+// Función para formatear fechas
+function formatFecha(fechaStr) {
+  const fecha = new Date(fechaStr);
+  fecha.setHours(fecha.getHours() + 3); // Ajuste de zona horaria
+  return fecha.toLocaleString('es-AR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+// Función para mostrar toasts mejorados
+function showToast(mensaje, tipo = 'success', duracion = 4000) {
+  const container = document.getElementById('toastContainer');
+  
+  // Crear el toast
+  const toast = document.createElement('div');
+  toast.className = `flex items-center p-4 mb-3 w-full max-w-xs text-gray-500 rounded-xl shadow-lg transition-all duration-300 transform translate-y-2 opacity-0 ${
+    tipo === 'success' 
+      ? 'bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/40 dark:to-green-900/50 border-l-4 border-green-500 dark:border-green-400'
+      : tipo === 'error'
+      ? 'bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/40 dark:to-red-900/50 border-l-4 border-red-500 dark:border-red-400'
+      : 'bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/40 dark:to-blue-900/50 border-l-4 border-blue-500 dark:border-blue-400'
+  }`;
+  
+  // Añadir icono según el tipo
+  let iconSvg = '';
+  if (tipo === 'success') {
+    iconSvg = `<svg class="w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+              </svg>`;
+  } else if (tipo === 'error') {
+    iconSvg = `<svg class="w-5 h-5 text-red-500 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+              </svg>`;
+  } else {
+    iconSvg = `<svg class="w-5 h-5 text-blue-500 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+              </svg>`;
+  }
+  
+  toast.innerHTML = `
+    <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg">
+      ${iconSvg}
+    </div>
+    <div class="ml-3 text-sm font-normal ${
+      tipo === 'success' 
+        ? 'text-green-700 dark:text-green-300'
+        : tipo === 'error'
+        ? 'text-red-700 dark:text-red-300'
+        : 'text-blue-700 dark:text-blue-300'
+    }">${mensaje}</div>
+    <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white" aria-label="Cerrar">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+      </svg>
+    </button>
+  `;
+  
+  // Añadir el toast al contenedor
+  container.appendChild(toast);
+  
+  // Animar entrada
+  setTimeout(() => {
+    toast.classList.remove('translate-y-2', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+  }, 10);
+  
+  // Configurar cierre manual
+  const closeButton = toast.querySelector('button');
+  closeButton.addEventListener('click', () => {
+    cerrarToast(toast);
+  });
+  
+  // Configurar cierre automático
+  setTimeout(() => {
+    cerrarToast(toast);
+  }, duracion);
+  
+  return toast;
+}
+
+function cerrarToast(toast) {
+  toast.classList.remove('translate-y-0', 'opacity-100');
+  toast.classList.add('translate-y-2', 'opacity-0');
+  
+  setTimeout(() => {
+    toast.remove();
+  }, 300);
+}
+
+// Función para activar/desactivar indicador de carga en formularios
+function toggleSubmitLoading(formId, show) {
+  const submitText = document.getElementById(`${formId}SubmitText`);
+  const submitLoading = document.getElementById(`${formId}SubmitLoading`);
+  const submitButton = submitText.closest('button');
+  
+  if (show) {
+    submitText.classList.add('hidden');
+    submitLoading.classList.remove('hidden');
+    submitButton.disabled = true;
+  } else {
+    submitText.classList.remove('hidden');
+    submitLoading.classList.add('hidden');
+    submitButton.disabled = false;
+  }
+}
+
+// Mostrar/ocultar modales con animación
+function showModal(modalId, show) {
+  const modal = document.getElementById(modalId);
+  const content = document.getElementById(`${modalId}Content`);
+  
+  if (show) {
+    modal.classList.remove('hidden');
+    
+    // Animar la entrada
+    setTimeout(() => {
+      content.classList.remove('opacity-0', 'scale-95');
+      content.classList.add('opacity-100', 'scale-100');
+    }, 10);
+  } else {
+    // Animar la salida
+    content.classList.remove('opacity-100', 'scale-100');
+    content.classList.add('opacity-0', 'scale-95');
+    
+    setTimeout(() => {
+      modal.classList.add('hidden');
+    }, 300);
+  }
+}
+
+// Gestión de estados de UI
+// Gestión de estados de UI mejorada
+function showLoading(show) {
+  const loadingElement = document.getElementById('loadingState');
+  const tableContainer = document.getElementById('tableContainer');
+  const cardView = document.getElementById('atencionesCardView');
+  const emptyState = document.getElementById('emptyState');
+  const errorState = document.getElementById('errorState');
+  
+  // Primero ocultar todos los estados
+  loadingElement.classList.add('hidden');
+  tableContainer.classList.add('hidden');
+  cardView.classList.add('hidden');
+  emptyState.classList.add('hidden');
+  errorState.classList.add('hidden');
+  
+  if (show) {
+    // Solo mostrar loading
+    loadingElement.classList.remove('hidden');
+  } else {
+    // Determinar qué estado mostrar basado en los datos
+    if (appState.error) {
+      errorState.classList.remove('hidden');
+    } else if (appState.atenciones.length === 0) {
+      emptyState.classList.remove('hidden');
+    } else {
+      tableContainer.classList.remove('hidden');
+      cardView.classList.remove('hidden');
+    }
+  }
+}
+
+// También puedes crear funciones específicas para mayor claridad
+function showDataState() {
+  showLoading(false);
+}
+
+function showEmptyState(show) {
+  if (show) {
+    document.getElementById('loadingState').classList.add('hidden');
+    document.getElementById('tableContainer').classList.add('hidden');
+    document.getElementById('atencionesCardView').classList.add('hidden');
+    document.getElementById('errorState').classList.add('hidden');
+    document.getElementById('emptyState').classList.remove('hidden');
+  } else {
+    document.getElementById('emptyState').classList.add('hidden');
+  }
+}
+
+function showError(message) {
+  const errorElement = document.getElementById('errorState');
+  const errorMessage = document.getElementById('errorMessage');
+  
+  // Ocultar todos los otros estados
+  document.getElementById('loadingState').classList.add('hidden');
+  document.getElementById('tableContainer').classList.add('hidden');
+  document.getElementById('atencionesCardView').classList.add('hidden');
+  document.getElementById('emptyState').classList.add('hidden');
+  
+  // Mostrar error
+  errorMessage.textContent = message || 'No se pudieron cargar los datos';
+  errorElement.classList.remove('hidden');
+}
+
+function showEmptyState(show) {
+  const emptyElement = document.getElementById('emptyState');
+  const tableContainer = document.getElementById('tableContainer');
+  const cardView = document.getElementById('atencionesCardView');
+  
+  if (show) {
+    emptyElement.classList.remove('hidden');
+    tableContainer.classList.add('hidden');
+    cardView.classList.add('hidden');
+  } else {
+    emptyElement.classList.add('hidden');
+    tableContainer.classList.remove('hidden');
+    cardView.classList.remove('hidden');
+  }
+}
+
+function showError(message) {
+  const errorElement = document.getElementById('errorState');
+  const errorMessage = document.getElementById('errorMessage');
+  const tableContainer = document.getElementById('tableContainer');
+  const cardView = document.getElementById('atencionesCardView');
+  const loadingElement = document.getElementById('loadingState');
+  const emptyElement = document.getElementById('emptyState');
+  
+  errorMessage.textContent = message || 'No se pudieron cargar los datos';
+  
+  errorElement.classList.remove('hidden');
+  tableContainer.classList.add('hidden');
+  cardView.classList.add('hidden');
+  loadingElement.classList.add('hidden');
+  emptyElement.classList.add('hidden');
+}
+
+// ====================================
+// FUNCIONES DE API Y DATOS
+// ====================================
+
+// Función para cargar datos iniciales
+async function cargarDatosIniciales() {
+  try {
+    showLoading(true);
+    appState.loading = true;
+    
+    // Cargar datos del paciente
+    const pacienteResponse = await fetch(`${BASE_URL}/paciente/findByDni/${dni}`);
+    if (!pacienteResponse.ok) {
+      throw new Error('Error al cargar datos del paciente');
+    }
+    
+    const { paciente } = await pacienteResponse.json();
+    if (!paciente || !paciente.dni) {
+      throw new Error('No se encontraron datos válidos del paciente');
+    }
+
+    const pacienteId = paciente._id || paciente.id;
+    document.getElementById('pacienteId').value = pacienteId;
+    appState.paciente = paciente;
+
+    // Cargar lista de médicos
+    const medicosResponse = await fetch(`${BASE_URL}/medico`);
+    if (!medicosResponse.ok) {
+      throw new Error('Error al cargar lista de médicos');
+    }
+    
+    const { medicos } = await medicosResponse.json();
+    appState.medicos = medicos;
+
+    // Poblar selectores de médicos
+    const selectMedicos = document.getElementById('profesional');
+    const selectMedicosEdit = document.getElementById('editProfesional');
+    
+    if (!selectMedicos || !selectMedicosEdit) {
+      throw new Error('Error en la interfaz de usuario');
+    }
+
+    const medicosOptions = ['<option value="">Seleccione un profesional</option>']
+      .concat(medicos.map(medico => 
+        `<option value="${medico.nombre}">${medico.nombre}</option>`
+      ));
+    
+    selectMedicos.innerHTML = medicosOptions.join('');
+    selectMedicosEdit.innerHTML = medicosOptions.join('');
+
+    // Cargar tabla de atenciones
+    await cargarAtenciones(pacienteId);
+  } catch (error) {
+    console.error('Error en cargarDatosIniciales:', error);
+    appState.error = error.message;
+    showError(error.message);
+    showToast(error.message, 'error');
+  } finally {
+    appState.loading = false;
+    showLoading(false);
+  }
+}
+
+// Función para cargar atenciones
+// Función para cargar atenciones - CORREGIDA
+async function cargarAtenciones(pacienteId) {
+  try {
+    showLoading(true);
+    
+    const response = await fetch(`${BASE_URL}/atenciones/todas/${pacienteId}`);
+    if (!response.ok) {
+      throw new Error('Error al cargar atenciones');
+    }
+    
+    const atenciones = await response.json();
+    appState.atenciones = atenciones;
+    
+    // PRIMERO ocultar el loading
+    showLoading(false);
+    
+    // DESPUÉS verificar y mostrar el estado apropiado
+    if (atenciones.length === 0) {
+      showEmptyState(true);
+      return;
+    } else {
+      showEmptyState(false);
+      // Renderizar los datos después de ocultar el loading
+      renderizarAtenciones(atenciones);
+    }
+    
+  } catch (error) {
+    console.error('Error en cargarAtenciones:', error);
+    appState.error = error.message;
+    showLoading(false); // Ocultar loading en caso de error
+    showError(error.message);
+    showToast(error.message, 'error');
+  }
+}
+
+// Función para crear una nueva atención
+async function crearAtencion(datos) {
+  try {
+    toggleSubmitLoading('atencion', true);
+    
+    const response = await fetch(`${BASE_URL}/atenciones/create`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datos)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al crear la atención');
+    }
+
+    const nuevaAtencion = await response.json();
+    
+    // Actualizar estado local
+    appState.atenciones.push(nuevaAtencion);
+    
+    showToast('Atención creada exitosamente', 'success');
+    showModal('atencionModal', false);
+    document.getElementById('atencionForm').reset();
+    
+    renderizarAtenciones(appState.atenciones);
+    
+    return nuevaAtencion;
+  } catch (error) {
+    console.error('Error al crear atención:', error);
+    showToast(error.message, 'error');
+    throw error;
+  } finally {
+    toggleSubmitLoading('atencion', false);
+  }
+}
+
+// Función para actualizar una atención existente
+async function actualizarAtencion(pacienteId, fechaOriginal, datos) {
+  try {
+    toggleSubmitLoading('editar', true);
+    
+    const response = await fetch(`${BASE_URL}/atenciones/edit-atencion/${pacienteId}/fecha/${fechaOriginal}`, {
+      method: 'PUT',
+      headers: { 'Content-Type':'application/json' },
+      body: JSON.stringify(datos)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al actualizar la atención');
+    }
+
+    const atencionActualizada = await response.json();
+    
+    // Actualizar estado local
+    const indexToUpdate = appState.atenciones.findIndex(
+      atencion => new Date(atencion.fecha).getTime() === new Date(fechaOriginal).getTime()
+    );
+    
+    if (indexToUpdate !== -1) {
+      appState.atenciones[indexToUpdate] = atencionActualizada;
+    } else {
+      // Si no se encuentra (por ejemplo, si cambió la fecha), recargar todas
+      await cargarAtenciones(pacienteId);
+    }
+    
+    showToast('Atención actualizada exitosamente', 'success');
+    showModal('editarAtencionModal', false);
+    document.getElementById('editarAtencionForm').reset();
+    
+    renderizarAtenciones(appState.atenciones);
+    
+    return atencionActualizada;
+  } catch (error) {
+    console.error('Error al actualizar atención:', error);
+    showToast(error.message, 'error');
+    throw error;
+  } finally {
+    toggleSubmitLoading('editar', false);
+  }
+}
+
+// Función para eliminar una atención
+async function eliminarAtencion(pacienteId, fecha) {
+  try {
+    toggleSubmitLoading('eliminar', true);
+    
+    const response = await fetch(`${BASE_URL}/atenciones/delete-atencion/${pacienteId}/fecha/${fecha}`, {
+      method: 'DELETE'
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al eliminar la atención');
+    }
+    
+    // Actualizar estado local
+    appState.atenciones = appState.atenciones.filter(
+      atencion => new Date(atencion.fecha).getTime() !== new Date(fecha).getTime()
+    );
+    
+    if (appState.atenciones.length === 0) {
+      showEmptyState(true);
+    }
+    
+    showToast('Atención eliminada exitosamente', 'success');
+    showModal('eliminarAtencionModal', false);
+    
+    renderizarAtenciones(appState.atenciones);
+  } catch (error) {
+    console.error('Error al eliminar atención:', error);
+    showToast(error.message, 'error');
+    throw error;
+  } finally {
+    toggleSubmitLoading('eliminar', false);
+  }
+}
+
+// ====================================
+// FUNCIONES DE RENDERIZADO
+// ====================================
+
+// Renderizar lista de atenciones
+function renderizarAtenciones(atenciones) {
+  const tableBody = document.getElementById('atencionesTableBody');
+  const cardView = document.getElementById('atencionesCardView');
+  
+  if (!tableBody || !cardView) {
+    console.error('Elementos de interfaz no encontrados');
+    return;
+  }
+
+  // Ordenar por fecha más reciente primero
+  const atencionesOrdenadas = [...atenciones].sort((a, b) => 
+    new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+  );
+
+  // Actualizar vista de tabla
+  tableBody.innerHTML = atencionesOrdenadas.map(atencion => `
+    <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-300 sm:pl-6">
+        ${formatFecha(atencion.fecha)}
+      </td>
+      <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-gray-300">
+        <div class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+          ${atencion.profesional}
+        </div>
+      </td>
+      <td class="px-3 py-4 text-sm text-gray-900 dark:text-gray-300">
+        <div class="line-clamp-2 break-words">
+          ${atencion.notaDelDia}
+        </div>
+      </td>
+      <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+        <div class="flex justify-end gap-2">
+          <button 
+            onclick="editarAtencionHandler('${appState.paciente._id}', '${atencion.fecha}')"
+            class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500 transition-colors duration-150 p-1 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30"
+            aria-label="Editar"
+            title="Editar atención"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" 
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+          <button 
+            onclick="confirmarEliminarAtencion('${appState.paciente._id}', '${atencion.fecha}')"
+            class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-500 transition-colors duration-150 p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30"
+            aria-label="Eliminar"
+            title="Eliminar atención"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" 
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  // Actualizar vista de tarjetas para móvil
+  cardView.innerHTML = atencionesOrdenadas.map(atencion => `
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+      <div class="flex justify-between items-start mb-3">
+        <div class="space-y-1">
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            ${formatFecha(atencion.fecha)}
+          </p>
+          <p class="text-base font-bold text-gray-900 dark:text-gray-100 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            ${atencion.profesional}
+          </p>
+        </div>
+        <div class="flex gap-1">
+          <button 
+            onclick="editarAtencionHandler('${appState.paciente._id}', '${atencion.fecha}')"
+            class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500 transition-colors duration-150 p-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30"
+            aria-label="Editar"
+            title="Editar atención"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" 
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+          <button 
+            onclick="confirmarEliminarAtencion('${appState.paciente._id}', '${atencion.fecha}')"
+            class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-500 transition-colors duration-150 p-1.5 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30"
+            aria-label="Eliminar"
+            title="Eliminar atención"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" 
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="text-sm text-gray-700 dark:text-gray-300 break-words bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700">
+        ${atencion.notaDelDia}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ====================================
+// HANDLERS GLOBALES
+// ====================================
+
+// Handler de edición
+window.editarAtencionHandler = async function(pacienteId, fecha) {
+  try {
+    const response = await fetch(`${BASE_URL}/atenciones/unica/${pacienteId}/fecha/${fecha}`);
+    if (!response.ok) {
+      throw new Error('Error al cargar la atención');
+    }
+    
+    const atencion = await response.json();
+    
+    // Rellenar el formulario con los datos existentes
+    document.getElementById('editPacienteId').value = pacienteId;
+    document.getElementById('editFechaOriginal').value = fecha;
+    document.getElementById('editProfesional').value = atencion.profesional;
+    
+    // Formatear correctamente la fecha para datetime-local
+    const fechaObj = new Date(atencion.fecha);
+    fechaObj.setMinutes(fechaObj.getMinutes() - fechaObj.getTimezoneOffset());
+    document.getElementById('editFecha').value = fechaObj.toISOString().slice(0, 16);
+    
+    document.getElementById('editNotaDelDia').value = atencion.notaDelDia;
+    
+    // Mostrar el modal
+    showModal('editarAtencionModal', true);
+    
+    // Ajustar altura del textarea automáticamente
+    const textarea = document.getElementById('editNotaDelDia');
+    textarea.style.height = 'auto';
+    textarea.style.height = (textarea.scrollHeight) + 'px';
+    
+    // Enfocar el primer campo
+    setTimeout(() => {
+      document.getElementById('editProfesional').focus();
+    }, 300);
+  } catch (error) {
+    console.error('Error en editarAtencionHandler:', error);
+    showToast(error.message, 'error');
+  }
+};
+
+// Handler para mostrar modal de confirmación de eliminación
+window.confirmarEliminarAtencion = function(pacienteId, fecha) {
+  // Guardar referencia para el handler de confirmación
+  appState.atencionAEliminar = {
+    pacienteId,
+    fecha
+  };
+  
+  // Mostrar modal de confirmación
+  showModal('eliminarAtencionModal', true);
+};
+
+// ====================================
+// INICIALIZACIÓN Y EVENTOS
+// ====================================
+
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    // Inicializar estado actual
+    const today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    document.getElementById('fecha').value = today.toISOString().slice(0, 16);
+    
+    // Botón de nueva atención
+    const nuevaAtencionBtn = document.getElementById('nuevaAtencionBtn');
+    if (nuevaAtencionBtn) {
+      nuevaAtencionBtn.addEventListener('click', () => {
+        showModal('atencionModal', true);
+        setTimeout(() => document.getElementById('profesional').focus(), 300);
+      });
+    }
+    
+    // Botón de nueva atención en estado vacío
+    const nuevaAtencionBtnEmpty = document.getElementById('nuevaAtencionBtnEmpty');
+    if (nuevaAtencionBtnEmpty) {
+      nuevaAtencionBtnEmpty.addEventListener('click', () => {
+        nuevaAtencionBtn.click();
+      });
+    }
+    
+    // Cerrar modales con botones específicos
+    const closeButtons = ['closeModalBtn', 'closeEditModalBtn', 'cancelarBtnA', 'cancelarEditarBtnA', 'cancelarEliminarBtn'];
+    
+    closeButtons.forEach(buttonId => {
+      const button = document.getElementById(buttonId);
+      if (button) {
+        button.addEventListener('click', () => {
+          if (buttonId.includes('Eliminar')) {
+            showModal('eliminarAtencionModal', false);
+          } else if (buttonId.includes('Edit')) {
+            showModal('editarAtencionModal', false);
+            document.getElementById('editarAtencionForm').reset();
+          } else {
+            showModal('atencionModal', false);
+            document.getElementById('atencionForm').reset();
+          }
+        });
+      }
+    });
+    
+    // Confirmar eliminación
+    const confirmarEliminarBtn = document.getElementById('confirmarEliminarBtn');
+    if (confirmarEliminarBtn) {
+      confirmarEliminarBtn.addEventListener('click', async () => {
+        try {
+          const { pacienteId, fecha } = appState.atencionAEliminar;
+          await eliminarAtencion(pacienteId, fecha);
+        } catch (error) {
+          console.error('Error al eliminar:', error);
+        }
+      });
+    }
+    
+    // Cerrar modales al hacer clic fuera
+    const modales = ['atencionModal', 'editarAtencionModal', 'eliminarAtencionModal'];
+    
+    modales.forEach(modalId => {
+      const modal = document.getElementById(modalId);
+      
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          showModal(modalId, false);
+          
+          if (modalId === 'atencionModal') {
+            document.getElementById('atencionForm').reset();
+          } else if (modalId === 'editarAtencionModal') {
+            document.getElementById('editarAtencionForm').reset();
+          }
+        }
+      });
+    });
+    
+    // Cerrar modales con Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        modales.forEach(modalId => {
+          const modal = document.getElementById(modalId);
+          if (!modal.classList.contains('hidden')) {
+            showModal(modalId, false);
+            
+            if (modalId === 'atencionModal') {
+              document.getElementById('atencionForm').reset();
+            } else if (modalId === 'editarAtencionModal') {
+              document.getElementById('editarAtencionForm').reset();
+            }
+          }
+        });
+      }
+    });
+    
+    // Botón de reintento
+    const retryButton = document.getElementById('retryButton');
+    if (retryButton) {
+      retryButton.addEventListener('click', () => {
+        cargarDatosIniciales();
+      });
+    }
+    
+    // Formulario de nueva atención
+    const atencionForm = document.getElementById('atencionForm');
+    if (atencionForm) {
+      atencionForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        try {
+          const formData = {
+            paciente: document.getElementById('pacienteId').value,
+            profesional: document.getElementById('profesional').value,
+            fecha: document.getElementById('fecha').value,
+            notaDelDia: document.getElementById('notaDelDia').value.trim()
+          };
+          
+          await crearAtencion(formData);
+        } catch (error) {
+          console.error('Error en submit de nueva atención:', error);
+        }
+      });
+    }
+    
+    // Formulario de edición
+    const editarForm = document.getElementById('editarAtencionForm');
+    if (editarForm) {
+      editarForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        try {
+          const pacienteId = document.getElementById('editPacienteId').value;
+          const fechaOriginal = document.getElementById('editFechaOriginal').value;
+          
+          const formData = {
+            profesional: document.getElementById('editProfesional').value,
+            fecha: document.getElementById('editFecha').value,
+            notaDelDia: document.getElementById('editNotaDelDia').value.trim()
+          };
+          
+          await actualizarAtencion(pacienteId, fechaOriginal, formData);
+        } catch (error) {
+          console.error('Error en submit de edición:', error);
+        }
+      });
+    }
+    
+    // Ajuste automático de altura para textareas
+    const textareas = document.querySelectorAll('textarea');
+    textareas.forEach(textarea => {
+      textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+      });
+    });
+    
+    // Manejar errores de red
+    window.addEventListener('offline', () => {
+      showToast('Se perdió la conexión a internet', 'error');
+    });
+    
+    window.addEventListener('online', () => {
+      showToast('Se restableció la conexión', 'success');
+      cargarDatosIniciales(); // Recargar datos cuando se recupere la conexión
+    });
+    
+    // Añadir accesibilidad para modales
+    modales.forEach(modalId => {
+      const modal = document.getElementById(modalId);
+      
+      modal.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+          const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+          
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      });
+    });
+    
+    // Inicializar datos
+    cargarDatosIniciales();
+  } catch (error) {
+    console.error('Error en la inicialización:', error);
+    showToast('Error al inicializar la aplicación', 'error');
+    showError('Error al inicializar la aplicación');
+  }
+});
+
+// Evento para el sistema de enrutamiento de Astro
+document.addEventListener('astro:page-load', () => {
+  cargarDatosIniciales();
+});
+</script>

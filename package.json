@@ -1,0 +1,27 @@
+{
+  "name": "fgf",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@panzoom/panzoom": "^4.6.0",
+    "astro": "^5.1.6",
+    "crypto": "^1.0.1",
+    "flatpickr": "^4.6.13",
+    "jose": "^5.9.6",
+    "panzoom": "^9.4.3",
+    "tailwindcss": "^3.4.17"
+  },
+  "devDependencies": {
+    "@astrojs/tailwind": "^5.1.4",
+    "@astrojs/vercel": "^8.0.2",
+    "@types/flatpickr": "^3.0.2",
+    "flowbite": "^2.5.2",
+    "flowbite-typography": "^1.0.5"
+  }
+}

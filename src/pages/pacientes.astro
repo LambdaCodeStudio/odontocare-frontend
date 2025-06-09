@@ -1,0 +1,1214 @@
+---
+import LayoutCommon from "../app/LayoutCommon.astro";
+import LayoutProtected from "../app/LayoutProtected.astro";
+---
+
+<LayoutProtected>
+  <LayoutCommon>
+    <div
+      class="min-h-screen bg-gradient-to-r from-slate-50 to-slate-100 p-4 text-slate-800 dark:from-slate-900 dark:to-slate-800 dark:text-slate-100 lg:p-8 transition-all duration-300"
+    >
+      <div class="mx-auto max-w-7xl">
+        <!-- Header -->
+        <div
+          class="mb-8 flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0"
+        >
+          <div
+            class="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0"
+          >
+            <button
+              id="volverBtn"
+              class="group flex items-center text-blue-600 transition-colors duration-200 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+              aria-label="Volver al inicio"
+            >
+              <svg 
+                class="mr-2 h-4 w-4 transform transition-transform duration-200 group-hover:-translate-x-1" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+              </svg>
+              Volver al inicio
+            </button>
+            <h1 class="text-3xl font-bold">Pacientes</h1>
+          </div>
+          <button
+            id="createPatientButton"
+            class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-medium text-white shadow-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-all duration-200 transform hover:translate-y-[-2px]"
+            aria-label="Crear nuevo paciente"
+          >
+            <svg
+              class="mr-2 h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"></path>
+            </svg>
+            Nuevo Paciente
+          </button>
+        </div>
+
+        <!-- Search and Info Banner -->
+        <div class="mb-8 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-6 shadow-md dark:from-slate-800 dark:to-slate-700">
+          <div class="flex flex-col space-y-4 md:flex-row md:items-end md:justify-between md:space-y-0">
+            <div class="flex-1 space-y-2 md:max-w-lg">
+              <label for="searchInput" class="block text-base font-medium text-blue-800 dark:text-blue-300">
+                Buscar Paciente
+              </label>
+              <div class="relative">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <svg 
+                    class="h-5 w-5 text-gray-400 dark:text-gray-500" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Buscar por nombre, DNI o email..."
+                  class="w-full rounded-lg border border-gray-300 bg-white p-3 pl-10 text-gray-900 shadow-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-800"
+                  aria-label="Buscar paciente"
+                />
+              </div>
+            </div>
+            <div id="patientCount" class="flex items-center text-sm text-blue-900 dark:text-blue-200">
+              <div id="totalPatientCount" class="font-medium">-</div>
+              <div class="ml-1">pacientes registrados</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading Skeleton -->
+        <div id="loadingSkeleton" class="hidden">
+          <div class="hidden md:block">
+            <div class="rounded-xl bg-white shadow-xl dark:bg-gray-800 animate-pulse">
+              <div class="p-6 space-y-4">
+                <div class="grid grid-cols-6 gap-4">
+                  <div class="h-6 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-6 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-6 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-6 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-6 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-6 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                </div>
+                <div class="grid grid-cols-6 gap-4">
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                </div>
+                <div class="grid grid-cols-6 gap-4">
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                  <div class="h-10 bg-gray-200 rounded dark:bg-gray-700 col-span-1"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="md:hidden space-y-4">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 animate-pulse">
+              <div class="flex justify-between">
+                <div class="w-1/2 h-6 bg-gray-200 rounded dark:bg-gray-700"></div>
+                <div class="w-8 h-8 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+              </div>
+              <div class="space-y-3 mt-4">
+                <div class="w-3/4 h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+                <div class="w-full h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+                <div class="w-5/6 h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+              </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 animate-pulse">
+              <div class="flex justify-between">
+                <div class="w-1/2 h-6 bg-gray-200 rounded dark:bg-gray-700"></div>
+                <div class="w-8 h-8 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+              </div>
+              <div class="space-y-3 mt-4">
+                <div class="w-3/4 h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+                <div class="w-full h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+                <div class="w-5/6 h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden">
+          <div class="flex flex-col items-center justify-center rounded-xl bg-white p-12 text-center shadow-xl dark:bg-gray-800">
+            <div class="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/30">
+              <svg 
+                class="h-12 w-12 text-blue-600 dark:text-blue-400" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+              </svg>
+            </div>
+            <h3 class="mb-2 text-xl font-semibold text-gray-900 dark:text-white">No hay pacientes registrados</h3>
+            <p class="mb-6 text-gray-600 dark:text-gray-400">Para comenzar, añade un nuevo paciente utilizando el botón "Nuevo Paciente".</p>
+            <button
+              id="createPatientEmptyState"
+              class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-medium text-white shadow-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-all duration-200 transform hover:translate-y-[-2px]"
+              aria-label="Crear nuevo paciente"
+            >
+              <svg
+                class="mr-2 h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"></path>
+              </svg>
+              Nuevo Paciente
+            </button>
+          </div>
+        </div>
+
+        <!-- Desktop Table -->
+        <div
+          id="dataContainer"
+          class="hidden md:block overflow-hidden rounded-xl bg-white shadow-xl dark:bg-gray-800 transition-all duration-300"
+        >
+          <table
+            class="min-w-full divide-y divide-gray-200 dark:divide-gray-700"
+          >
+            <thead class="bg-gray-50 dark:bg-gray-700">
+              <tr>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">DNI</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Nombre Completo</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Email</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Número de Celular</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Perfil</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-300">Acciones</th>
+              </tr>
+            </thead>
+            <tbody
+              id="pacientesTableBodyDesktop"
+              class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800"
+            >
+              <!-- Filled dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Cards -->
+        <div class="md:hidden space-y-4" id="pacientesTableBodyMobile">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="fixed inset-0 z-50 hidden">
+      <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300"></div>
+      <div
+        class="relative mx-auto mt-20 w-full max-w-2xl overflow-hidden rounded-xl bg-white p-6 shadow-2xl dark:bg-gray-800 transition-all duration-300"
+      >
+        <div class="flex items-start justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
+          <div class="space-y-1">
+            <h3 class="text-2xl font-semibold text-gray-900 dark:text-white">
+              Editar Paciente
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Actualiza la información del paciente</p>
+          </div>
+          <button
+            type="button"
+            class="close-create-modal rounded-lg bg-transparent p-1.5 text-gray-400 hover:bg-gray-200 hover:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-gray-300 transition-colors"
+            aria-label="Cerrar"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <form id="editForm" class="mt-6 space-y-6">
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div class="space-y-2">
+              <label
+                for="editName"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Nombre</label>
+              <input
+                type="text"
+                id="editName"
+                name="name"
+                required
+                placeholder="Ingrese Nombre y Apellido"
+                class="block w-full rounded-lg border border-gray-300 bg-white p-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label
+                for="editDni"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >DNI</label>
+              <input
+                type="text"
+                id="editDni"
+                name="dni"
+                required
+                placeholder="Ingrese 8 números"
+                class="block w-full rounded-lg border border-gray-300 bg-white p-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label
+                for="editMail"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Email</label>
+              <input
+                type="email"
+                id="editMail"
+                name="mail"
+                placeholder="ejemplo@correo.com"
+                class="block w-full rounded-lg border border-gray-300 bg-white p-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label
+                for="editTelefono"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Teléfono</label>
+              <div class="flex gap-3">
+                <select
+                  id="editAreaCode"
+                  name="areaCode"
+                  class="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800"
+                >
+                  <option value="+54">+54 (Argentina)</option>
+                  <option value="+1">+1 (Estados Unidos)</option>
+                </select>
+                <input
+                  type="text"
+                  id="editTelefono"
+                  name="telefono"
+                  required
+                  placeholder="Número de teléfono"
+                  class="flex-1 rounded-lg border border-gray-300 bg-white p-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end space-x-4 pt-4">
+            <button
+              type="button"
+              class="close-create-modal rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-medium text-white shadow-sm hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-all duration-200"
+            >
+              Guardar Cambios
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Create Modal -->
+    <div id="createModal" class="fixed inset-0 z-50 hidden">
+      <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300"></div>
+      <div
+        class="relative mx-auto mt-20 w-full max-w-2xl overflow-hidden rounded-xl bg-white p-6 shadow-2xl dark:bg-gray-800 transition-all duration-300"
+      >
+        <div class="flex items-start justify-between border-b border-gray-200 pb-4 dark:border-gray-700">
+          <div class="space-y-1">
+            <h3 class="text-2xl font-semibold text-gray-900 dark:text-white">
+              Nuevo Paciente
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Ingresa los datos del nuevo paciente</p>
+          </div>
+          <button
+            type="button"
+            class="close-create-modal rounded-lg bg-transparent p-1.5 text-gray-400 hover:bg-gray-200 hover:text-gray-500 dark:hover:bg-gray-700 dark:hover:text-gray-300 transition-colors"
+            aria-label="Cerrar"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <form id="createForm" class="mt-6 space-y-6">
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div class="space-y-2">
+              <label
+                for="createName"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Nombre</label>
+              <input
+                type="text"
+                id="createName"
+                name="name"
+                required
+                placeholder="Ingrese Nombre y Apellido"
+                class="block w-full rounded-lg border border-gray-300 bg-white p-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label
+                for="createDni"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >DNI</label>
+              <input
+                type="text"
+                id="createDni"
+                name="dni"
+                required
+                placeholder="Ingrese 8 números"
+                class="block w-full rounded-lg border border-gray-300 bg-white p-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label
+                for="createMail"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Email</label>
+              <input
+                type="email"
+                id="createMail"
+                name="mail"
+                placeholder="ejemplo@correo.com"
+                class="block w-full rounded-lg border border-gray-300 bg-white p-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800"
+              />
+            </div>
+
+            <div class="space-y-2">
+              <label
+                for="createTelefono"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Teléfono</label>
+              <div class="flex gap-3">
+                <select
+                  id="createAreaCode"
+                  name="areaCode"
+                  class="rounded-lg border border-gray-300 bg-white p-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800"
+                >
+                  <option value="+54">+54 (Argentina)</option>
+                  <option value="+1">+1 (Estados Unidos)</option>
+                </select>
+                <input
+                  type="text"
+                  id="createTelefono"
+                  name="telefono"
+                  required
+                  placeholder="Número de teléfono"
+                  class="flex-1 rounded-lg border border-gray-300 bg-white p-3 text-gray-900 shadow-sm transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-800"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end space-x-4 pt-4">
+            <button
+              type="button"
+              class="close-create-modal rounded-lg border border-gray-300 bg-white px-5 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-medium text-white shadow-sm hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition-all duration-200"
+            >
+              Crear Paciente
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 space-y-3"></div>
+  </LayoutCommon>
+</LayoutProtected>
+
+<script>
+  const BASE_URL = "http://localhost:5000/api";
+
+  // Estado y Variables Globales
+  const state = {
+    pacientes: [],
+    loading: true,
+    modals: {
+      edit: { isOpen: false, selectedPatient: null },
+      create: { isOpen: false },
+    },
+    filteredPacientes: [],
+  };
+
+  // Validaciones
+  const validatePatient = (patient) => {
+    const errors = [];
+    const dniRegex = /^[0-9]{8}$/;
+    const phoneRegex = /^\d{6,14}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!patient.nombre || !patient.nombre.trim()) errors.push("El nombre es requerido");
+    if (!dniRegex.test(patient.dni)) errors.push("DNI inválido (8 números)");
+    if (!phoneRegex.test(patient.telefono))
+      errors.push("Teléfono inválido (6 a 14 dígitos)");
+    if (patient.mail && patient.mail.trim() && !emailRegex.test(patient.mail.trim())) {
+      errors.push("Formato de email inválido");
+    }
+
+    return errors;
+  };
+
+  // Notificaciones
+  const showToast = (message, type = "success") => {
+    const toastContainer = document.getElementById("toastContainer");
+    
+    if (!toastContainer) return;
+    
+    const toast = document.createElement("div");
+    const bgColor = type === "success" 
+      ? "bg-green-50 border-green-500 text-green-800 dark:bg-green-900/30 dark:text-green-200 dark:border-green-600" 
+      : "bg-red-50 border-red-500 text-red-800 dark:bg-red-900/30 dark:text-red-200 dark:border-red-600";
+    
+    const iconColor = type === "success" ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400";
+    const iconPath = type === "success" 
+      ? "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
+      : "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z";
+    
+    toast.className = `flex items-center w-full max-w-sm p-4 mb-4 rounded-lg shadow-lg border-l-4 ${bgColor} transform transition-all duration-300 ease-out translate-x-full opacity-0`;
+    toast.innerHTML = `
+      <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 ${iconColor}">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconPath}"></path>
+        </svg>
+      </div>
+      <div class="ml-3 text-sm font-normal">${message}</div>
+      <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 inline-flex h-8 w-8" aria-label="Cerrar">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    // Añadir event listener para cerrar
+    toast.querySelector("button").addEventListener("click", () => {
+      toast.classList.add("translate-x-full", "opacity-0");
+      setTimeout(() => toast.remove(), 300);
+    });
+    
+    // Animación de entrada
+    setTimeout(() => {
+      toast.classList.remove("translate-x-full", "opacity-0");
+    }, 10);
+    
+    // Auto cerrar después de 5 segundos
+    setTimeout(() => {
+      if (toast.parentNode) {
+        toast.classList.add("translate-x-full", "opacity-0");
+        setTimeout(() => toast.remove(), 300);
+      }
+    }, 5000);
+  };
+
+  // Manejo de UI
+  const toggleLoadingState = (isLoading) => {
+    state.loading = isLoading;
+    const loadingSkeleton = document.getElementById("loadingSkeleton");
+    const dataContainer = document.getElementById("dataContainer");
+    const mobileContainer = document.getElementById("pacientesTableBodyMobile");
+    const emptyState = document.getElementById("emptyState");
+    
+    if (loadingSkeleton) {
+      loadingSkeleton.classList.toggle("hidden", !isLoading);
+    }
+    
+    if (!isLoading) {
+      const hasPacientes = state.pacientes.length > 0;
+      
+      if (dataContainer) {
+        dataContainer.classList.toggle("hidden", !hasPacientes);
+      }
+      
+      if (mobileContainer) {
+        mobileContainer.classList.toggle("hidden", !hasPacientes);
+      }
+      
+      if (emptyState) {
+        emptyState.classList.toggle("hidden", hasPacientes);
+      }
+      
+      // Actualizar contador de pacientes
+      const totalCount = document.getElementById("totalPatientCount");
+      if (totalCount) {
+        totalCount.textContent = state.pacientes.length;
+      }
+    }
+  };
+
+  // Actualizar Tabla
+  async function actualizarTabla() {
+    toggleLoadingState(true);
+    
+    try {
+      const response = await fetch(`${BASE_URL}/paciente`);
+      if (!response.ok) {
+        throw new Error(`Error en la solicitud: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      state.pacientes = data.pacientes || [];
+      state.filteredPacientes = [...state.pacientes];
+      
+      renderizarVistas(state.filteredPacientes);
+      toggleLoadingState(false);
+    } catch (error) {
+      console.error("Error al obtener pacientes:", error);
+      showToast("No se pudieron cargar los pacientes", "error");
+      toggleLoadingState(false);
+    }
+  }
+
+  // Filtrar Pacientes
+  function filtrarPacientes() {
+    const searchTerm = document.getElementById("searchInput")?.value.toLowerCase().trim();
+    
+    if (!searchTerm) {
+      state.filteredPacientes = [...state.pacientes];
+    } else {
+      state.filteredPacientes = state.pacientes.filter(
+        (paciente) =>
+          (paciente.nombre?.toLowerCase() || "").includes(searchTerm) ||
+          (paciente.dni?.toString() || "").includes(searchTerm) ||
+          (paciente.mail?.toLowerCase() || "").includes(searchTerm)
+      );
+    }
+    
+    renderizarVistas(state.filteredPacientes);
+    
+    // Actualizar UI basado en resultados
+    const dataContainer = document.getElementById("dataContainer");
+    const mobileContainer = document.getElementById("pacientesTableBodyMobile");
+    const emptyState = document.getElementById("emptyState");
+    
+    const hasResults = state.filteredPacientes.length > 0;
+    
+    if (dataContainer) {
+      dataContainer.classList.toggle("hidden", !hasResults);
+    }
+    
+    if (mobileContainer) {
+      mobileContainer.classList.toggle("hidden", !hasResults);
+    }
+    
+    if (emptyState) {
+      emptyState.classList.toggle("hidden", hasResults);
+    }
+  }
+
+  // Renderizar ambas vistas
+  function renderizarVistas(pacientes) {
+    const tbodyDesktop = document.getElementById("pacientesTableBodyDesktop");
+    const containerMobile = document.getElementById("pacientesTableBodyMobile");
+
+    if (!tbodyDesktop || !containerMobile) return;
+
+    // Vista Desktop
+    tbodyDesktop.innerHTML = pacientes
+      .map(
+        (row) => `
+      <tr class="group hover:bg-blue-50 dark:hover:bg-gray-700 transition-all duration-200"
+        data-name="${row.nombre || ""}"
+        data-dni="${row.dni || ""}"
+        data-telefono="${row.telefono || ""}"
+        data-mail="${row.mail || ""}">
+        <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+          ${row.dni || ""}
+        </td>
+        <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+          ${row.nombre || ""}
+        </td>
+        <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+          ${row.mail || ""}
+        </td>
+        <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+          <span>${row.areaCode || ""}</span><span>${row.telefono || ""}</span>
+        </td>
+        <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+          <button 
+            onclick="window.location.href='/perfil/${row.dni}'"
+            class="rounded-lg p-2 text-blue-600 hover:bg-blue-100 hover:text-blue-800 transition-colors duration-200 dark:hover:bg-blue-900/30 dark:text-blue-400 dark:hover:text-blue-300"
+            aria-label="Ver perfil de ${row.nombre || 'paciente'}"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </button>
+        </td>
+        <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+          <div class="flex space-x-2">
+            <button 
+              class="edit-button rounded-lg p-2 text-blue-600 hover:bg-blue-100 hover:text-blue-800 transition-colors duration-200 dark:hover:bg-blue-900/30 dark:text-blue-400 dark:hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-700"
+              data-patient='${JSON.stringify({
+                name: row.nombre,
+                dni: row.dni,
+                mail: row.mail,
+                telefono: row.telefono,
+                areaCode: row.areaCode,
+              })}'
+              aria-label="Editar paciente ${row.nombre || ''}"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+            <button 
+              class="delete-button rounded-lg p-2 text-red-600 hover:bg-red-100 hover:text-red-800 transition-colors duration-200 dark:hover:bg-red-900/30 dark:text-red-400 dark:hover:text-red-300 focus:outline-none focus:ring-2 focus:ring-red-300 dark:focus:ring-red-700"
+              data-dni="${row.dni}"
+              aria-label="Eliminar paciente ${row.nombre || ''}"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `
+      )
+      .join("");
+
+    // Vista Mobile
+    containerMobile.innerHTML = pacientes
+      .map(
+        (row) => `
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-5 space-y-4 transition-transform duration-200 hover:scale-[1.01]"
+        data-name="${row.nombre || ""}"
+        data-dni="${row.dni || ""}"
+        data-telefono="${row.telefono || ""}"
+        data-mail="${row.mail || ""}">
+        <div class="flex justify-between items-start">
+          <div class="space-y-1">
+            <div class="font-medium text-lg text-gray-900 dark:text-white">${row.nombre || ""}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">DNI: ${row.dni || ""}</div>
+          </div>
+          <button 
+            onclick="window.location.href='/perfil/${row.dni}'"
+            class="rounded-full p-2 text-blue-600 hover:bg-blue-100 hover:text-blue-800 transition-colors duration-200 dark:hover:bg-blue-900/30 dark:text-blue-400 dark:hover:text-blue-300"
+            aria-label="Ver perfil de ${row.nombre || 'paciente'}"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div class="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+            <span class="text-xs font-medium text-blue-800 dark:text-blue-300">Email</span>
+            <p class="mt-1 text-gray-900 dark:text-white break-all">${row.mail || "No especificado"}</p>
+          </div>
+          
+          <div class="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+            <span class="text-xs font-medium text-blue-800 dark:text-blue-300">Teléfono</span>
+            <p class="mt-1 text-gray-900 dark:text-white">
+              <span>${row.areaCode || ""}</span><span>${row.telefono || ""}</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-3 border-t border-gray-200 dark:border-gray-700">
+          <button 
+            class="edit-button inline-flex items-center px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg border border-transparent hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-800/50 transition-colors"
+            data-patient='${JSON.stringify({
+              name: row.nombre,
+              dni: row.dni,
+              mail: row.mail,
+              telefono: row.telefono,
+              areaCode: row.areaCode,
+            })}'
+            aria-label="Editar paciente ${row.nombre || ''}"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Editar
+          </button>
+          <button 
+            class="delete-button inline-flex items-center px-4 py-2 text-sm font-medium text-red-700 bg-red-100 rounded-lg border border-transparent hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-800/50 transition-colors"
+            data-dni="${row.dni}"
+            aria-label="Eliminar paciente ${row.nombre || ''}"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+            Eliminar
+          </button>
+        </div>
+      </div>
+    `
+      )
+      .join("");
+
+    // Setup event listeners for both views
+    setupEventListeners();
+  }
+
+  // Manejadores de Modales
+  const openEditModal = async (patient) => {
+    state.modals.edit.selectedPatient = {
+      ...patient,
+      originalDni: patient.dni,
+    };
+    state.modals.edit.isOpen = true;
+
+    const modal = document.getElementById("editModal");
+    
+    if (modal) {
+      // Animar apertura
+      document.body.style.overflow = "hidden"; // Prevenir scroll
+      modal.classList.remove("hidden");
+      
+      // Rellenar formulario
+      document.getElementById("editName").value = patient.name || "";
+      document.getElementById("editDni").value = patient.dni || "";
+      document.getElementById("editMail").value = patient.mail || "";
+      document.getElementById("editTelefono").value = patient.telefono || "";
+      document.getElementById("editAreaCode").value = patient.areaCode || "+54";
+    }
+  };
+
+  const closeEditModal = () => {
+    const modal = document.getElementById("editModal");
+    
+    if (modal) {
+      document.body.style.overflow = ""; // Restaurar scroll
+      
+      // Resetear estado
+      state.modals.edit.isOpen = false;
+      state.modals.edit.selectedPatient = null;
+      
+      modal.classList.add("hidden");
+      document.getElementById("editForm")?.reset();
+    }
+  };
+
+  const openCreateModal = () => {
+    const createModal = document.getElementById("createModal");
+    
+    if (createModal) {
+      // Animar apertura
+      document.body.style.overflow = "hidden"; // Prevenir scroll
+      createModal.classList.remove("hidden");
+      state.modals.create.isOpen = true;
+      
+      // Enfocar el primer campo
+      setTimeout(() => {
+        document.getElementById("createName")?.focus();
+      }, 100);
+    }
+  };
+
+  const closeCreateModal = () => {
+    const createModal = document.getElementById("createModal");
+    
+    if (createModal) {
+      document.body.style.overflow = ""; // Restaurar scroll
+      createModal.classList.add("hidden");
+      state.modals.create.isOpen = false;
+      document.getElementById("createForm")?.reset();
+    }
+  };
+
+  // Manejo de Formularios
+  const handleFormSubmit = async (endpoint, formData, onSuccess) => {
+    const patient = {
+      nombre: formData.get("name")?.toString().trim(),
+      dni: formData.get("dni")?.toString().trim(),
+      mail: formData.get("mail")?.toString().trim(),
+      telefono: formData.get("telefono")?.toString().trim(),
+      areaCode: formData.get("areaCode")?.toString().trim(),
+      edad: 0,
+      direccion: "",
+      obraSocial: "No especificada",
+      ultCons: new Date(),
+      tratamientoMedico : "No",
+      tomaMedicamentos: "No",
+      alergias: "",
+      embarazada: false,
+      motivoConsulta: "Consulta general",
+    };
+
+    const errors = validatePatient(patient);
+    if (errors.length > 0) {
+      throw new Error(errors.join("\n"));
+    }
+
+    const response = await fetch(`${BASE_URL}/paciente/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "http://localhost:4321",
+      },
+      body: JSON.stringify(patient),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result.message || `Error del servidor: ${response.status}`
+      );
+    }
+
+    onSuccess(result);
+    return result;
+  };
+
+  const handleDelete = async (dni, nombre) => {
+    try {
+      // Mostrar spinner o indicador en el botón
+      const buttons = document.querySelectorAll(`.delete-button[data-dni="${dni}"]`);
+      const originalContents = Array.from(buttons).map(btn => btn.innerHTML);
+      
+      buttons.forEach(btn => {
+        btn.disabled = true;
+        btn.innerHTML = `
+          <svg class="animate-spin h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        `;
+      });
+      
+      // Find patient by DNI
+      const findResponse = await fetch(
+        `${BASE_URL}/paciente/findByDni/${dni}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Origin: "http://localhost:4321",
+          },
+        }
+      );
+
+      if (!findResponse.ok) {
+        const errorData = await findResponse.json();
+        throw new Error(
+          errorData.message || `Error del servidor: ${findResponse.status}`
+        );
+      }
+
+      const findResult = await findResponse.json();
+      const pacienteId = findResult.paciente.id;
+
+      // Delete patient
+      const deleteResponse = await fetch(
+        `${BASE_URL}/paciente/deleteById/${pacienteId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Origin: "http://localhost:4321",
+          },
+        }
+      );
+
+      if (!deleteResponse.ok) {
+        const result = await deleteResponse.json();
+        throw new Error(
+          result.message || `Error del servidor: ${deleteResponse.status}`
+        );
+      }
+
+      showToast(`Paciente ${nombre ? nombre + ' ' : ''}eliminado correctamente`);
+      await actualizarTabla();
+    } catch (error) {
+      showToast(error.message, "error");
+      
+      // Restaurar botones
+      const buttons = document.querySelectorAll(`.delete-button[data-dni="${dni}"]`);
+      buttons.forEach((btn, index) => {
+        btn.disabled = false;
+        btn.innerHTML = originalContents[index];
+      });
+    }
+  };
+
+  const handleEdit = async (patient) => {
+    if (!state.modals.edit.selectedPatient) {
+      showToast("Error: No se encontró el paciente a editar", "error");
+      return;
+    }
+    
+    try {
+      // Mostrar indicador de carga
+      const submitButton = document.querySelector("#editForm button[type='submit']");
+      const originalText = submitButton.textContent;
+      submitButton.disabled = true;
+      submitButton.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Guardando...
+      `;
+      
+      const originalDni = state.modals.edit.selectedPatient.originalDni;
+      
+      // Verificar errores de validación
+      const errors = validatePatient(patient);
+      if (errors.length > 0) {
+        throw new Error(errors.join("\n"));
+      }
+      
+      const response22 = await fetch(
+        `${BASE_URL}/paciente/findByDni/${originalDni}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Origin: "http://localhost:4321",
+          },
+        }
+      );
+      
+      if (!response22.ok) {
+        throw new Error(`Error al buscar paciente: ${response22.status}`);
+      }
+      
+      const dataaa = await response22.json();
+      const id = dataaa.paciente.id;
+
+      const response = await fetch(`${BASE_URL}/paciente/updateById/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost:4321",
+        },
+        body: JSON.stringify(patient),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error del servidor: ${response.status}`);
+      }
+
+      showToast("Paciente actualizado correctamente");
+      await actualizarTabla();
+      closeEditModal();
+    } catch (error) {
+      showToast(error.message, "error");
+    } finally {
+      // Restaurar botón
+      const submitButton = document.querySelector("#editForm button[type='submit']");
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = "Guardar Cambios";
+      }
+    }
+  };
+
+  // Event Listeners
+  function setupEventListeners() {
+    // Event listeners para botones de editar
+    document.querySelectorAll(".edit-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        try {
+          const patientData = JSON.parse(button.dataset.patient || "{}");
+          openEditModal(patientData);
+        } catch (e) {
+          console.error("Error al parsear datos del paciente:", e);
+          showToast("Error al cargar datos del paciente", "error");
+        }
+      });
+    });
+
+    // Event listeners para botones de eliminar
+    document.querySelectorAll(".delete-button").forEach((button) => {
+      button.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        
+        const container = button.closest("[data-dni]");
+        if (!container) return;
+
+        const dni = container.dataset.dni;
+        const nombre = container.dataset.name;
+
+        // Diálogo de confirmación más elegante
+        if (confirm(
+          `¿Está seguro que desea eliminar al paciente${nombre ? " " + nombre : ""}? Esta acción no se puede deshacer.`
+        )) {
+          await handleDelete(dni, nombre);
+        }
+      });
+    });
+  }
+
+  // Inicialización
+  document.addEventListener("DOMContentLoaded", () => {
+    actualizarTabla();
+
+    // Event Listeners básicos
+    document.getElementById("volverBtn")?.addEventListener("click", () => {
+      window.location.href = "/";
+    });
+
+    document
+      .getElementById("searchInput")
+      ?.addEventListener("input", () => {
+        filtrarPacientes();
+      });
+
+    // Botones para crear pacientes
+    document
+      .getElementById("createPatientButton")
+      ?.addEventListener("click", openCreateModal);
+      
+    document
+      .getElementById("createPatientEmptyState")
+      ?.addEventListener("click", openCreateModal);
+
+    // Event Listeners para modales
+    document.addEventListener("click", (e) => {
+      // Use closest() to find the nearest matching element, even if you clicked inside the button
+      const closeCreateModalButton = e.target.closest(".close-create-modal");
+
+      if (closeCreateModalButton) {
+        if (closeCreateModalButton.closest("#editModal")) {
+          closeEditModal();
+        }
+        if (closeCreateModalButton.closest("#createModal")) {
+          closeCreateModal();
+        }
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        if (state.modals.edit.isOpen) {
+          closeEditModal();
+        }
+        if (state.modals.create.isOpen) {
+          closeCreateModal();
+        }
+      }
+    });
+
+    // Event listener para toasts
+    document.getElementById("toastContainer")?.addEventListener("click", (e) => {
+      if (e.target.closest("button")) {
+        const toast = e.target.closest("div");
+        if (toast) {
+          toast.classList.add("translate-x-full", "opacity-0");
+          setTimeout(() => toast.remove(), 300);
+        }
+      }
+    });
+
+    // Formularios
+    document
+      .getElementById("createForm")
+      ?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+
+        try {
+          submitButton.disabled = true;
+          submitButton.innerHTML = `
+            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Creando...
+          `;
+
+          await handleFormSubmit("/paciente", new FormData(form), () => {
+            showToast("Paciente creado correctamente");
+            closeCreateModal();
+            window.location.reload();
+          });
+        } catch (error) {
+          showToast(error.message, "error");
+        } finally {
+          submitButton.disabled = false;
+          submitButton.innerHTML = originalText;
+        }
+      });
+
+    document
+      .getElementById("editForm")
+      ?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const patient = {
+          nombre: form.elements.name.value,
+          dni: form.elements.dni.value,
+          mail: form.elements.mail.value,
+          telefono: form.elements.telefono.value,
+          areaCode: form.elements.areaCode.value,
+        };
+
+        await handleEdit(patient);
+      });
+  });
+</script>

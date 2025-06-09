@@ -1,0 +1,1082 @@
+---
+
+---
+
+<div
+  class="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 text-slate-800 dark:text-slate-100 min-h-screen pb-20"
+>
+  <header class="p-4 lg:p-8 max-w-7xl mx-auto">
+    <!-- Page header with improved spacing and animation -->
+    <div
+      class="flex flex-col md:flex-row justify-between items-center w-full mb-8 gap-4 animate-fade-in"
+    >
+      <h1
+        class="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent leading-tight"
+      >
+        Citas
+      </h1>
+      <div class="flex flex-wrap gap-3 items-center w-full md:w-auto">
+        <div class="relative w-full md:w-auto flex-grow md:flex-grow-0">
+          <!-- Improved date picker with icon -->
+          <div class="relative">
+            <input
+              type="text"
+              id="calendar"
+              class="pl-10 pr-4 py-3 w-full md:w-64 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 shadow-md transition-all"
+              placeholder="Selecciona una fecha"
+              aria-label="Seleccionar fecha para filtrar citas"
+            />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 dark:text-gray-500 absolute left-3 top-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        </div>
+        
+        <!-- View toggle buttons with improved accessibility -->
+        <div class="flex items-center gap-0 ml-2 bg-gray-100 dark:bg-gray-700 rounded-xl p-1 shadow-inner">
+          <button
+            id="view-cards"
+            class="flex items-center justify-center px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors view-btn aria-selected:bg-white aria-selected:dark:bg-gray-800 aria-selected:shadow-md"
+            aria-label="Ver como tarjetas"
+            aria-selected="true"
+            role="tab"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            <span class="ml-2 hidden sm:inline">Tarjetas</span>
+          </button>
+          <button
+            id="view-table"
+            class="flex items-center justify-center px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors view-btn"
+            aria-label="Ver como tabla"
+            aria-selected="false"
+            role="tab"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18M3 18h18M3 6h18" />
+            </svg>
+            <span class="ml-2 hidden sm:inline">Tabla</span>
+          </button>
+        </div>
+        
+        <!-- New appointment button -->
+        <button
+          id="nueva-cita"
+          class="flex items-center justify-center px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors shadow-md hover:shadow-lg ml-2"
+          aria-label="Crear nueva cita"
+          onclick="window.location.href='/nueva-cita'"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          <span class="hidden sm:inline">Nueva cita</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Improved content container with better shadows and rounded corners -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden transition-all duration-200 border border-gray-100 dark:border-gray-700">
+      <!-- Loading skeleton -->
+      <div id="loading-skeleton" class="hidden">
+        <div class="p-6 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="animate-pulse">
+              <div class="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+            </div>
+            <div class="animate-pulse">
+              <div class="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+            </div>
+            <div class="animate-pulse hidden lg:block">
+              <div class="h-32 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Error state container -->
+      <div id="error-container" class="hidden p-8 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-red-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2" id="error-title">Error al cargar las citas</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4" id="error-message">Ha ocurrido un problema al conectar con el servidor.</p>
+        <button 
+          id="retry-button"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-md"
+        >
+          Intentar nuevamente
+        </button>
+      </div>
+      
+      <!-- Empty state container -->
+      <div id="empty-container" class="hidden">
+        <div class="p-12 flex flex-col items-center justify-center text-center">
+          <div class="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-full mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-3" id="empty-title">
+            No hay citas programadas
+          </h2>
+          <p class="text-gray-600 dark:text-gray-400 max-w-md mb-6" id="empty-message">
+            No se encontraron citas para la fecha seleccionada. Selecciona otra fecha o programa una nueva cita.
+          </p>
+          <div class="flex flex-wrap gap-3 justify-center">
+            <button class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg transition-colors flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Cambiar fecha
+            </button>
+            <button 
+              onclick="window.location.href='/nueva-cita'"
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-md flex items-center"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              Crear nueva cita
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Cards container with improved styling -->
+      <div
+        id="cards-container"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6"
+      >
+        <!-- Cards will be added here dynamically -->
+      </div>
+      
+      <!-- Table container with improved styling -->
+      <div id="table-container" class="hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-900">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Paciente</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Hora</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Médico</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Motivo</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Estado</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              <!-- Table rows will be added here dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Toast notifications container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-3"></div>
+  </header>
+</div>
+
+<script>
+  import flatpickr from "flatpickr";
+  import "flatpickr/dist/flatpickr.min.css";
+  import { Spanish } from "flatpickr/dist/l10n/es.js";
+
+  // Core DOM elements
+  const cardsContainer = document.getElementById("cards-container");
+  const tableContainer = document.getElementById("table-container");
+  const tableBody = document.getElementById("table-body");
+  const viewCardsBtn = document.getElementById("view-cards");
+  const viewTableBtn = document.getElementById("view-table");
+  const loadingSkeleton = document.getElementById("loading-skeleton");
+  const errorContainer = document.getElementById("error-container");
+  const emptyContainer = document.getElementById("empty-container");
+  const retryButton = document.getElementById("retry-button");
+  const errorTitle = document.getElementById("error-title");
+  const errorMessage = document.getElementById("error-message");
+  
+  const BASE_URL = "http://localhost:5000/api";
+  let currentDate = new Date();
+  let flatpickrInstance = null;
+  
+  // State management
+  const state = {
+    isLoading: false,
+    hasError: false,
+    errorDetails: null,
+    isEmpty: false,
+    currentView: 'cards',
+    appointments: [],
+    
+    // Set loading state and update UI
+    setLoading(loading) {
+      this.isLoading = loading;
+      updateUIState();
+    },
+    
+    // Set error state and update UI
+    setError(hasError, details = null) {
+      this.hasError = hasError;
+      this.errorDetails = details;
+      updateUIState();
+    },
+    
+    // Set empty state and update UI
+    setEmpty(isEmpty) {
+      this.isEmpty = isEmpty;
+      updateUIState();
+    },
+    
+    // Set view mode and update UI
+    setView(view) {
+      this.currentView = view;
+      localStorage.setItem('preferredView', view);
+      updateUIState();
+    },
+    
+    // Set appointments data and update UI
+    setAppointments(appointments) {
+      this.appointments = appointments;
+      this.setEmpty(appointments.length === 0);
+      renderAppointments();
+    }
+  };
+  
+  // Update UI based on current state
+  function updateUIState() {
+    // Handle loading state
+    loadingSkeleton.classList.toggle('hidden', !state.isLoading);
+    
+    // Handle error state
+    errorContainer.classList.toggle('hidden', !state.hasError || state.isLoading);
+    if (state.hasError && state.errorDetails) {
+      errorTitle.textContent = "Error al cargar las citas";
+      errorMessage.textContent = state.errorDetails;
+    }
+    
+    // Handle empty state
+    emptyContainer.classList.toggle('hidden', !state.isEmpty || state.isLoading || state.hasError);
+    
+    // Handle view mode
+    cardsContainer.classList.toggle('hidden', state.currentView !== 'cards' || state.isLoading || state.hasError || state.isEmpty);
+    tableContainer.classList.toggle('hidden', state.currentView !== 'table' || state.isLoading || state.hasError || state.isEmpty);
+    
+    // Update view buttons
+    viewCardsBtn.setAttribute('aria-selected', state.currentView === 'cards');
+    viewTableBtn.setAttribute('aria-selected', state.currentView !== 'cards');
+  }
+  
+  // Format date for API
+  function formatDateForAPI(date) {
+    const offset = -3;
+    const argDate = new Date(date.getTime() + offset * 60 * 60 * 1000);
+
+    const year = argDate.getUTCFullYear();
+    const month = String(argDate.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(argDate.getUTCDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+  // Format time from 24h format
+  function formatTime(dateString) {
+    const date = new Date(dateString);
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  }
+
+  // Format date for messages
+  function formatDateForMessage(dateStr) {
+    const date = new Date(dateStr);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('es-ES', options);
+  }
+
+  // Get color class for status
+  function getEstadoColor(estado) {
+    const colores = {
+      pendiente:
+        "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+      en_proceso:
+        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+      completada:
+        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+    };
+    return colores[estado] || colores["pendiente"];
+  }
+
+  // Get text for status
+  function getEstadoTexto(estado) {
+    const textos = {
+      pendiente: "Pendiente",
+      en_proceso: "En Proceso",
+      completada: "Completada",
+    };
+    return textos[estado] || "Pendiente";
+  }
+
+  // Generate WhatsApp link with formatted message
+  function getWhatsAppLink(paciente, hora, fecha) {
+    const telefono = paciente?.telefono?.replace(/\D/g, "");
+    const codigoPais = paciente?.areaCode || "+54";
+    const telefonoCompleto = `${codigoPais}${telefono}`.replace("+", "");
+    
+    // Format date for message
+    const fechaFormateada = formatDateForMessage(fecha);
+
+    const mensaje = encodeURIComponent(
+      `👋 ¡Hola, ${paciente.nombre}!
+💬 Te recordamos tu turno con
+Odontologia Integral
+Calle 55 número 587 entre calle 6 y calle 7
+📅 ${fechaFormateada}
+🕐 ${hora} hs
+¡Te esperamos! 🙌`
+    );
+
+    return `https://wa.me/${telefonoCompleto}?text=${mensaje}`;
+  }
+
+  // Handle Attend button click
+  window.handleAtenderClick = async function (citaId) {
+    try {
+      showToast("Procesando...", "info");
+      
+      const response = await fetch(`${BASE_URL}/citas/${citaId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          estado: "en_proceso",
+          fecha: new Date(),
+          motivo:
+            document.getElementById(`motivo-${citaId}`)?.textContent || "",
+          monto:
+            document
+              .getElementById(`monto-${citaId}`)
+              ?.textContent?.replace("$", "") || 0,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.message || "Error al actualizar el estado de la cita"
+        );
+      }
+
+      showToast("Redirigiendo a consulta...", "success");
+      setTimeout(() => {
+        window.location.href = `/consulta?id=${citaId}`;
+      }, 1000);
+    } catch (error) {
+      console.error("Error:", error);
+      showToast(`Error: ${error.message}`, "error");
+    }
+  };
+
+  // Navigate to patient profile
+  window.irAlPerfil = function(dni) {
+    if (dni) {
+      window.location.href = `/paciente/${dni}`;
+    }
+  };
+  
+  // Show toast notification
+  window.showToast = function(message, type = "info") {
+    const toastContainer = document.getElementById("toast-container");
+    const toast = document.createElement("div");
+    
+    // Set toast classes based on type
+    const baseClasses = "px-4 py-3 rounded-lg shadow-lg flex items-center transition-all duration-300 transform translate-y-2 opacity-0";
+    let typeClasses = "";
+    let icon = "";
+    
+    switch (type) {
+      case "success":
+        typeClasses = "bg-green-100 border-l-4 border-green-500 text-green-800 dark:bg-green-900 dark:border-green-500 dark:text-green-200";
+        icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>`;
+        break;
+      case "error":
+        typeClasses = "bg-red-100 border-l-4 border-red-500 text-red-800 dark:bg-red-900 dark:border-red-500 dark:text-red-200";
+        icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>`;
+        break;
+      case "info":
+      default:
+        typeClasses = "bg-blue-100 border-l-4 border-blue-500 text-blue-800 dark:bg-blue-900 dark:border-blue-500 dark:text-blue-200";
+        icon = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>`;
+    }
+    
+    toast.className = `${baseClasses} ${typeClasses}`;
+    toast.innerHTML = `
+      ${icon}
+      <span>${message}</span>
+      <button class="ml-auto" aria-label="Cerrar notificación">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    `;
+    
+    // Add close functionality
+    toast.querySelector('button').addEventListener('click', () => {
+      toast.classList.replace('opacity-100', 'opacity-0');
+      toast.classList.replace('translate-y-0', 'translate-y-2');
+      setTimeout(() => {
+        toast.remove();
+      }, 300);
+    });
+    
+    toastContainer.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => {
+      toast.classList.replace('opacity-0', 'opacity-100');
+      toast.classList.replace('translate-y-2', 'translate-y-0');
+    }, 10);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      if (toast.parentNode) {
+        toast.classList.replace('opacity-100', 'opacity-0');
+        toast.classList.replace('translate-y-0', 'translate-y-2');
+        setTimeout(() => {
+          if (toast.parentNode) {
+            toast.remove();
+          }
+        }, 300);
+      }
+    }, 5000);
+  };
+
+  // Fetch and render appointments
+  async function loadData(selectedDate = new Date()) {
+    try {
+      state.setLoading(true);
+      state.setError(false);
+      currentDate = selectedDate;
+      
+      const formattedDate = formatDateForAPI(selectedDate);
+      console.log("Fecha seleccionada:", selectedDate);
+      console.log("Fecha formateada para API:", formattedDate);
+
+      const response = await fetch(`${BASE_URL}/citas/fecha/${formattedDate}`);
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const consultas = data.data;
+      
+      // Update state with appointments
+      state.setAppointments(consultas);
+      state.setLoading(false);
+      
+      // Update calendar date label
+      if (flatpickrInstance) {
+        flatpickrInstance.setDate(selectedDate);
+      }
+      
+    } catch (error) {
+      console.error("Error al cargar las consultas:", error);
+      state.setLoading(false);
+      state.setError(true, error.message);
+    }
+  }
+  
+  // Render appointments based on current view
+  function renderAppointments() {
+    if (state.currentView === 'cards') {
+      renderCardsView();
+    } else {
+      renderTableView();
+    }
+  }
+  
+  // Render appointments in cards view
+  function renderCardsView() {
+    cardsContainer.innerHTML = "";
+    
+    for (const consulta of state.appointments) {
+      // Verificar el rol del usuario y el estado de la consulta
+      const userRole = localStorage.getItem("userRole") || "";
+      const mostrarBotonAtender =
+        consulta.estado !== "completada" && userRole !== "secretaria";
+      const mostrarBotonRecordatorio = consulta.estado !== "completada";
+
+      // Create card element
+      const card = document.createElement("div");
+      card.className = "bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md hover:shadow-lg transition-all overflow-hidden transform hover:-translate-y-1 duration-300";
+      card.setAttribute('data-appointment-id', consulta._id);
+
+      // Card content
+      card.innerHTML = `
+        <div class="p-5">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-1 flex items-center gap-2">
+                ${consulta.pacienteId.nombre}
+                <span class="text-sm font-normal text-gray-500 dark:text-gray-400 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  ${formatTime(consulta.fecha)}
+                </span>
+              </h3>
+              <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <span class="inline-flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  ${consulta.medicoId.nombre}
+                </span>
+              </div>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-medium ${getEstadoColor(consulta.estado)}">
+              ${getEstadoTexto(consulta.estado)}
+            </span>
+          </div>
+          
+          <div class="text-gray-600 dark:text-gray-300 mb-4">
+            <div class="text-sm">
+              <strong>Motivo:</strong>
+              <span id="motivo-${consulta._id}" class="ml-1">${consulta.motivo}</span>
+            </div>
+          </div>
+          
+          <div class="space-y-2">
+            ${mostrarBotonRecordatorio ? `
+              <button 
+                onclick="window.open('${getWhatsAppLink(consulta.pacienteId, formatTime(consulta.fecha), consulta.fecha)}', '_blank'); showToast('Abriendo WhatsApp...', 'info');"
+                class="w-full px-3 py-2 text-sm text-white bg-green-500 hover:bg-green-600 rounded-lg transition-colors flex items-center justify-center shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+                aria-label="Enviar recordatorio por WhatsApp"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                Enviar recordatorio
+              </button>
+            ` : ''}
+            
+            ${mostrarBotonAtender ? `
+              <button 
+                onclick="handleAtenderClick('${consulta._id}')"
+                class="w-full px-3 py-2 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center justify-center shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                aria-label="${consulta.estado === 'en_proceso' ? 'Continuar atención' : 'Iniciar atención'}"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                ${consulta.estado === "en_proceso" ? "Continuar atención" : "Atender paciente"}
+              </button>
+            ` : ''}
+            
+            <button 
+              onclick="irAlPerfil('${consulta.pacienteId.dni}')"
+              class="w-full px-3 py-2 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 dark:text-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-lg transition-colors flex items-center justify-center shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+              aria-label="Ver perfil del paciente"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Ver perfil del paciente
+            </button>
+          </div>
+          
+          <!-- Collapsible treatments section button -->
+          <button 
+            class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mt-4 text-sm flex items-center w-full justify-center py-2 border-t border-gray-100 dark:border-gray-700"
+            onclick="toggleTratamientos('${consulta._id}')"
+            aria-expanded="false"
+            aria-controls="tratamientos-${consulta._id}"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 transition-transform duration-200" id="chevron-${consulta._id}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+            <span id="tratamientos-text-${consulta._id}">Mostrar tratamientos</span>
+          </button>
+        </div>
+        
+        <!-- Collapsible treatments container -->
+        <div id="tratamientos-${consulta._id}" class="hidden px-5 pb-5 pt-1 space-y-2 text-gray-600 dark:text-gray-300 text-sm border-t border-gray-100 dark:border-gray-700">
+          <div id="tratamientos-loader-${consulta._id}" class="py-2">
+            <div class="flex items-center justify-center space-x-2 animate-pulse">
+              <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+              <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+              <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+            </div>
+          </div>
+          <div id="tratamientos-content-${consulta._id}" class="hidden">
+            <!-- Treatment content will be loaded here -->
+          </div>
+        </div>
+      `;
+
+      cardsContainer.appendChild(card);
+    }
+  }
+  
+  // Render appointments in table view
+  function renderTableView() {
+    tableBody.innerHTML = "";
+    
+    for (const consulta of state.appointments) {
+      // Check user role and appointment status
+      const userRole = localStorage.getItem("userRole") || "";
+      const mostrarBotonAtender =
+        consulta.estado !== "completada" && userRole !== "secretaria";
+      const mostrarBotonRecordatorio = consulta.estado !== "completada";
+
+      // Create table row
+      const tableRow = document.createElement("tr");
+      tableRow.className = "hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors";
+      tableRow.setAttribute('data-appointment-id', consulta._id);
+      
+      tableRow.innerHTML = `
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="flex items-center">
+            <div>
+              <div class="text-sm font-medium text-gray-900 dark:text-white">${consulta.pacienteId.nombre}</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">DNI: ${consulta.pacienteId.dni || 'N/A'}</div>
+            </div>
+          </div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="text-sm text-gray-900 dark:text-white">${formatTime(consulta.fecha)}</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <div class="text-sm text-gray-900 dark:text-white">${consulta.medicoId.nombre}</div>
+        </td>
+        <td class="px-6 py-4">
+          <div class="text-sm text-gray-900 dark:text-white max-w-xs truncate" id="motivo-${consulta._id}" title="${consulta.motivo}">${consulta.motivo}</div>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoColor(consulta.estado)}">
+            ${getEstadoTexto(consulta.estado)}
+          </span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+          <div class="flex flex-wrap gap-2">
+            ${mostrarBotonRecordatorio ? `
+              <button 
+                onclick="window.open('${getWhatsAppLink(consulta.pacienteId, formatTime(consulta.fecha), consulta.fecha)}', '_blank'); showToast('Abriendo WhatsApp...', 'info');"
+                class="text-xs px-2 py-1 bg-green-100 hover:bg-green-200 text-green-800 dark:bg-green-900 dark:hover:bg-green-800 dark:text-green-200 rounded transition-colors inline-flex items-center"
+                aria-label="Enviar recordatorio por WhatsApp"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                Recordatorio
+              </button>
+            ` : ''}
+            
+            ${mostrarBotonAtender ? `
+              <button 
+                onclick="handleAtenderClick('${consulta._id}')"
+                class="text-xs px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 dark:bg-blue-900 dark:hover:bg-blue-800 dark:text-blue-200 rounded transition-colors inline-flex items-center"
+                aria-label="${consulta.estado === 'en_proceso' ? 'Continuar atención' : 'Iniciar atención'}"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                ${consulta.estado === "en_proceso" ? "Continuar" : "Atender"}
+              </button>
+            ` : ''}
+            
+            <button 
+              onclick="irAlPerfil('${consulta.pacienteId.dni}')"
+              class="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 rounded transition-colors inline-flex items-center"
+              aria-label="Ver perfil del paciente"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Ver perfil
+            </button>
+            
+            <button 
+              onclick="toggleTratamientosTabla('${consulta._id}')"
+              class="text-xs px-2 py-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-800 dark:bg-indigo-900 dark:hover:bg-indigo-800 dark:text-indigo-200 rounded transition-colors inline-flex items-center"
+              aria-label="Ver tratamientos"
+              aria-expanded="false"
+              aria-controls="tratamientos-tabla-${consulta._id}"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1 transition-transform duration-200" id="chevron-tabla-${consulta._id}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+              <span id="tratamientos-text-tabla-${consulta._id}">Tratamientos</span>
+            </button>
+          </div>
+        </td>
+      `;
+      
+      tableBody.appendChild(tableRow);
+      
+      // Add treatment row (hidden by default)
+      const treatmentRow = document.createElement("tr");
+      treatmentRow.id = `tratamientos-tabla-${consulta._id}`;
+      treatmentRow.className = "bg-gray-50 dark:bg-gray-750 hidden";
+      
+      treatmentRow.innerHTML = `
+        <td colspan="6" class="px-6 py-4">
+          <div id="tratamientos-loader-tabla-${consulta._id}" class="py-2">
+            <div class="flex items-center justify-center space-x-2 animate-pulse">
+              <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+              <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+              <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+            </div>
+          </div>
+          <div id="tratamientos-content-tabla-${consulta._id}" class="hidden">
+            <!-- Treatment content will be loaded here -->
+          </div>
+        </td>
+      `;
+      
+      tableBody.appendChild(treatmentRow);
+    }
+  }
+  
+  // Toggle treatments display in card view
+  window.toggleTratamientos = async function (citaId) {
+    const tratamientosContainer = document.getElementById(`tratamientos-${citaId}`);
+    const chevronIcon = document.getElementById(`chevron-${citaId}`);
+    const textElement = document.getElementById(`tratamientos-text-${citaId}`);
+    const isExpanded = tratamientosContainer.classList.contains('hidden') ? false : true;
+    
+    // Toggle container visibility
+    if (isExpanded) {
+      // Hide container
+      tratamientosContainer.classList.add('hidden');
+      chevronIcon.classList.remove('rotate-180');
+      textElement.textContent = 'Mostrar tratamientos';
+      document.querySelector(`button[aria-controls="tratamientos-${citaId}"]`).setAttribute('aria-expanded', 'false');
+    } else {
+      // Show container
+      tratamientosContainer.classList.remove('hidden');
+      chevronIcon.classList.add('rotate-180');
+      textElement.textContent = 'Ocultar tratamientos';
+      document.querySelector(`button[aria-controls="tratamientos-${citaId}"]`).setAttribute('aria-expanded', 'true');
+      
+      // Load treatments if not already loaded
+      const treatmentsContent = document.getElementById(`tratamientos-content-${citaId}`);
+      const treatmentsLoader = document.getElementById(`tratamientos-loader-${citaId}`);
+      
+      if (treatmentsContent.innerHTML.trim() === '') {
+        // Show loader
+        treatmentsLoader.classList.remove('hidden');
+        treatmentsContent.classList.add('hidden');
+        
+        try {
+          await loadTreatments(citaId, 'card');
+        } catch (error) {
+          console.error('Error loading treatments:', error);
+          treatmentsContent.innerHTML = `<p class="text-red-500">Error al cargar tratamientos: ${error.message}</p>`;
+        } finally {
+          treatmentsLoader.classList.add('hidden');
+          treatmentsContent.classList.remove('hidden');
+        }
+      }
+    }
+  };
+  
+  // Toggle treatments display in table view
+  window.toggleTratamientosTabla = async function (citaId) {
+    const tratamientosRow = document.getElementById(`tratamientos-tabla-${citaId}`);
+    const chevronIcon = document.getElementById(`chevron-tabla-${citaId}`);
+    const textElement = document.getElementById(`tratamientos-text-tabla-${citaId}`);
+    const isExpanded = !tratamientosRow.classList.contains('hidden');
+    
+    // Toggle container visibility
+    if (isExpanded) {
+      // Hide container
+      tratamientosRow.classList.add('hidden');
+      chevronIcon.classList.remove('rotate-180');
+      textElement.textContent = 'Tratamientos';
+      document.querySelector(`button[aria-controls="tratamientos-tabla-${citaId}"]`).setAttribute('aria-expanded', 'false');
+    } else {
+      // Show container
+      tratamientosRow.classList.remove('hidden');
+      chevronIcon.classList.add('rotate-180');
+      textElement.textContent = 'Ocultar';
+      document.querySelector(`button[aria-controls="tratamientos-tabla-${citaId}"]`).setAttribute('aria-expanded', 'true');
+      
+      // Load treatments if not already loaded
+      const treatmentsContent = document.getElementById(`tratamientos-content-tabla-${citaId}`);
+      const treatmentsLoader = document.getElementById(`tratamientos-loader-tabla-${citaId}`);
+      
+      if (treatmentsContent.innerHTML.trim() === '') {
+        // Show loader
+        treatmentsLoader.classList.remove('hidden');
+        treatmentsContent.classList.add('hidden');
+        
+        try {
+          await loadTreatments(citaId, 'table');
+        } catch (error) {
+          console.error('Error loading treatments:', error);
+          treatmentsContent.innerHTML = `<p class="text-red-500">Error al cargar tratamientos: ${error.message}</p>`;
+        } finally {
+          treatmentsLoader.classList.add('hidden');
+          treatmentsContent.classList.remove('hidden');
+        }
+      }
+    }
+  };
+  
+  // Load treatments data
+  async function loadTreatments(citaId, viewType) {
+    // Find the current appointment data
+    const appointment = state.appointments.find(a => a._id === citaId);
+    
+    if (!appointment) {
+      throw new Error('Cita no encontrada');
+    }
+    
+    const contentId = viewType === 'card' ? 
+      `tratamientos-content-${citaId}` : 
+      `tratamientos-content-tabla-${citaId}`;
+    
+    const contentElement = document.getElementById(contentId);
+    
+    // Check if appointment has treatments
+    if (Array.isArray(appointment.tratamientos) && appointment.tratamientos.length > 0) {
+      // Process each treatment
+      const tratamientosPromises = appointment.tratamientos.map(
+        async (tratamiento) => {
+          try {
+            // If the treatment already has a name, use it
+            if (tratamiento.nombre || tratamiento.nombreTratamiento) {
+              return `
+                <div class="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-500 dark:text-indigo-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>${tratamiento.nombre || tratamiento.nombreTratamiento}</span>
+                </div>`;
+            }
+
+            // Otherwise, fetch treatment details from API
+            const tratamientoId = typeof tratamiento === "string" ? tratamiento : tratamiento._id;
+            const response = await fetch(`${BASE_URL}/tratamientos/findById/${tratamientoId}`);
+
+            if (!response.ok)
+              throw new Error("Error al cargar tratamiento");
+
+            const data = await response.json();
+            return `
+              <div class="p-2 bg-indigo-50 dark:bg-indigo-900/30 rounded flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-500 dark:text-indigo-400 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>${data.nombre || data.nombreTratamiento}</span>
+              </div>`;
+          } catch (error) {
+            console.error("Error al cargar tratamiento:", error);
+            return `
+              <div class="p-2 bg-red-50 dark:bg-red-900/30 rounded flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Error al cargar tratamiento</span>
+              </div>`;
+          }
+        }
+      );
+
+      // Resolve all treatment promises
+      const treatmentsContent = await Promise.all(tratamientosPromises);
+      contentElement.innerHTML = `<div class="space-y-2">${treatmentsContent.join("")}</div>`;
+    } else {
+      // No treatments
+      contentElement.innerHTML = `
+        <div class="p-2 bg-gray-50 dark:bg-gray-700 rounded text-center">
+          <span class="text-gray-500 dark:text-gray-400">No hay tratamientos asignados</span>
+        </div>`;
+    }
+  }
+
+  // Set up view mode
+  function changeView(viewType) {
+    state.setView(viewType);
+  }
+  
+  // Initialize application
+  document.addEventListener("DOMContentLoaded", () => {
+    // Initialize flatpickr calendar
+    flatpickrInstance = flatpickr("#calendar", {
+      dateFormat: "Y-m-d",
+      defaultDate: "today",
+      locale: Spanish,
+      time_24hr: true,
+      enableTime: false,
+      onChange: function (selectedDates) {
+        if (selectedDates.length > 0) {
+          loadData(selectedDates[0]);
+        }
+      },
+      animate: true,
+      disableMobile: false,
+      nextArrow: '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>',
+      prevArrow: '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>',
+    });
+
+    // Set initial view based on screen size and user preference
+    const isMobile = window.innerWidth < 768;
+    let preferredView = localStorage.getItem('preferredView') || 'cards';
+    
+    // Always show cards on mobile
+    if (isMobile) {
+      preferredView = 'cards';
+    }
+    
+    // Set initial view
+    state.setView(preferredView);
+    
+    // Add event listeners for view buttons
+    viewCardsBtn.addEventListener('click', () => changeView('cards'));
+    viewTableBtn.addEventListener('click', () => changeView('table'));
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth < 768 && state.currentView !== 'cards') {
+        state.setView('cards');
+      }
+    });
+    
+    // Set up retry button
+    retryButton.addEventListener('click', () => {
+      loadData(currentDate);
+    });
+
+    // Load initial data
+    loadData();
+  });
+</script>
+
+<style>
+  /* Entry animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  
+  /* Transitions for cards and table rows */
+  #cards-container > div, #table-body > tr {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+  
+  /* Improve calendar appearance */
+  :global(.flatpickr-calendar) {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border-radius: 0.75rem;
+    padding: 0.5rem;
+  }
+
+  /* Dark theme for calendar */
+  :global(.dark .flatpickr-calendar) {
+    background: #1e293b !important;
+    border-color: #475569 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Calendar header */
+  :global(.dark .flatpickr-months) {
+    background: #1e293b !important;
+  }
+
+  :global(.dark .flatpickr-months .flatpickr-month) {
+    color: #e2e8f0 !important;
+    fill: #e2e8f0 !important;
+  }
+
+  :global(.dark .flatpickr-months .flatpickr-prev-month,
+      .dark .flatpickr-months .flatpickr-next-month) {
+    color: #94a3b8 !important;
+    fill: #94a3b8 !important;
+    padding: 0.5rem;
+  }
+
+  :global(.dark .flatpickr-months .flatpickr-prev-month:hover,
+      .dark .flatpickr-months .flatpickr-next-month:hover) {
+    color: #e2e8f0 !important;
+    fill: #e2e8f0 !important;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+  }
+
+  /* Weekdays */
+  :global(.dark .flatpickr-weekdays) {
+    background: #1e293b !important;
+  }
+
+  :global(.dark .flatpickr-weekday) {
+    color: #94a3b8 !important;
+    font-weight: 600;
+  }
+
+  /* Calendar days */
+  :global(.dark .flatpickr-day) {
+    color: #e2e8f0 !important;
+    border-color: transparent !important;
+    border-radius: 0.5rem !important;
+    margin: 0.15rem 0 !important;
+  }
+
+  :global(.dark .flatpickr-day:hover) {
+    background: #334155 !important;
+  }
+
+  :global(.dark .flatpickr-day.selected) {
+    background: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+    color: #ffffff !important;
+  }
+
+  :global(.dark .flatpickr-day.today) {
+    border: 1px solid #3b82f6 !important;
+    background: transparent !important;
+  }
+
+  :global(.dark .flatpickr-day.today:hover) {
+    background: #334155 !important;
+    color: #e2e8f0 !important;
+  }
+  
+  /* Focus styles for accessibility */
+  button:focus, a:focus, input:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+  
+  /* Focus visible only when using keyboard navigation */
+  button:focus:not(:focus-visible), 
+  a:focus:not(:focus-visible),
+  input:focus:not(:focus-visible) {
+    outline: none;
+  }
+  
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>

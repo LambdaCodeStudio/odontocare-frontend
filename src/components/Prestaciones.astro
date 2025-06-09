@@ -1,0 +1,2143 @@
+---
+import ColapsoButton from './ColapsoButton.astro';
+
+interface Props {
+  dni: string;
+}
+
+const { dni } = Astro.props;
+---
+
+<div class="space-y-6 transition-all duration-300 animate-fadeIn">
+  <!-- Header con botones principales y título -->
+  <div class="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-4 shadow-md transition-all duration-300">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-2">
+      <h2 class="text-xl font-bold text-indigo-700 dark:text-indigo-300 sm:text-2xl transition-all duration-300 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z" />
+        </svg>
+        Prestaciones
+      </h2>
+      <div class="flex flex-wrap gap-3 w-full sm:w-auto">
+        <button
+          id="historialBtn"
+          class="flex-1 sm:flex-none rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 px-4 py-2.5 text-white hover:from-indigo-600 hover:to-indigo-700 dark:from-indigo-600 dark:to-indigo-700 dark:hover:from-indigo-500 dark:hover:to-indigo-600 shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center"
+          aria-label="Ver historial de prestaciones"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Historial
+        </button>
+        <button
+          id="agregarPagoBtn"
+          class="flex-1 sm:flex-none rounded-lg bg-gradient-to-br from-green-500 to-green-600 px-4 py-2.5 text-white hover:from-green-600 hover:to-green-700 dark:from-green-600 dark:to-green-700 dark:hover:from-green-500 dark:hover:to-green-600 shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center"
+          aria-label="Agregar nuevo pago"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+          Agregar Pago
+        </button>
+        <button
+          id="nuevaPrestacionBtn"
+          class="flex-1 sm:flex-none rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 px-4 py-2.5 text-white hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center"
+          aria-label="Crear nueva prestación"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Nueva Prestación
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de carga -->
+  <div id="loadingState" class="hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+      <div class="animate-pulse space-y-4">
+        <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+        <div class="grid grid-cols-6 gap-4">
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded col-span-1"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded col-span-1"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded col-span-1"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded col-span-1"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded col-span-1"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded col-span-1"></div>
+        </div>
+        <div class="space-y-2">
+          <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado vacío -->
+  <div id="emptyState" class="hidden bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
+    <div class="mx-auto w-24 h-24 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    </div>
+    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">No hay prestaciones registradas</h3>
+    <p class="text-gray-600 dark:text-gray-400 mb-6">Cree una nueva prestación para comenzar a registrar los servicios del paciente.</p>
+    <button
+      id="nuevaPrestacionBtnEmpty"
+      class="inline-flex items-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 px-5 py-2.5 text-white hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 shadow-md hover:shadow-lg transition-all duration-300"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+      Nueva Prestación
+    </button>
+  </div>
+
+  <!-- Estado de error -->
+  <div id="errorState" class="hidden bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
+    <div class="mx-auto w-24 h-24 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-500 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+    </div>
+    <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Error al cargar datos</h3>
+    <p id="errorMessage" class="text-gray-600 dark:text-gray-400 mb-6">No se pudieron cargar las prestaciones del paciente.</p>
+    <button
+      id="retryButton"
+      class="inline-flex items-center rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 px-5 py-2.5 text-white hover:from-indigo-600 hover:to-indigo-700 dark:from-indigo-600 dark:to-indigo-700 dark:hover:from-indigo-500 dark:hover:to-indigo-600 shadow-md hover:shadow-lg transition-all duration-300"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+      Reintentar
+    </button>
+  </div>
+
+  <!-- Vista de tabla para desktop -->
+  <div id="tableContainer" class="hidden md:block overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg bg-white dark:bg-gray-800 transition-all duration-300">
+    <table class="w-full table-auto border-collapse">
+      <thead>
+        <tr class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 border-b border-gray-200 dark:border-gray-700">
+          <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-200 font-bold">Tratamiento</th>
+          <th class="px-4 py-3 text-right text-gray-700 dark:text-gray-200 font-bold">Precio Total</th>
+          <th class="px-4 py-3 text-right text-gray-700 dark:text-gray-200 font-bold">Total Pagado</th>
+          <th class="px-4 py-3 text-right text-gray-700 dark:text-gray-200 font-bold">Saldo</th>
+          <th class="px-4 py-3 text-right text-gray-700 dark:text-gray-200 font-bold">Últimos Pagos</th>
+          <th class="px-4 py-3 text-right text-gray-700 dark:text-gray-200 font-bold">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="prestacionesTableBody" class="divide-y divide-gray-200 dark:divide-gray-700"></tbody>
+      <tfoot>
+        <tr class="border-t-2 border-gray-200 font-semibold dark:border-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800">
+          <td class="px-4 py-3 text-right text-gray-700 dark:text-gray-200 font-bold" colspan="5" id="etiquetaTotalAdeudado">Saldo:</td>
+          <td id="totalAdeudado" class="px-4 py-3 text-right"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- Vista de tarjetas para móvil -->
+  <div class="md:hidden space-y-4" id="prestacionesCardView">
+    <!-- Las tarjetas se agregarán dinámicamente -->
+  </div>
+
+  <!-- Saldo total para móvil -->
+  <div class="md:hidden rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-4 shadow-md transition-all duration-300">
+    <div class="flex justify-between items-center">
+      <span class="font-bold text-gray-700 dark:text-gray-200" id="etiquetaTotalAdeudadoMovil">Saldo:</span>
+      <span id="totalAdeudadoMovil" class="font-bold"></span>
+    </div>
+  </div>
+
+  <!-- Modal Historial -->
+  <div
+    id="historialModal"
+    class="fixed left-0 top-0 z-50 hidden h-full w-full overflow-auto bg-black bg-opacity-50 backdrop-blur-sm transition-all duration-300"
+    role="dialog"
+    aria-labelledby="historialModalTitle"
+    aria-modal="true"
+  >
+    <div class="fixed left-1/2 top-10 w-full max-w-5xl -translate-x-1/2 rounded-xl bg-white p-6 shadow-xl dark:bg-gray-800 transition-all duration-500 transform opacity-0 scale-95" id="historialModalContent">
+      <div class="mb-6 flex items-center justify-between">
+        <h3 id="historialModalTitle" class="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Historial de Prestaciones
+        </h3>
+        <button
+          id="cerrarHistorialBtn"
+          class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors duration-300 rounded-full p-1 hover:bg-gray-100 dark:hover:bg-gray-700"
+          aria-label="Cerrar historial"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Estado de carga del historial -->
+      <div id="historialLoadingState" class="hidden animate-pulse space-y-4 mb-4">
+        <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+        <div class="space-y-2">
+          <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+        </div>
+      </div>
+      
+      <!-- Estado vacío del historial -->
+      <div id="historialEmptyState" class="hidden py-8 text-center">
+        <div class="mx-auto w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h4 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">Sin historial de actividad</h4>
+        <p class="text-gray-600 dark:text-gray-400">No se han registrado actividades para este paciente.</p>
+      </div>
+      
+      <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700" id="historialTableContainer">
+        <table class="w-full table-auto border-collapse">
+          <thead>
+            <tr class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 border-b border-gray-200 dark:border-gray-700">
+              <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-200 font-bold">Fecha</th>
+              <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-200 font-bold min-w-[180px]">Tipo</th>
+              <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-200 font-bold">Tratamiento</th>
+              <th class="px-4 py-3 text-right text-gray-700 dark:text-gray-200 font-bold">Monto</th>
+              <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-200 font-bold">Usuario</th>
+              <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-200 font-bold">Detalles</th>
+              <th class="px-4 py-3 text-right text-gray-700 dark:text-gray-200 font-bold">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="historialTableBody" class="divide-y divide-gray-200 text-sm dark:divide-gray-700">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Nueva Prestación -->
+  <div
+    id="prestacionModal"
+    class="fixed left-0 top-0 z-50 hidden h-full w-full bg-black bg-opacity-50 backdrop-blur-sm transition-all duration-300"
+    role="dialog"
+    aria-labelledby="nuevaPrestacionTitle"
+    aria-modal="true"
+  >
+    <div class="absolute left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-6 shadow-xl dark:bg-gray-800 transition-all duration-500 transform opacity-0 scale-95" id="prestacionModalContent">
+      <h3 id="nuevaPrestacionTitle" class="mb-4 text-xl font-bold text-gray-900 dark:text-white flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        Nueva Prestación
+      </h3>
+      <form id="prestacionForm" class="space-y-4">
+        <div>
+          <label for="tratamiento" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Tratamiento</label>
+          <select
+            id="tratamiento"
+            name="tratamiento"
+            required
+            class="w-full rounded-lg border border-gray-300 bg-white px-3 py-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 transition-colors duration-300"
+          >
+            <option value="">Seleccione un tratamiento</option>
+          </select>
+        </div>
+        <div>
+          <label for="precio" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Precio</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <span class="text-gray-500 dark:text-gray-400">$</span>
+            </div>
+            <input
+              type="number"
+              id="precio"
+              name="precio"
+              required
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              class="w-full rounded-lg border border-gray-300 bg-white pl-8 px-3 py-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 transition-colors duration-300"
+            />
+          </div>
+        </div>
+        <div class="flex justify-end space-x-3 pt-2">
+          <button
+            type="button"
+            id="cancelarBtn"
+            class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors duration-300"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 px-4 py-2.5 text-white hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 shadow-md hover:shadow-lg transition-all duration-300"
+          >
+            <span id="prestacionSubmitText">Guardar</span>
+            <span id="prestacionSubmitLoading" class="hidden">
+              <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Editar Prestación -->
+  <div
+    id="editarPrestacionModal"
+    class="fixed left-0 top-0 z-50 hidden h-full w-full bg-black bg-opacity-50 backdrop-blur-sm transition-all duration-300"
+    role="dialog"
+    aria-labelledby="editarPrestacionTitle"
+    aria-modal="true"
+  >
+    <div class="absolute left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-6 shadow-xl dark:bg-gray-800 transition-all duration-500 transform opacity-0 scale-95" id="editarPrestacionModalContent">
+      <h3 id="editarPrestacionTitle" class="mb-4 text-xl font-bold text-gray-900 dark:text-white flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+        Editar Prestación
+      </h3>
+      <form id="editarPrestacionForm" class="space-y-4">
+        <input type="hidden" name="prestacionId" />
+        <div>
+          <label for="tratamientoEditar" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Tratamiento</label>
+          <select
+            id="tratamientoEditar"
+            name="tratamiento"
+            required
+            class="w-full rounded-lg border border-gray-300 bg-white px-3 py-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 transition-colors duration-300"
+          >
+            <option value="">Seleccione un tratamiento</option>
+          </select>
+        </div>
+        <div>
+          <label for="precioEditar" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Precio</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <span class="text-gray-500 dark:text-gray-400">$</span>
+            </div>
+            <input
+              type="number"
+              id="precioEditar"
+              name="precio"
+              required
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              class="w-full rounded-lg border border-gray-300 bg-white pl-8 px-3 py-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 transition-colors duration-300"
+            />
+          </div>
+        </div>
+        <div class="flex justify-end space-x-3 pt-2">
+          <button
+            type="button"
+            id="cancelarEditarBtn"
+            class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors duration-300"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 px-4 py-2.5 text-white hover:from-blue-600 hover:to-blue-700 dark:from-blue-600 dark:to-blue-700 dark:hover:from-blue-500 dark:hover:to-blue-600 shadow-md hover:shadow-lg transition-all duration-300"
+          >
+            <span id="editarSubmitText">Actualizar</span>
+            <span id="editarSubmitLoading" class="hidden">
+              <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Pago -->
+  <div
+    id="pagoModal"
+    class="fixed left-0 top-0 z-50 hidden h-full w-full bg-black bg-opacity-50 backdrop-blur-sm transition-all duration-300"
+    role="dialog"
+    aria-labelledby="pagoModalTitle"
+    aria-modal="true"
+  >
+    <div class="absolute left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl bg-white p-6 shadow-xl dark:bg-gray-800 transition-all duration-500 transform opacity-0 scale-95" id="pagoModalContent">
+      <h3 id="pagoModalTitle" class="mb-4 text-xl font-bold text-gray-900 dark:text-white flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z" />
+        </svg>
+        Registrar Pago
+      </h3>
+      <form id="pagoForm" class="space-y-4">
+        <input type="hidden" name="prestacionId" />
+        <input type="hidden" name="pagoId" />
+        <div>
+          <label for="prestacionSelect" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Prestación</label>
+          <select
+            id="prestacionSelect"
+            name="prestacionSelect"
+            required
+            class="w-full rounded-lg border border-gray-300 bg-white px-3 py-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 transition-colors duration-300"
+          >
+            <option value="">Seleccione una prestación</option>
+          </select>
+        </div>
+        <div>
+          <label for="montoPago" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Monto del Pago</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <span class="text-gray-500 dark:text-gray-400">$</span>
+            </div>
+            <input
+              type="number"
+              id="montoPago"
+              name="montoPago"
+              required
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              class="w-full rounded-lg border border-gray-300 bg-white pl-8 px-3 py-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 transition-colors duration-300"
+            />
+          </div>
+        </div>
+        <div>
+          <label for="fechaPago" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Fecha del Pago</label>
+          <input
+            type="datetime-local"
+            id="fechaPago"
+            name="fechaPago"
+            required
+            class="w-full rounded-lg border border-gray-300 bg-white px-3 py-3 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-blue-500 transition-colors duration-300"
+          />
+        </div>
+        <div class="flex justify-end space-x-3 pt-2">
+          <button
+            type="button"
+            id="cancelarPagoBtn"
+            class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors duration-300"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="rounded-lg bg-gradient-to-br from-green-500 to-green-600 px-4 py-2.5 text-white hover:from-green-600 hover:to-green-700 dark:from-green-600 dark:to-green-700 dark:hover:from-green-500 dark:hover:to-green-600 shadow-md hover:shadow-lg transition-all duration-300"
+          >
+            <span id="pagoSubmitText">Guardar</span>
+            <span id="pagoSubmitLoading" class="hidden">
+              <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+</div>
+
+<script define:vars={{ dni }}>
+  // ====================================
+  // CONFIGURACIÓN
+  // ====================================
+  const BASE_URL = "http://localhost:5000/api";
+  
+  // ====================================
+  // GESTIÓN DE ESTADO
+  // ====================================
+  const appState = {
+    loading: true,
+    error: null,
+    prestaciones: [],
+    paciente: null,
+    tratamientos: [],
+    historialLoading: false,
+    historial: []
+  };
+  
+  // ====================================
+  // FUNCIONES DE API
+  // ====================================
+  async function obtenerTratamientos() {
+    try {
+      showLoading(true);
+      const response = await fetch(`${BASE_URL}/tratamientos`);
+      if (!response.ok) throw new Error('Error al obtener tratamientos');
+      const data = await response.json();
+      appState.tratamientos = Array.isArray(data) ? data : [];
+      return appState.tratamientos;
+    } catch (error) {
+      console.error('Error al obtener tratamientos:', error);
+      mostrarToast('Error al cargar los tratamientos', 'error');
+      appState.error = error.message;
+      return [];
+    } finally {
+      if (appState.paciente) showLoading(false);
+    }
+  }
+  
+  async function obtenerPacientePorDni() {
+    try {
+      showLoading(true);
+      console.log('Buscando paciente con DNI:', dni);
+      const response = await fetch(`${BASE_URL}/paciente/findByDni/${dni}`);
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Error details:', errorData);
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Verificar la estructura de la respuesta
+      if (!data || !data.paciente) {
+        throw new Error('No se encontraron datos del paciente');
+      }
+
+      // Asegurarnos de que tenemos el ID del paciente
+      const pacienteId = data.paciente._id || data.paciente.id;
+      if (!pacienteId) {
+        throw new Error('El paciente no tiene un ID válido');
+      }
+
+      appState.paciente = {
+        ...data.paciente,
+        _id: pacienteId // Asegurarnos de que siempre usamos _id
+      };
+      
+      return appState.paciente;
+    } catch (error) {
+      console.error('Error al obtener paciente:', error);
+      mostrarToast('Error al cargar datos del paciente', 'error');
+      appState.error = error.message;
+      showError(error.message);
+      throw error;
+    } finally {
+      if (appState.tratamientos.length > 0) showLoading(false);
+    }
+  }
+  
+  async function obtenerPrestaciones(pacienteId) {
+    try {
+      if (!pacienteId) {
+        throw new Error('ID de paciente no proporcionado');
+      }
+      
+      showLoading(true);
+      const response = await fetch(`${BASE_URL}/prestaciones/paciente/${pacienteId}`);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al obtener prestaciones');
+      }
+      
+      const data = await response.json();
+      appState.prestaciones = Array.isArray(data) ? data : [];
+      
+      if (appState.prestaciones.length === 0) {
+        showEmptyState(true);
+      } else {
+        showEmptyState(false);
+      }
+      
+      return appState.prestaciones;
+    } catch (error) {
+      console.error('Error en obtenerPrestaciones:', error);
+      mostrarToast('Error al cargar las prestaciones', 'error');
+      appState.error = error.message;
+      showError(error.message);
+      throw error;
+    } finally {
+      showLoading(false);
+    }
+  }
+  
+  async function crearPrestacion(data) {
+    try {
+      const userId = localStorage.getItem('userId') || 'Sistema';
+      const nombreUsuario = await obtenerNombreUsuario(userId);
+      
+      const prestacionData = {
+        ...data,
+        creadoPor: userId,
+        nombreCreador: nombreUsuario
+      };
+
+      const response = await fetch(`${BASE_URL}/prestaciones`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(prestacionData)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al crear la prestación');
+      }
+      
+      const resultado = await response.json();
+      
+      // Actualizar el estado local
+      if (appState.prestaciones.length === 0) {
+        appState.prestaciones = [resultado];
+      } else {
+        appState.prestaciones = [...appState.prestaciones, resultado];
+      }
+      
+      return resultado;
+    } catch (error) {
+      console.error('Error al crear prestación:', error);
+      throw error;
+    }
+  }
+  
+  async function actualizarPrestacion(id, data) {
+    try {
+      const userId = localStorage.getItem('userId') || 'Sistema';
+      const nombreUsuario = await obtenerNombreUsuario(userId);
+      
+      const prestacionData = {
+        ...data,
+        modificadoPor: userId,
+        nombreModificador: nombreUsuario,
+        fechaModificacion: new Date().toISOString()
+      };
+
+      const response = await fetch(`${BASE_URL}/prestaciones/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(prestacionData)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al actualizar la prestación');
+      }
+      
+      const resultado = await response.json();
+      
+      // Actualizar el estado local
+      appState.prestaciones = appState.prestaciones.map(p => 
+        p._id === id ? resultado : p
+      );
+      
+      return resultado;
+    } catch (error) {
+      console.error('Error al actualizar prestación:', error);
+      throw error;
+    }
+  }
+  
+  async function eliminarPrestacion(id) {
+    try {
+      const response = await fetch(`${BASE_URL}/prestaciones/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ odontologoId: localStorage.getItem('userId') || 'Sistema' })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al eliminar la prestación');
+      }
+      
+      // Actualizar el estado local
+      appState.prestaciones = appState.prestaciones.filter(p => p._id !== id);
+      
+      if (appState.prestaciones.length === 0) {
+        showEmptyState(true);
+      }
+    } catch (error) {
+      console.error('Error al eliminar prestación:', error);
+      throw error;
+    }
+  }
+  
+  async function registrarPago(prestacionId, data) {
+    try {
+      const userId = localStorage.getItem('userId') || 'Sistema';
+      const nombreUsuario = await obtenerNombreUsuario(userId);
+      
+      const pagoData = {
+        ...data,
+        odontologoId: userId,
+        nombreOdontologo: nombreUsuario
+      };
+
+      const response = await fetch(`${BASE_URL}/prestaciones/${prestacionId}/pagos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pagoData)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al registrar el pago');
+      }
+      
+      const resultado = await response.json();
+      
+      // Actualizar el estado local
+      appState.prestaciones = appState.prestaciones.map(p => {
+        if (p._id === prestacionId) {
+          // Asegurarse de que pagos es un array
+          const pagos = Array.isArray(p.pagos) ? p.pagos : [];
+          return {
+            ...p,
+            pagos: [...pagos, resultado.pago]
+          };
+        }
+        return p;
+      });
+      
+      return resultado;
+    } catch (error) {
+      console.error('Error al registrar pago:', error);
+      throw error;
+    }
+  }
+  
+  async function actualizarPago(prestacionId, pagoId, data) {
+    try {
+      const userId = localStorage.getItem('userId') || 'Sistema';
+      const nombreUsuario = await obtenerNombreUsuario(userId);
+      
+      const pagoData = {
+        ...data,
+        editadoPor: userId,
+        nombreEditor: nombreUsuario
+      };
+
+      const response = await fetch(`${BASE_URL}/prestaciones/${prestacionId}/pagos/${pagoId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pagoData)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al actualizar el pago');
+      }
+      
+      const resultado = await response.json();
+      
+      // Actualizar el estado local
+      appState.prestaciones = appState.prestaciones.map(p => {
+        if (p._id === prestacionId) {
+          return {
+            ...p,
+            pagos: p.pagos.map(pago => 
+              pago._id === pagoId ? resultado.pago : pago
+            )
+          };
+        }
+        return p;
+      });
+      
+      return resultado;
+    } catch (error) {
+      console.error('Error al actualizar pago:', error);
+      throw error;
+    }
+  }
+  
+  async function eliminarPago(prestacionId, pagoId) {
+    try {
+      const userId = localStorage.getItem('userId') || 'Sistema';
+      const nombreUsuario = await obtenerNombreUsuario(userId);
+      
+      const response = await fetch(`${BASE_URL}/prestaciones/${prestacionId}/pagos/${pagoId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eliminadoPor: userId,
+          nombreEliminador: nombreUsuario,
+          fechaEliminacion: new Date().toISOString()
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al eliminar el pago');
+      }
+      
+      // Actualizar el estado local
+      appState.prestaciones = appState.prestaciones.map(p => {
+        if (p._id === prestacionId) {
+          return {
+            ...p,
+            pagos: p.pagos.map(pago => 
+              pago._id === pagoId ? { ...pago, eliminado: true } : pago
+            )
+          };
+        }
+        return p;
+      });
+    } catch (error) {
+      console.error('Error al eliminar pago:', error);
+      throw error;
+    }
+  }
+  
+  // ====================================
+  // FUNCIONES DE UTILIDAD
+  // ====================================
+  function formatearMoneda(valor) {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS'
+    }).format(valor);
+  }
+  
+  function formatearFechaHora(fecha) {
+    return new Date(fecha).toLocaleString('es-AR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+  
+  function calcularTotalAdeudado(prestaciones) {
+    return prestaciones.reduce((total, p) => {
+      if (p.eliminado) return total;
+      
+      const totalPagos = (p.pagos || []).reduce((sum, pago) => 
+        pago.eliminado ? sum : sum + pago.monto, 0
+      );
+      return total + (p.precio - totalPagos);
+    }, 0);
+  }
+  
+  function mostrarToast(mensaje, tipo = 'success', duracion = 3000) {
+    const container = document.getElementById('toastContainer');
+    
+    // Crear el toast
+    const toast = document.createElement('div');
+    toast.className = `flex items-center p-4 mb-3 w-full max-w-md text-gray-500 rounded-lg shadow-lg transition-all duration-300 transform translate-y-2 opacity-0 ${
+      tipo === 'success' 
+        ? 'bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/40 dark:to-green-900/50 border-l-4 border-green-500 dark:border-green-400'
+        : tipo === 'error'
+        ? 'bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/40 dark:to-red-900/50 border-l-4 border-red-500 dark:border-red-400'
+        : 'bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/40 dark:to-blue-900/50 border-l-4 border-blue-500 dark:border-blue-400'
+    }`;
+    
+    // Añadir icono según el tipo
+    let iconSvg = '';
+    if (tipo === 'success') {
+      iconSvg = `<svg class="w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                </svg>`;
+    } else if (tipo === 'error') {
+      iconSvg = `<svg class="w-5 h-5 text-red-500 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                </svg>`;
+    } else {
+      iconSvg = `<svg class="w-5 h-5 text-blue-500 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                </svg>`;
+    }
+    
+    toast.innerHTML = `
+      <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg">
+        ${iconSvg}
+      </div>
+      <div class="ml-3 text-sm font-normal ${
+        tipo === 'success' 
+          ? 'text-green-700 dark:text-green-300'
+          : tipo === 'error'
+          ? 'text-red-700 dark:text-red-300'
+          : 'text-blue-700 dark:text-blue-300'
+      }">${mensaje}</div>
+      <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white" aria-label="Cerrar">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    `;
+    
+    // Añadir el toast al contenedor
+    container.appendChild(toast);
+    
+    // Animar entrada
+    setTimeout(() => {
+      toast.classList.remove('translate-y-2', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+    }, 10);
+    
+    // Configurar cierre manual
+    const closeButton = toast.querySelector('button');
+    closeButton.addEventListener('click', () => {
+      cerrarToast(toast);
+    });
+    
+    // Configurar cierre automático
+    setTimeout(() => {
+      cerrarToast(toast);
+    }, duracion);
+    
+    return toast;
+  }
+  
+  function cerrarToast(toast) {
+    toast.classList.remove('translate-y-0', 'opacity-100');
+    toast.classList.add('translate-y-2', 'opacity-0');
+    
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }
+  
+  // ====================================
+  // FUNCIONES DE GESTIÓN DE UI
+  // ====================================
+  function showLoading(show) {
+    appState.loading = show;
+    
+    const loadingElement = document.getElementById('loadingState');
+    const tableContainer = document.getElementById('tableContainer');
+    const cardView = document.getElementById('prestacionesCardView');
+    const saldoMovil = document.querySelector('.md\\:hidden.rounded-xl');
+    
+    if (show) {
+      loadingElement.classList.remove('hidden');
+      tableContainer.classList.add('hidden');
+      cardView.classList.add('hidden');
+      saldoMovil.classList.add('hidden');
+      document.getElementById('emptyState').classList.add('hidden');
+      document.getElementById('errorState').classList.add('hidden');
+    } else {
+      loadingElement.classList.add('hidden');
+      tableContainer.classList.remove('hidden');
+      cardView.classList.remove('hidden');
+      saldoMovil.classList.remove('hidden');
+    }
+  }
+  
+  function showHistorialLoading(show) {
+    appState.historialLoading = show;
+    
+    const loadingElement = document.getElementById('historialLoadingState');
+    const tableContainer = document.getElementById('historialTableContainer');
+    const emptyState = document.getElementById('historialEmptyState');
+    
+    if (show) {
+      loadingElement.classList.remove('hidden');
+      tableContainer.classList.add('hidden');
+      emptyState.classList.add('hidden');
+    } else {
+      loadingElement.classList.add('hidden');
+      
+      if (appState.historial.length === 0) {
+        emptyState.classList.remove('hidden');
+        tableContainer.classList.add('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+        tableContainer.classList.remove('hidden');
+      }
+    }
+  }
+  
+  function showEmptyState(show) {
+    const emptyElement = document.getElementById('emptyState');
+    const tableContainer = document.getElementById('tableContainer');
+    const cardView = document.getElementById('prestacionesCardView');
+    const saldoMovil = document.querySelector('.md\\:hidden.rounded-xl');
+    
+    if (show) {
+      emptyElement.classList.remove('hidden');
+      tableContainer.classList.add('hidden');
+      cardView.classList.add('hidden');
+      saldoMovil.classList.add('hidden');
+    } else {
+      emptyElement.classList.add('hidden');
+      tableContainer.classList.remove('hidden');
+      cardView.classList.remove('hidden');
+      saldoMovil.classList.remove('hidden');
+    }
+  }
+  
+  function showError(message) {
+    const errorElement = document.getElementById('errorState');
+    const errorMessage = document.getElementById('errorMessage');
+    const tableContainer = document.getElementById('tableContainer');
+    const cardView = document.getElementById('prestacionesCardView');
+    const saldoMovil = document.querySelector('.md\\:hidden.rounded-xl');
+    const loadingElement = document.getElementById('loadingState');
+    const emptyElement = document.getElementById('emptyState');
+    
+    errorMessage.textContent = message || 'No se pudieron cargar los datos';
+    
+    errorElement.classList.remove('hidden');
+    tableContainer.classList.add('hidden');
+    cardView.classList.add('hidden');
+    saldoMovil.classList.add('hidden');
+    loadingElement.classList.add('hidden');
+    emptyElement.classList.add('hidden');
+  }
+  
+  function showModal(modalId, show) {
+    const modal = document.getElementById(modalId);
+    const content = document.getElementById(`${modalId}Content`);
+    
+    if (show) {
+      modal.classList.remove('hidden');
+      
+      // Animar la entrada
+      setTimeout(() => {
+        content.classList.remove('opacity-0', 'scale-95');
+        content.classList.add('opacity-100', 'scale-100');
+      }, 10);
+    } else {
+      // Animar la salida
+      content.classList.remove('opacity-100', 'scale-100');
+      content.classList.add('opacity-0', 'scale-95');
+      
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+  }
+  
+  function toggleSubmitLoading(formId, show) {
+    const submitText = document.getElementById(`${formId}SubmitText`);
+    const submitLoading = document.getElementById(`${formId}SubmitLoading`);
+    const submitButton = submitText.closest('button');
+    
+    if (show) {
+      submitText.classList.add('hidden');
+      submitLoading.classList.remove('hidden');
+      submitButton.disabled = true;
+    } else {
+      submitText.classList.remove('hidden');
+      submitLoading.classList.add('hidden');
+      submitButton.disabled = false;
+    }
+  }
+  
+  // ====================================
+  // FUNCIONES DE RENDERIZADO
+  // ====================================
+  async function cargarTratamientos() {
+    try {
+      const tratamientos = await obtenerTratamientos();
+      const selectElements = document.querySelectorAll('select[name="tratamiento"]');
+      
+      const optionsHTML = tratamientos.map(t => 
+        `<option value="${t._id}" data-precio="${t.precio}">${t.nombre}</option>`
+      ).join('');
+
+      selectElements.forEach(select => {
+        select.innerHTML = '<option value="">Seleccione un tratamiento</option>' + optionsHTML;
+      });
+    } catch (error) {
+      console.error('Error al cargar tratamientos:', error);
+      mostrarToast('Error al cargar los tratamientos', 'error');
+    }
+  }
+
+  async function cargarPrestaciones() {
+    try {
+      if (!dni) {
+        throw new Error('DNI no proporcionado');
+      }
+
+      const paciente = await obtenerPacientePorDni();
+      const prestaciones = await obtenerPrestaciones(paciente._id);
+      renderizarPrestaciones(prestaciones);
+    } catch (error) {
+      console.error('Error al cargar prestaciones:', error);
+      showError(error.message);
+    }
+  }
+
+  function generarHistorial(prestaciones) {
+    const historial = [];
+    
+    prestaciones.forEach(prestacion => {
+      if (prestacion.eliminado) return;
+      
+      // Registro de creación de prestación
+      if (prestacion.createdAt) {
+        historial.push({
+          fecha: prestacion.createdAt,
+          tipo: 'Creación',
+          tratamiento: prestacion.tratamientoId?.nombre,
+          monto: prestacion.precio,
+          usuario: prestacion.nombreCreador || prestacion.creadoPor || 'Sistema',
+          detalles: `Creación de prestación: ${prestacion.tratamientoId?.nombre}`,
+          prestacionId: prestacion._id
+        });
+      }
+
+      // Registrar pagos
+      if (prestacion.pagos && Array.isArray(prestacion.pagos)) {
+        prestacion.pagos.forEach(pago => {
+          if (!pago || typeof pago !== 'object') return;
+
+          // Registro inicial del pago
+          if (!pago.eliminado) {
+            historial.push({
+              fecha: pago.fecha,
+              tipo: 'Pago',
+              tratamiento: prestacion.tratamientoId?.nombre,
+              monto: pago.monto,
+              usuario: pago.nombreOdontologo || pago.odontologoId || 'Sistema',
+              detalles: `Pago registrado: ${formatearMoneda(pago.monto)}`,
+              prestacionId: prestacion._id,
+              pagoId: pago._id
+            });
+          }
+
+          // Registro de historial específico del pago
+          if (pago.historial && Array.isArray(pago.historial)) {
+            pago.historial.forEach(evento => {
+              historial.push({
+                fecha: evento.fecha,
+                tipo: evento.tipo,
+                tratamiento: prestacion.tratamientoId?.nombre,
+                monto: pago.monto,
+                usuario: evento.nombreUsuario || evento.usuario || 'Sistema',
+                detalles: evento.detalle,
+                prestacionId: prestacion._id,
+                pagoId: pago._id
+              });
+            });
+          }
+
+          // Eventos específicos
+          if (pago.editadoPor) {
+            historial.push({
+              fecha: pago.fechaEdicion || pago.fecha,
+              tipo: 'Edición de Pago',
+              tratamiento: prestacion.tratamientoId?.nombre,
+              monto: pago.monto,
+              usuario: pago.nombreEditor || pago.editadoPor || 'Sistema',
+              detalles: `Pago editado: ${formatearMoneda(pago.monto)}`,
+              prestacionId: prestacion._id,
+              pagoId: pago._id
+            });
+          }
+
+          if (pago.eliminado) {
+            historial.push({
+              fecha: pago.fechaEliminacion || new Date(),
+              tipo: 'Eliminación de Pago',
+              tratamiento: prestacion.tratamientoId?.nombre,
+              monto: pago.monto,
+              usuario: pago.nombreEliminador || pago.eliminadoPor || 'Sistema',
+              detalles: `Pago eliminado: ${formatearMoneda(pago.monto)}`,
+              prestacionId: prestacion._id,
+              pagoId: pago._id
+            });
+          }
+        });
+      }
+
+      // Modificaciones de la prestación
+      if (prestacion.modificadoPor) {
+        historial.push({
+          fecha: prestacion.fechaModificacion || prestacion.updatedAt,
+          tipo: 'Modificación',
+          tratamiento: prestacion.tratamientoId?.nombre,
+          monto: prestacion.precio,
+          usuario: prestacion.nombreModificador || prestacion.modificadoPor || 'Sistema',
+          detalles: `Prestación modificada: ${prestacion.tratamientoId?.nombre}`,
+          prestacionId: prestacion._id
+        });
+      }
+    });
+
+    // Ordenar por fecha descendente (más reciente primero)
+    return historial.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  }
+
+  async function renderizarHistorial(historial) {
+    appState.historial = historial;
+    
+    const tbody = document.getElementById('historialTableBody');
+    
+    // Procesar cada item del historial para obtener los nombres de usuarios
+    const historialConNombres = await Promise.all(historial.map(async item => {
+      const usuario = await obtenerNombreUsuario(item.usuario);
+      return {
+        ...item,
+        nombreUsuario: renderizarInfoUsuario(usuario)
+      };
+    }));
+    
+    tbody.innerHTML = historialConNombres.map(item => `
+      <tr class="bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-150">
+        <td class="px-4 py-3 text-gray-900 dark:text-gray-200">
+          ${formatearFechaHora(item.fecha)}
+        </td>
+        <td class="px-4 py-3">
+          <span class="rounded-full px-2.5 py-1 text-xs font-semibold ${
+            item.tipo === 'Pago' 
+              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+              : item.tipo === 'Modificación'
+              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+              : item.tipo === 'Eliminación de Pago'
+              ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+              : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+          }">
+            ${item.tipo}
+          </span>
+        </td>
+        <td class="px-4 py-3 text-gray-900 dark:text-gray-200">
+          ${item.tratamiento || 'N/A'}
+        </td>
+        <td class="px-4 py-3 text-right text-gray-900 dark:text-gray-200">
+          ${formatearMoneda(item.monto)}
+        </td>
+        <td class="px-4 py-3 text-gray-900 dark:text-gray-200">
+          ${item.nombreUsuario}
+        </td>
+        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">
+          ${item.detalles}
+        </td>
+        <td class="px-4 py-3">
+          ${item.tipo === 'Pago' ? `
+            <div class="flex justify-end space-x-2">
+              <button
+                onclick="editarPagoHandlerDesdeHistorial('${item.prestacionId}', '${item.pagoId}')"
+                class="text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors duration-150 p-1 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                title="Editar pago"
+                aria-label="Editar pago"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" 
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+              <button
+                onclick="eliminarPagoHandlerDesdeHistorial('${item.prestacionId}', '${item.pagoId}')"
+                class="text-red-600 hover:text-red-700 dark:text-red-400 transition-colors duration-150 p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30"
+                title="Eliminar pago"
+                aria-label="Eliminar pago"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" 
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 6h18"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                  <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </button>
+            </div>
+          ` : ''}
+        </td>
+      </tr>
+    `).join('');
+    
+    showHistorialLoading(false);
+  }
+
+  function renderizarInfoUsuario(usuario, tipo = '') {
+    if (!usuario || usuario === 'Sistema') return 'Sistema';
+    return `${usuario}${tipo ? ` (${tipo})` : ''}`;
+  }
+
+  async function obtenerNombreUsuario(userId) {
+    if (!userId || userId === 'Sistema') return 'Sistema';
+    
+    const userRole = localStorage.getItem('userRole');
+    
+    try {
+      let response;
+      let userData;
+      let rolTexto = userRole === 'odontologo' ? 'Odontólogo' : 'Secretaria';
+
+      const url = userRole === 'odontologo' 
+        ? `${BASE_URL}/medico/findById/${userId}`
+        : `${BASE_URL}/secretaria/buscarId/${userId}`;
+
+      response = await fetch(url);
+      const data = await response.json();
+      
+      // Manejar diferentes estructuras de respuesta
+      userData = userRole === 'odontologo' ? data.medico : data;
+
+      if (!response.ok || !userData || !userData.nombre) {
+        throw new Error('No se pudo obtener el nombre del usuario');
+      }
+
+      const nombreCapitalizado = userData.nombre
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+
+      return `${nombreCapitalizado} (${rolTexto})`;
+    } catch (error) {
+      console.error('Error al obtener nombre:', error);
+      return `${userId}`;
+    }
+  }
+
+  async function obtenerNombreUsuarioActual() {
+    const userId = localStorage.getItem('userId');
+    if (!userId || userId === 'Sistema') return 'Sistema';
+    
+    try {
+      return await obtenerNombreUsuario(userId);
+    } catch (error) {
+      console.error('Error al obtener nombre de usuario:', error);
+      return 'Sistema';
+    }
+  }
+
+  async function renderizarPrestaciones(prestaciones) {
+    prestaciones = prestaciones.filter(p => !p.eliminado);
+    
+    const tbody = document.getElementById('prestacionesTableBody');
+    const cardView = document.getElementById('prestacionesCardView');
+    const pagoSelect = document.querySelector('select[name="prestacionSelect"]');
+    
+    // Actualizar selector de prestaciones
+    pagoSelect.innerHTML = '<option value="">Seleccione una prestación</option>' + 
+      prestaciones.map(p => `
+        <option value="${p._id}">${p.tratamientoId?.nombre || 'Sin tratamiento'} - ${formatearMoneda(p.precio)}</option>
+      `).join('');
+
+    // Renderizar tabla y tarjetas
+    const renderizarContenido = async () => {
+      // Mapeo común para ambas vistas
+      const prestacionesConDatos = await Promise.all(prestaciones.map(async p => {
+        const totalPagado = (p.pagos || [])
+          .filter(pago => !pago.eliminado)
+          .reduce((sum, pago) => sum + pago.monto, 0);
+        const saldoPendiente = p.precio - totalPagado;
+
+        // Obtener el último pago activo
+        const ultimoPago = (p.pagos || [])
+          .filter(pago => !pago.eliminado)
+          .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))[0];
+
+        let infoPago = '<div class="px-4 py-3 text-gray-500 dark:text-gray-400 italic">Sin pagos registrados</div>';
+        
+        if (ultimoPago) {
+          const nombreOdontologo = await obtenerNombreUsuario(ultimoPago.odontologoId);
+          let nombreEditor = '';
+          if (ultimoPago.editadoPor) {
+            nombreEditor = await obtenerNombreUsuario(ultimoPago.editadoPor);
+          }
+
+          infoPago = `
+            <div class="mb-1 rounded-lg bg-green-50 p-3 text-sm dark:bg-green-900/20 border border-green-100 dark:border-green-800 transition-all duration-300">
+              <div class="flex items-center justify-between">
+                <span class="text-gray-700 dark:text-gray-300 font-medium">
+                  ${formatearFechaHora(ultimoPago.fecha)} - ${formatearMoneda(ultimoPago.monto)}
+                </span>
+                <div class="flex space-x-1">
+                  <button
+                    onclick="editarPagoHandler('${p._id}', '${ultimoPago._id}')"
+                    class="text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors duration-150 p-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                    title="Editar pago"
+                    aria-label="Editar pago"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" 
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                  <button
+                    onclick="eliminarPagoHandler('${p._id}', '${ultimoPago._id}')"
+                    class="text-red-600 hover:text-red-700 dark:text-red-400 transition-colors duration-150 p-1.5 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30"
+                    title="Eliminar pago"
+                    aria-label="Eliminar pago"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" 
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 6h18"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+                <div>Registrado por: ${nombreOdontologo}</div>
+                ${nombreEditor ? `<div class="mt-0.5">Editado por: ${nombreEditor}</div>` : ''}
+              </div>
+            </div>
+          `;
+        }
+
+        return {
+          ...p,
+          totalPagado,
+          saldoPendiente,
+          infoPago
+        };
+      }));
+
+      // Renderizar vista de tabla
+      tbody.innerHTML = prestacionesConDatos.map(p => `
+        <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+          <td class="px-4 py-3 text-gray-900 dark:text-gray-200 font-medium">
+            ${p.tratamientoId?.nombre || 'Sin tratamiento'}
+          </td>
+          <td class="px-4 py-3 text-right text-gray-900 dark:text-gray-200">
+            ${formatearMoneda(p.precio)}
+          </td>
+          <td class="px-4 py-3 text-right text-gray-900 dark:text-gray-200">
+            ${formatearMoneda(p.totalPagado)}
+          </td>
+          <td class="px-4 py-3 text-right ${p.saldoPendiente > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'} font-medium">
+            ${formatearMoneda(p.saldoPendiente)}
+          </td>
+          <td class="w-1/3">
+            ${p.infoPago}
+          </td>
+          <td class="px-4 py-3">
+            <div class="flex justify-end space-x-1">
+              <button
+                onclick="editarPrestacionHandler('${p._id}')"
+                class="text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors duration-150 p-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                title="Editar prestación"
+                aria-label="Editar prestación"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" 
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+              <button
+                onclick="eliminarPrestacionHandler('${p._id}')"
+                class="text-red-600 hover:text-red-700 dark:text-red-400 transition-colors duration-150 p-1.5 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30"
+                title="Eliminar prestación"
+                aria-label="Eliminar prestación"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" 
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 6h18"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                  <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      // Renderizar vista de tarjetas
+      cardView.innerHTML = prestacionesConDatos.map(p => `
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+          <div class="space-y-3">
+            <div class="flex justify-between items-start">
+              <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                ${p.tratamientoId?.nombre || 'Sin tratamiento'}
+              </h3>
+              <div class="flex space-x-1">
+                <button
+                  onclick="editarPrestacionHandler('${p._id}')"
+                  class="text-blue-600 hover:text-blue-700 dark:text-blue-400 transition-colors duration-150 p-1.5 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                  title="Editar prestación"
+                  aria-label="Editar prestación"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" 
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                </button>
+                <button
+                  onclick="eliminarPrestacionHandler('${p._id}')"
+                  class="text-red-600 hover:text-red-700 dark:text-red-400 transition-colors duration-150 p-1.5 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30"
+                  title="Eliminar prestación"
+                  aria-label="Eliminar prestación"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" 
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-sm bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-100 dark:border-gray-700">
+              <div>
+                <p class="text-gray-500 dark:text-gray-400">Precio Total</p>
+                <p class="font-bold text-gray-900 dark:text-gray-100 text-lg">${formatearMoneda(p.precio)}</p>
+              </div>
+              <div>
+                <p class="text-gray-500 dark:text-gray-400">Total Pagado</p>
+                <p class="font-bold text-gray-900 dark:text-gray-100 text-lg">${formatearMoneda(p.totalPagado)}</p>
+              </div>
+              <div class="col-span-2">
+                <p class="text-gray-500 dark:text-gray-400">Saldo Pendiente</p>
+                <p class="font-bold ${p.saldoPendiente > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'} text-lg">
+                  ${formatearMoneda(Math.abs(p.saldoPendiente))}
+                  <span class="text-sm font-normal">
+                    ${p.saldoPendiente > 0 ? '(adeuda)' : '(a favor)'}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-3">
+              <h4 class="text-sm font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                </svg>
+                Último Pago
+              </h4>
+              ${p.infoPago}
+              <div class="mt-3 flex justify-center">
+                <button
+                  onclick="registrarPagoParaPrestacion('${p._id}')"
+                  class="w-full flex items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-green-600 px-4 py-2 text-white hover:from-green-600 hover:to-green-700 shadow-md hover:shadow-lg transition-all duration-300 text-sm"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Registrar Pago
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Actualizar totales
+      const total = calcularTotalAdeudado(prestaciones);
+      const totalElement = document.getElementById('totalAdeudado');
+      const totalElementMovil = document.getElementById('totalAdeudadoMovil');
+      const etiquetaTotal = document.getElementById('etiquetaTotalAdeudado');
+      const etiquetaTotalMovil = document.getElementById('etiquetaTotalAdeudadoMovil');
+
+      const etiquetaTexto = total > 0 ? 'Saldo Adeudado:' : (total < 0 ? 'Saldo a Favor:' : 'Saldo:');
+      etiquetaTotal.textContent = etiquetaTexto;
+      etiquetaTotalMovil.textContent = etiquetaTexto;
+      
+      const montoFormateado = formatearMoneda(Math.abs(total));
+      const claseColor = total > 0 
+        ? 'text-red-600 dark:text-red-400 font-bold' 
+        : (total < 0 ? 'text-green-600 dark:text-green-400 font-bold' : 'text-gray-900 dark:text-gray-200');
+      
+      totalElement.textContent = montoFormateado;
+      totalElement.className = `px-4 py-3 text-right ${claseColor}`;
+      
+      totalElementMovil.textContent = montoFormateado;
+      totalElementMovil.className = `font-bold ${claseColor}`;
+    };
+
+    // Ejecutar el renderizado
+    await renderizarContenido();
+  }
+
+  // ====================================
+  // EVENT HANDLERS GLOBALES
+  // ====================================
+  window.editarPrestacionHandler = async function(id) {
+    try {
+      const prestacion = appState.prestaciones.find(p => p._id === id);
+      if (!prestacion) throw new Error('No se encontró la prestación');
+
+      const form = document.getElementById('editarPrestacionForm');
+      
+      form.querySelector('input[name="prestacionId"]').value = prestacion._id;
+      form.querySelector('select[name="tratamiento"]').value = prestacion.tratamientoId._id;
+      form.querySelector('input[name="precio"]').value = prestacion.precio;
+
+      showModal('editarPrestacionModal', true);
+    } catch (error) {
+      console.error('Error al abrir el modal de edición:', error);
+      mostrarToast('Error al cargar los datos de la prestación', 'error');
+    }
+  };
+
+  window.eliminarPrestacionHandler = async function(id) {
+    // Usar SweetAlert o similar para una mejor UX en confirmaciones
+    if (confirm('¿Está seguro de eliminar esta prestación? Esta acción no se puede deshacer.')) {
+      try {
+        await eliminarPrestacion(id);
+        mostrarToast('Prestación eliminada correctamente', 'success');
+        await renderizarPrestaciones(appState.prestaciones);
+      } catch (error) {
+        console.error('Error al eliminar prestación:', error);
+        mostrarToast('Error al eliminar la prestación', 'error');
+      }
+    }
+  };
+
+  window.editarPagoHandler = async function(prestacionId, pagoId) {
+    try {
+      // Obtener datos del estado local
+      const prestacion = appState.prestaciones.find(p => p._id === prestacionId);
+      const pago = prestacion.pagos.find(p => p._id === pagoId);
+
+      if (!prestacion || !pago) throw new Error('No se encontraron los datos del pago');
+
+      const modal = document.getElementById('pagoModal');
+      const form = document.getElementById('pagoForm');
+      const titulo = document.getElementById('pagoModalTitle');
+      
+      titulo.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+        Editar Pago
+      `;
+      
+      form.querySelector('input[name="prestacionId"]').value = prestacionId;
+      form.querySelector('input[name="pagoId"]').value = pagoId;
+      form.querySelector('select[name="prestacionSelect"]').value = prestacionId;
+      form.querySelector('input[name="montoPago"]').value = pago.monto;
+      
+      const fecha = new Date(pago.fecha);
+      fecha.setMinutes(fecha.getMinutes() - fecha.getTimezoneOffset());
+      form.querySelector('input[name="fechaPago"]').value = fecha.toISOString().slice(0, 16);
+      
+      showModal('pagoModal', true);
+    } catch (error) {
+      console.error('Error al cargar datos del pago:', error);
+      mostrarToast('Error al cargar los datos del pago', 'error');
+    }
+  };
+
+  window.registrarPagoParaPrestacion = function(prestacionId) {
+    try {
+      const form = document.getElementById('pagoForm');
+      const titulo = document.getElementById('pagoModalTitle');
+      
+      // Restablecer el formulario
+      form.reset();
+      
+      // Cambiar título e ícono
+      titulo.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z" />
+        </svg>
+        Registrar Pago
+      `;
+      
+      // Completar campos
+      form.querySelector('input[name="prestacionId"]').value = '';
+      form.querySelector('input[name="pagoId"]').value = '';
+      form.querySelector('select[name="prestacionSelect"]').value = prestacionId;
+      
+      // Establecer fecha y hora actual
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      form.querySelector('input[name="fechaPago"]').value = now.toISOString().slice(0, 16);
+      
+      // Mostrar modal
+      showModal('pagoModal', true);
+    } catch (error) {
+      console.error('Error al preparar formulario de pago:', error);
+      mostrarToast('Error al preparar el formulario de pago', 'error');
+    }
+  };
+
+  window.editarPagoHandlerDesdeHistorial = async function(prestacionId, pagoId) {
+    // Cerrar el modal de historial
+    showModal('historialModal', false);
+    
+    // Llamar al handler existente
+    setTimeout(() => {
+      editarPagoHandler(prestacionId, pagoId);
+    }, 300);
+  };
+
+  window.eliminarPagoHandlerDesdeHistorial = async function(prestacionId, pagoId) {
+    // Cerrar el modal de historial
+    showModal('historialModal', false);
+    
+    // Llamar al handler existente
+    setTimeout(() => {
+      eliminarPagoHandler(prestacionId, pagoId);
+    }, 300);
+  };
+
+  window.eliminarPagoHandler = async function(prestacionId, pagoId) {
+    if (confirm('¿Está seguro de eliminar este pago? Esta acción no se puede deshacer.')) {
+      try {
+        await eliminarPago(prestacionId, pagoId);
+        
+        // Actualizar UI
+        await renderizarPrestaciones(appState.prestaciones);
+        
+        // Actualizar historial si está abierto
+        if (!document.getElementById('historialModal').classList.contains('hidden')) {
+          const historial = generarHistorial(appState.prestaciones);
+          await renderizarHistorial(historial);
+        }
+        
+        mostrarToast('Pago eliminado correctamente', 'success');
+      } catch (error) {
+        console.error('Error al eliminar pago:', error);
+        mostrarToast(error.message || 'Error al eliminar el pago', 'error');
+      }
+    }
+  };
+
+  // ====================================
+  // INICIALIZACIÓN Y MANEJO DE EVENTOS
+  // ====================================
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      // Inicializar referencias a elementos comunes
+      const prestacionModal = document.getElementById('prestacionModal');
+      const editarModal = document.getElementById('editarPrestacionModal');
+      const pagoModal = document.getElementById('pagoModal');
+      const historialModal = document.getElementById('historialModal');
+      const prestacionForm = document.getElementById('prestacionForm');
+      const editarForm = document.getElementById('editarPrestacionForm');
+      const pagoForm = document.getElementById('pagoForm');
+
+      // Agregar clases de animación a los modales
+      document.querySelectorAll('#historialModalContent, #prestacionModalContent, #editarPrestacionModalContent, #pagoModalContent').forEach(el => {
+        el.classList.add('transition-all', 'duration-300', 'transform');
+      });
+
+      // Manejador del historial
+      document.getElementById('historialBtn').addEventListener('click', async () => {
+        try {
+          showModal('historialModal', true);
+          showHistorialLoading(true);
+          
+          const historial = generarHistorial(appState.prestaciones);
+          await renderizarHistorial(historial);
+        } catch (error) {
+          console.error('Error al cargar historial:', error);
+          mostrarToast('Error al cargar el historial', 'error');
+          showHistorialLoading(false);
+        }
+      });
+
+      document.getElementById('cerrarHistorialBtn').addEventListener('click', () => {
+        showModal('historialModal', false);
+      });
+
+      // También permitir que el botón en estado vacío funcione
+      document.getElementById('nuevaPrestacionBtnEmpty').addEventListener('click', () => {
+        document.getElementById('nuevaPrestacionBtn').click();
+      });
+
+      // Event listeners para tratamientos - cambio de precio automático
+      document.querySelectorAll('select[name="tratamiento"]').forEach(select => {
+        select.addEventListener('change', (e) => {
+          const selectedOption = e.target.options[e.target.selectedIndex];
+          const precio = selectedOption.dataset.precio;
+          if (precio) {
+            const form = e.target.closest('form');
+            form.querySelector('input[name="precio"]').value = precio;
+          }
+        });
+      });
+
+      // Manejadores de botones principales
+      document.getElementById('nuevaPrestacionBtn').addEventListener('click', () => {
+        prestacionForm.reset();
+        showModal('prestacionModal', true);
+      });
+
+      document.getElementById('agregarPagoBtn').addEventListener('click', () => {
+        const form = document.getElementById('pagoForm');
+        const titulo = document.getElementById('pagoModalTitle');
+        
+        form.reset();
+        titulo.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z" />
+          </svg>
+          Registrar Pago
+        `;
+        
+        form.querySelector('input[name="pagoId"]').value = '';
+        
+        // Establecer fecha y hora actual
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        form.querySelector('input[name="fechaPago"]').value = now.toISOString().slice(0, 16);
+        
+        showModal('pagoModal', true);
+      });
+
+      // Formulario de nueva prestación
+      prestacionForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        toggleSubmitLoading('prestacion', true);
+
+        try {
+          const formData = new FormData(prestacionForm);
+          
+          const prestacionData = {
+            pacienteId: appState.paciente._id,
+            tratamientoId: formData.get('tratamiento'),
+            precio: parseFloat(formData.get('precio')),
+            pagos: []
+          };
+
+          await crearPrestacion(prestacionData);
+          await renderizarPrestaciones(appState.prestaciones);
+          showModal('prestacionModal', false);
+          prestacionForm.reset();
+          mostrarToast('Prestación creada exitosamente', 'success');
+        } catch (error) {
+          console.error('Error al crear prestación:', error);
+          mostrarToast('Error al crear la prestación: ' + error.message, 'error');
+        } finally {
+          toggleSubmitLoading('prestacion', false);
+        }
+      });
+
+      // Formulario de edición de prestación
+      editarForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        toggleSubmitLoading('editar', true);
+
+        try {
+          const formData = new FormData(editarForm);
+          const prestacionId = formData.get('prestacionId');
+          const prestacionData = {
+            tratamientoId: formData.get('tratamiento'),
+            precio: parseFloat(formData.get('precio'))
+          };
+
+          await actualizarPrestacion(prestacionId, prestacionData);
+          await renderizarPrestaciones(appState.prestaciones);
+          showModal('editarPrestacionModal', false);
+          editarForm.reset();
+          mostrarToast('Prestación actualizada exitosamente', 'success');
+        } catch (error) {
+          console.error('Error al actualizar prestación:', error);
+          mostrarToast('Error al actualizar la prestación: ' + error.message, 'error');
+        } finally {
+          toggleSubmitLoading('editar', false);
+        }
+      });
+
+      // Formulario de pago
+      pagoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        toggleSubmitLoading('pago', true);
+
+        try {
+          const formData = new FormData(pagoForm);
+          const prestacionId = formData.get('prestacionSelect') || formData.get('prestacionId');
+          const pagoId = formData.get('pagoId');
+          
+          const datosPago = {
+            monto: parseFloat(formData.get('montoPago')),
+            fecha: new Date(formData.get('fechaPago')).toISOString()
+          };
+
+          if (pagoId) {
+            // Edición de pago existente
+            await actualizarPago(prestacionId, pagoId, datosPago);
+            mostrarToast('Pago actualizado exitosamente', 'success');
+          } else {
+            // Creación de nuevo pago
+            await registrarPago(prestacionId, datosPago);
+            mostrarToast('Pago registrado exitosamente', 'success');
+          }
+          
+          // Actualizar UI
+          await renderizarPrestaciones(appState.prestaciones);
+          
+          // Actualizar historial si está abierto
+          if (!document.getElementById('historialModal').classList.contains('hidden')) {
+            const historial = generarHistorial(appState.prestaciones);
+            await renderizarHistorial(historial);
+          }
+          
+          showModal('pagoModal', false);
+          pagoForm.reset();
+        } catch (error) {
+          console.error('Error al procesar pago:', error);
+          mostrarToast(error.message || 'Error al procesar el pago', 'error');
+        } finally {
+          toggleSubmitLoading('pago', false);
+        }
+      });
+
+      // Manejadores para cerrar modales
+      document.getElementById('cancelarBtn').addEventListener('click', () => {
+        showModal('prestacionModal', false);
+      });
+
+      document.getElementById('cancelarEditarBtn').addEventListener('click', () => {
+        showModal('editarPrestacionModal', false);
+      });
+
+      document.getElementById('cancelarPagoBtn').addEventListener('click', () => {
+        showModal('pagoModal', false);
+      });
+
+      // Cerrar modales al hacer clic fuera
+      const modales = [
+        { id: 'prestacionModal', closeOnOutsideClick: true },
+        { id: 'editarPrestacionModal', closeOnOutsideClick: true },
+        { id: 'pagoModal', closeOnOutsideClick: true },
+        { id: 'historialModal', closeOnOutsideClick: true }
+      ];
+
+      modales.forEach(({ id, closeOnOutsideClick }) => {
+        const modal = document.getElementById(id);
+        
+        if (closeOnOutsideClick) {
+          modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+              showModal(id, false);
+            }
+          });
+        }
+      });
+
+      // Cerrar modales con Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          modales.forEach(({ id }) => {
+            const modal = document.getElementById(id);
+            if (!modal.classList.contains('hidden')) {
+              showModal(id, false);
+            }
+          });
+        }
+      });
+
+      // Botón de reintento
+      document.getElementById('retryButton').addEventListener('click', async () => {
+        try {
+          document.getElementById('errorState').classList.add('hidden');
+          showLoading(true);
+          await cargarPrestaciones();
+        } catch (error) {
+          console.error('Error al reintentar carga:', error);
+        }
+      });
+
+      // Añadir funcionalidades de accesibilidad para los modales
+      modales.forEach(({ id }) => {
+        const modal = document.getElementById(id);
+        
+        modal.addEventListener('keydown', (e) => {
+          if (e.key === 'Tab') {
+            const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+            
+            if (e.shiftKey && document.activeElement === firstElement) {
+              e.preventDefault();
+              lastElement.focus();
+            } else if (!e.shiftKey && document.activeElement === lastElement) {
+              e.preventDefault();
+              firstElement.focus();
+            }
+          }
+        });
+      });
+
+      // Cargar datos iniciales
+      try {
+        await Promise.all([
+          cargarTratamientos(),
+          cargarPrestaciones()
+        ]);
+      } catch (error) {
+        console.error('Error al cargar datos iniciales:', error);
+      }
+
+    } catch (error) {
+      console.error('Error en la inicialización:', error);
+      mostrarToast('Error al inicializar el componente', 'error');
+    }
+  });
+
+  // Manejar recarga de página en Astro
+  document.addEventListener('astro:page-load', async () => {
+    try {
+      await Promise.all([
+        cargarTratamientos(),
+        cargarPrestaciones()
+      ]);
+    } catch (error) {
+      console.error('Error al recargar datos:', error);
+      mostrarToast('Error al recargar los datos', 'error');
+    }
+  });
+
+  // Añadir animación CSS global para fundidos
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .animate-fadeIn { animation: fadeIn 0.5s ease-out; }
+    
+    @keyframes ripple {
+      0% { transform: scale(0); opacity: 1; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    
+    .button-ripple {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .button-ripple:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: scale(0);
+      animation: ripple 0.6s linear;
+      pointer-events: none;
+    }
+  `;
+  document.head.appendChild(style);
+</script>
+
+<style>
+  /* Utilidades adicionales para transiciones y animaciones */
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .duration-300 {
+    transition-duration: 300ms;
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  /* Efecto hover mejorado para botones */
+  button:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+  
+  button:not(:disabled):active {
+    transform: translateY(0);
+  }
+  
+  /* Efectos de enfoque accesibles */
+  button:focus-visible,
+  select:focus-visible,
+  input:focus-visible {
+    outline: 2px solid var(--focus-ring-color, #4f46e5);
+    outline-offset: 2px;
+  }
+  
+  /* Estilo para errores de validación */
+  input:invalid,
+  select:invalid {
+    border-color: #ef4444;
+  }
+  
+  /* Efecto de carga para skeleton loaders */
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  /* Modal con animación de backdrop blur */
+  .backdrop-blur-sm {
+    backdrop-filter: blur(4px);
+  }
+  
+  /* Estilo para estados de hover en tablas */
+  tr.hover\:bg-gray-50:hover td {
+    background-color: rgb(249 250 251 / var(--tw-bg-opacity));
+    --tw-bg-opacity: 1;
+  }
+  
+  .dark tr.dark\:hover\:bg-gray-700:hover td {
+    background-color: rgb(55 65 81 / var(--tw-bg-opacity));
+    --tw-bg-opacity: 1;
+  }
+  
+  /* Ripple effect para botones */
+  button:not(:disabled):active::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+  }
+  
+  @keyframes ripple {
+    to {
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 0;
+    }
+  }
+  
+  /* Mejor contraste para elementos de formulario en modo oscuro */
+  .dark input,
+  .dark select,
+  .dark textarea {
+    color-scheme: dark;
+  }
+  
+  /* Estilos para toasts */
+  #toastContainer {
+    max-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+    scrollbar-width: thin;
+  }
+  
+  /* Estilo para scrollbars */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 20px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.7);
+  }
+  
+  /* Prevenir selección de texto en elementos no editables */
+  button, th, .modal-header {
+    user-select: none;
+  }
+</style>
